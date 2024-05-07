@@ -10,10 +10,6 @@
 
 
 let state = "starting screen";
-let modes = ["normal", "practice", "single attack", "endless"];
-let mode = 0;
-let actions = [];
-let action = 0;
 let level = 0;
 let scaleOfPlayer;
 let time;
@@ -27,6 +23,12 @@ let platformOrder = {
   down: 2,
   right : 3,
 };
+
+
+let modes = [];
+let mode = 0;
+let actions = [];
+let action = 0;
 
 let currentBones;
 let currentAttackIndex;
@@ -70,7 +72,13 @@ function setup() {
     {word: "item", positionX: 0.6 * height, positionY: 0.835 * height},
     {word: "spare", positionX: 0.85 * height, positionY: 0.835 * height}
   ];
-  
+
+  modes = [
+    {word: "normal", position: 0},
+    {word: "practice", position: 1},
+    {word: "single attack", position: 2},
+    {word: "endless", position: 3},
+  ];
   // // music
   // megalovania.jump(0);
   // megalovania.play();
@@ -100,8 +108,8 @@ function draw() {
     }
     
     textAlign(LEFT);
-    for (let i = 0; i < 4; i++){
-      text(actions[i].word,actions[i].positionX,actions[i].positionY);
+    for (let actionText of actions){
+      text(actionText.word,actionText.positionX,actionText.positionY);
     }
     if (currentBones[currentAttackIndex].type === "next round"){
       state = "action time";
@@ -120,47 +128,59 @@ function draw() {
     text("die",50,50);
   }
 }
+
+
+const TITLEHIEGHT = 0.25;
+const TITLEWIDTH = 0.6;
+const MODEWIDTH = 0.1;
+const MODEHEIGHT = 0.45;
+const MODEHEIGHTDIFFERENCE = 0.1;
+
 function drawStartScreen(){
-  let titleHeight = 0.25;
-  let titleWidth = 0.6;
-  let modeWidth = 0.1;
-  let modeHeightDifference = 0.1;
+  // display the title being: Sans Boss Fight from Undertale
+  // formating
   fill("white");
   textAlign(CENTER,CENTER);
   textSize(1);
-  for(let i = 0; textWidth("Sans Boss Fight from Undertale") < titleWidth * width; i++){
+  for(let i = 0; textWidth("Sans Boss Fight from Undertale") < TITLEWIDTH * width; i++){
     textSize(i);
   }
-  text("Sans Boss Fight from Undertale", width / 2, titleHeight * height);
-  textSize(1);
-  for(let i = 1; textWidth("Normal") < modeWidth * width; i++){
-    textSize(i);
-  }
+  // display text
+  text("Sans Boss Fight from Undertale", width / 2, TITLEHIEGHT * height);
+
+  // display all the modes being: normal, endless....
+  // formating
+  fill("white");
   textAlign(LEFT,CENTER);
-  text(modes[0], width / 2, (titleHeight + modeHeightDifference * 2) * height);
-  text(modes[1], width / 2, (titleHeight + modeHeightDifference * 3) * height);
-  text(modes[2], width / 2, (titleHeight + modeHeightDifference * 4) * height);
-  text(modes[3], width / 2, (titleHeight + modeHeightDifference * 5) * height);
+  textSize(1);
+  for(let i = 1; textWidth("Normal") < MODEWIDTH * width; i++){
+    textSize(i);
+  }
+  
+  // display text
+  for(let modeText of modes){
+    text(modeText.word, width/2, (MODEHEIGHT + MODEHEIGHTDIFFERENCE * modeText.position) * height);
+  }
 
   let heartX = 0.45;
   if (mode === 0){
     imageMode(CENTER);
-    image(heart, heartX * width , (titleHeight + modeHeightDifference * 2) * height, heart.width * scaleOfPlayer, heart.height * scaleOfPlayer);
+    image(heart, heartX * width , (TITLEHIEGHT + MODEHEIGHTDIFFERENCE * 2) * height, heart.width * scaleOfPlayer, heart.height * scaleOfPlayer);
   }
 
   if (mode === 1){
     imageMode(CENTER);
-    image(heart, heartX * width , (titleHeight + modeHeightDifference * 3) * height, heart.width * scaleOfPlayer, heart.height * scaleOfPlayer);
+    image(heart, heartX * width , (TITLEHIEGHT + MODEHEIGHTDIFFERENCE * 3) * height, heart.width * scaleOfPlayer, heart.height * scaleOfPlayer);
   }
   
   if (mode === 2){
     imageMode(CENTER);
-    image(heart, heartX * width , (titleHeight + modeHeightDifference * 4) * height, heart.width * scaleOfPlayer, heart.height * scaleOfPlayer);
+    image(heart, heartX * width , (TITLEHIEGHT + MODEHEIGHTDIFFERENCE * 4) * height, heart.width * scaleOfPlayer, heart.height * scaleOfPlayer);
   }
   
   if (mode === 3){
     imageMode(CENTER);
-    image(heart, heartX * width , (titleHeight + modeHeightDifference * 5) * height, heart.width * scaleOfPlayer, heart.height * scaleOfPlayer);
+    image(heart, heartX * width , (TITLEHIEGHT + MODEHEIGHTDIFFERENCE * 5) * height, heart.width * scaleOfPlayer, heart.height * scaleOfPlayer);
   }
   
 }

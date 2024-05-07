@@ -4,20 +4,32 @@
 Undertale Sans boss fight
 
 ## Needs to have list
-- adjust to full screen
 - heart function properly when being attacked
-    - No going into platforms
+    - stop moving when hitting a boarder or platform
     - take damage at the right time
 - bones function properly
-    - float around in the intended
+    - float around as intended
     - know if it is on top of the heart
-- self made gravity. I know this is hard.
-- imitate at least 3 different attacks from the game as close as possible
-- sound effect when hit
-- bad death screen
+- self made gravity fpr jumping of the boarders
+- imitate at least 3 different attacks from the game as close as possible. These attacks being:
+    - boneTab 1,2,3
+    - blueBone 1
+    - boneGap 1,2,3
+- very simple death screen
 
 ## Nice to Have List
-- have all of the attacks from the game
+- adjust to full screen
+- sound effect when hit
+- have all of the attacks from the game:
+    - BoneSlideHorizontal
+    - BoneSlideVertical
+    - Intro
+    - Final
+    - multi
+        -
+        -
+        -
+    - platformBlaster 1,2
 - have different game modes
 - have different action option
 - ok death screen
