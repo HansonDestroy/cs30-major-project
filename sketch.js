@@ -177,7 +177,6 @@ function drawStartScreen(){
     heart.width * scaleOfPlayer,
     heart.height * scaleOfPlayer
   );
-  
 }
 function keyTyped(){
   // chage mode or action COMPLETED
@@ -217,8 +216,8 @@ function keyTyped(){
   }
   
 }
-// innitialize the starting x,y position of the heart // reset timer // only run it once per level
 function innit(){
+  // innitialize the starting x,y position of the heart // reset timer // only run it once per level COMPLETED
   if(inttailizedAready === "no"){
     // innitail spawn
     if(level === 1){
@@ -240,8 +239,8 @@ function innit(){
     inttailizedAready = "yes";
   }
 }
-
 function displayBones(){
+  // TEMP
   let leveltime = millis();
   let attack = currentBones[currentAttackIndex];
   if (attack.type === "tab"){
@@ -332,9 +331,8 @@ function displayBones(){
 
   }
 }
-
-// given the currentPlatformEdge display each of them
 function displayPlatformEdge(){
+  // given the currentPlatformEdge display each of them COMPLETED
   for (let platformEdge of currentPlatformEdge){
     rectMode(CENTER);
     fill("white");
@@ -343,7 +341,7 @@ function displayPlatformEdge(){
   }
 }
 function movePlayer() {
-
+  // TEMP
   if (currentBones[currentAttackIndex].type === "next round"){
     // temppppppppp
     player.x = actions[action].positionX;
@@ -498,8 +496,8 @@ function movePlayer() {
     }
   }
 }
-
 function displayPlayer(){
+  // TEMP
   if (currentBones[currentAttackIndex].type === "next round"){
     image(heart, player.x, player.y, heart.width * scaleOfPlayer, heart.height * scaleOfPlayer);
   }
@@ -525,7 +523,6 @@ function displayPlayer(){
     }
   }
 }
-
 function takeAction(){
   if (level === 1){
     loadLevel1All();
@@ -534,7 +531,6 @@ function takeAction(){
     loadLevel2All();
   }
 }
-
 function loadLevel1All(){
   // level 1
   // platformEdge
@@ -780,7 +776,6 @@ function loadLevel1All(){
   currentGravity = [gravitaty1,gravitaty2,gravitaty3];
   
 }
-
 function loadLevel2All(){
   // level 2
   // platformEdge
@@ -1070,7 +1065,6 @@ function loadLevel2All(){
   currentGravity = [gravitaty1,gravitaty2,gravitaty3];
   
 }
-
 function stopRight(){
   if (keyIsDown(68)){
     //d
@@ -1151,7 +1145,6 @@ function stopDown(){
     }
   }
 }
-
 function mouseReleased(){
   if (startMusic){
     megalovania.jump(0);
