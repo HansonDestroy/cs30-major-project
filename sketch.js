@@ -9,7 +9,8 @@
 // it will always fit the screen's size
 
 class TabAttack{
-  constructor(reaction,changeTime,endTime,damage,cooldown,direction,height,rectangleInfo,gravitaty, platformEdge){
+  constructor(reaction,changeTime,endTime,damage,cooldown,direction,height,zone,gravitaty){
+    // innit varible COMPLETED
     this.type = "tab";
     this.reaction = reaction;
     this.changeTime = changeTime;
@@ -17,43 +18,58 @@ class TabAttack{
     this.damage = damage;
     this.cooldown = cooldown;
     this.direction = direction;
-    this.height = height;
-    this.rectangleInfo = rectangleInfo;
-    this.gravitaty = gravitaty;
-    this.platformEdge = platformEdge;
-  }
-  calculateDamageZone(){
     this.height = this.height * height;
+    this.zone = zone;
+    this.gravitaty = gravitaty;
+  }
+  calculateDamageZone(platformEdge){
+    // draw the right damge zone at the right place. very hard I wish not to look back at it. COMPLETED
     if (this.direction === "up"){
-      this.rectangleInfo = [
-        this.platformEdge[platformEdgeOrder.up].x,
-        this.platformEdge[platformEdgeOrder.up].y + this.platformEdge[platformEdgeOrder.down].w / 2 + this.height / 2,
-        this.platformEdge[platformEdgeOrder.up].l - this.platformEdge[platformEdgeOrder.left].l - this.platformEdge[platformEdgeOrder.right].l,
+      this.zone = [
+        platformEdge[platformEdgeOrder.up].x,
+        platformEdge[platformEdgeOrder.up].y
+        + platformEdge[platformEdgeOrder.down].w / 2
+        + this.height / 2,
+        platformEdge[platformEdgeOrder.up].l
+        - platformEdge[platformEdgeOrder.left].l
+        - platformEdge[platformEdgeOrder.right].l,
         this.height
       ];
     }
     if (this.direction === "down"){
-      this.rectangleInfo = [
-        this.platformEdge[platformEdgeOrder.down].x,
-        this.platformEdge[platformEdgeOrder.down].y - this.platformEdge[platformEdgeOrder.down].w / 2 - this.height / 2,
-        this.platformEdge[platformEdgeOrder.down].l - this.platformEdge[platformEdgeOrder.left].l - this.platformEdge[platformEdgeOrder.right].l,
+      this.zone = [
+        platformEdge[platformEdgeOrder.down].x,
+        platformEdge[platformEdgeOrder.down].y
+        - platformEdge[platformEdgeOrder.down].w / 2
+        - this.height / 2,
+        platformEdge[platformEdgeOrder.down].l
+        - platformEdge[platformEdgeOrder.left].l
+        - platformEdge[platformEdgeOrder.right].l,
         this.height
       ];
     }
     if (this.direction === "left"){
-      this.rectangleInfo = [
-        this.platformEdge[platformEdgeOrder.left].x + this.platformEdge[platformEdgeOrder.left].l / 2 + this.height / 2,
-        this.platformEdge[platformEdgeOrder.left].y,
+      this.zone = [
+        platformEdge[platformEdgeOrder.left].x
+        + platformEdge[platformEdgeOrder.left].l / 2
+        + this.height / 2,
+        platformEdge[platformEdgeOrder.left].y,
         this.height,
-        this.platformEdge[platformEdgeOrder.left].w - this.platformEdge[platformEdgeOrder.up].w - this.platformEdge[platformEdgeOrder.down].w
+        platformEdge[platformEdgeOrder.left].w
+        - platformEdge[platformEdgeOrder.up].w
+        - platformEdge[platformEdgeOrder.down].w
       ];
     }
     if (this.direction === "right"){
-      this.rectangleInfo = [
-        this.platformEdge[platformEdgeOrder.right].x - this.platformEdge[platformEdgeOrder.right].l / 2 - this.height / 2,
-        this.platformEdge[platformEdgeOrder.right].y,
+      this.zone = [
+        platformEdge[platformEdgeOrder.right].x
+        - platformEdge[platformEdgeOrder.right].l / 2
+        - this.height / 2,
+        platformEdge[platformEdgeOrder.right].y,
         this.height,
-        this.platformEdge[platformEdgeOrder.right].w - this.platformEdge[platformEdgeOrder.up].w - this.platformEdge[platformEdgeOrder.down].w
+        platformEdge[platformEdgeOrder.right].w
+        - platformEdge[platformEdgeOrder.up].w
+        - platformEdge[platformEdgeOrder.down].w
       ];
     }
   }
@@ -108,7 +124,6 @@ function preload() {
   heartUp = loadImage("assets/image/heartUp.png");
   heartLeft = loadImage("assets/image/heartLeft.png");
   heartRight = loadImage("assets/image/heartRight.png");
-  megalovania = loadSound("assets/audio/Megalovania.mp3");
 }
 function setup() {
   // set up COMPLETED
@@ -135,7 +150,7 @@ function setup() {
   // megalovania.jump(0);
   // megalovania.play();
   // megalovania.setLoop(true);
-  startMusic = true;
+  // startMusic = true;
   // load level 1
   loadLevel1All();  
 }
@@ -297,17 +312,17 @@ function displayBones(){
     if (leveltime - time < attack.reaction){
       rectMode(CENTER);
       fill(0,150,0);
-      rect(attack.rectangleInfo[0],attack.rectangleInfo[1],attack.rectangleInfo[2],attack.rectangleInfo[3]);
+      rect(attack.zone[0],attack.zone[1],attack.zone[2],attack.zone[3]);
     }
     else{
       rectMode(CENTER);
       fill(150,150,150);
-      rect(attack.rectangleInfo[0],attack.rectangleInfo[1],attack.rectangleInfo[2],attack.rectangleInfo[3]);
+      rect(attack.zone[0],attack.zone[1],attack.zone[2],attack.zone[3]);
       if (
-        player.x < attack.rectangleInfo[0] + attack.rectangleInfo[2] / 2 &&
-        player.x > attack.rectangleInfo[0] - attack.rectangleInfo[2] / 2 &&
-        player.y < attack.rectangleInfo[1] + attack.rectangleInfo[3] / 2 &&
-        player.y > attack.rectangleInfo[1] - attack.rectangleInfo[3] / 2 &&
+        player.x < attack.zone[0] + attack.zone[2] / 2 &&
+        player.x > attack.zone[0] - attack.zone[2] / 2 &&
+        player.y < attack.zone[1] + attack.zone[3] / 2 &&
+        player.y > attack.zone[1] - attack.zone[3] / 2 &&
         damgeTime + attack.cooldown < leveltime) {
         player.health -= attack.damage;
         damgeTime = millis();
@@ -339,20 +354,20 @@ function displayBones(){
     if (state !== "dsfkad;lfksal;dkasdfk;slakdf;lak"){
       rectMode(CENTER);
       fill(150,150,150);
-      rect(attack.rectangleInfo[0][0],attack.rectangleInfo[0][1],attack.rectangleInfo[0][2],attack.rectangleInfo[0][3]);
-      rect(attack.rectangleInfo[1][0],attack.rectangleInfo[1][1],attack.rectangleInfo[1][2],attack.rectangleInfo[1][3]);
-      rect(attack.rectangleInfo[2][0],attack.rectangleInfo[2][1],attack.rectangleInfo[2][2],attack.rectangleInfo[2][3]);
-      rect(attack.rectangleInfo[3][0],attack.rectangleInfo[3][1],attack.rectangleInfo[3][2],attack.rectangleInfo[3][3]);
+      rect(attack.zone[0][0],attack.zone[0][1],attack.zone[0][2],attack.zone[0][3]);
+      rect(attack.zone[1][0],attack.zone[1][1],attack.zone[1][2],attack.zone[1][3]);
+      rect(attack.zone[2][0],attack.zone[2][1],attack.zone[2][2],attack.zone[2][3]);
+      rect(attack.zone[3][0],attack.zone[3][1],attack.zone[3][2],attack.zone[3][3]);
     }
     else{
       rectMode(CENTER);
       fill(150,150,150);
-      rect(attack.rectangleInfo[0],attack.rectangleInfo[1],attack.rectangleInfo[2],attack.rectangleInfo[3]);
+      rect(attack.zone[0],attack.zone[1],attack.zone[2],attack.zone[3]);
       if (
-        player.x < attack.rectangleInfo[0] + attack.rectangleInfo[2] / 2 &&
-        player.x > attack.rectangleInfo[0] - attack.rectangleInfo[2] / 2 &&
-        player.y < attack.rectangleInfo[1] + attack.rectangleInfo[3] / 2 &&
-        player.y > attack.rectangleInfo[1] - attack.rectangleInfo[3] / 2 &&
+        player.x < attack.zone[0] + attack.zone[2] / 2 &&
+        player.x > attack.zone[0] - attack.zone[2] / 2 &&
+        player.y < attack.zone[1] + attack.zone[3] / 2 &&
+        player.y > attack.zone[1] - attack.zone[3] / 2 &&
         damgeTime + attack.cooldown < leveltime) {
         player.health -= attack.damage;
         damgeTime = millis();
@@ -582,8 +597,8 @@ function takeAction(){
   }
 }
 function loadLevel1All(){
-  // level 1
-  // platformEdge
+  // level 1 innit COMPLETED
+  // platformEdge COMPLETED
   let platformEdge1={x: 0.5 * height,y: 0.5 * height,l: 0.26 * height,w: 0.01 * height};
   let platformEdge2={x: 0.375 * height,y: 0.625 * height,l: 0.01 * height,w: 0.26 * height};
   let platformEdge3={x: 0.5 * height,y: 0.75 * height,l: 0.26 * height,w: 0.01 * height};
@@ -595,9 +610,9 @@ function loadLevel1All(){
   let level1PlatformEdge = [platformEdge1,platformEdge2,platformEdge3,platformEdge4];
   currentPlatformEdge = level1PlatformEdge;
 
-  // bones
+  // bones COMPLETD
   // attack 1
-  // gravity
+  // gravity innit COMPLETED
   let gravitaty1 = {
     mode: "on",
     accerlerationX: 0,
@@ -626,6 +641,7 @@ function loadLevel1All(){
   currentGravity = [gravitaty1, gravitaty2, gravitaty3];
   currentGravityIndex = 0;
 
+  // initialize the varible of the attack 1 level 1 COMPLETED
   let attack1 = new TabAttack();
 
   attack1.type = "tab";
@@ -635,34 +651,26 @@ function loadLevel1All(){
   attack1.damage = 7;
   attack1.cooldown = 400;
   attack1.direction = "down";
-  attack1.height = 0.08;
-  attack1.rectangleInfo = [];
+  attack1.height = 0.08 * height;
+  attack1.zone = [];
   attack1.gravitaty = structuredClone(currentGravity);
-  attack1.platformEdge = structuredClone(level1PlatformEdge);
 
-  attack1.height = attack1.height * height;
-  attack1.rectangleInfo = [
-    level1PlatformEdge[platformEdgeOrder.down].x,
-    level1PlatformEdge[platformEdgeOrder.down].y
-    - level1PlatformEdge[platformEdgeOrder.down].w / 2
-    - attack1.height / 2,
-    level1PlatformEdge[platformEdgeOrder.down].l
-    - level1PlatformEdge[platformEdgeOrder.left].l
-    - level1PlatformEdge[platformEdgeOrder.right].l,
-    attack1.height
-  ];
+  // calculated damge zone COMPLETED
+  attack1.calculateDamageZone(level1PlatformEdge);
+  
+  // push the attack in COMPLETED
   currentAttackIndex = 0;
   currentBones = [attack1];
   
   // attack 2
 
   for (let i = 0; i < 6; i++){
-
     // random attack
+    // select a random direction
     let randomNumber = floor(random(4));
     let directions = ["up", "down", "left", "right"];
 
-    // gravity
+    // gravity innit COMPLETED
     if (directions[randomNumber] === "down"){
       let gravitaty4 = {
         mode: "on",
@@ -775,65 +783,37 @@ function loadLevel1All(){
       currentGravity = [gravitaty4,gravitaty5,gravitaty6];
     }
 
-    let attack2 = {
-      type: "tab",
-      reaction: 700,
-      changeTime: 1000,
-      endTime: 1300,
-      damage: 3,
-      cooldown: 150,
-      direction: directions[randomNumber],
-      height: 0.02,
-      rectangleInfo: [],
-      gravitaty: structuredClone(currentGravity),
-    };
+    // initialize the varible of the attack 1 level 1 COMPLETED
+    let attack2 = new TabAttack();
 
-    attack2.height = attack2.height * height;
-    if (attack2.direction === "up"){
-      attack2.rectangleInfo = [
-        level1PlatformEdge[platformEdgeOrder.up].x,
-        level1PlatformEdge[platformEdgeOrder.up].y + level1PlatformEdge[platformEdgeOrder.down].w / 2 + attack2.height / 2,
-        level1PlatformEdge[platformEdgeOrder.up].l - level1PlatformEdge[platformEdgeOrder.left].l - level1PlatformEdge[platformEdgeOrder.right].l,
-        attack2.height
-      ];
-    }
-    if (attack2.direction === "down"){
-      attack2.rectangleInfo = [
-        level1PlatformEdge[platformEdgeOrder.down].x,
-        level1PlatformEdge[platformEdgeOrder.down].y - level1PlatformEdge[platformEdgeOrder.down].w / 2 - attack2.height / 2,
-        level1PlatformEdge[platformEdgeOrder.down].l - level1PlatformEdge[platformEdgeOrder.left].l - level1PlatformEdge[platformEdgeOrder.right].l,
-        attack2.height
-      ];
-    }
-    if (attack2.direction === "left"){
-      attack2.rectangleInfo = [
-        level1PlatformEdge[platformEdgeOrder.left].x + level1PlatformEdge[platformEdgeOrder.left].l / 2 + attack2.height / 2,
-        level1PlatformEdge[platformEdgeOrder.left].y,
-        attack2.height,
-        level1PlatformEdge[platformEdgeOrder.left].w - level1PlatformEdge[platformEdgeOrder.up].w - level1PlatformEdge[platformEdgeOrder.down].w
-      ];
-    }
-    if (attack2.direction === "right"){
-      attack2.rectangleInfo = [
-        level1PlatformEdge[platformEdgeOrder.right].x - level1PlatformEdge[platformEdgeOrder.right].l / 2 - attack2.height / 2,
-        level1PlatformEdge[platformEdgeOrder.right].y,
-        attack2.height,
-        level1PlatformEdge[platformEdgeOrder.right].w - level1PlatformEdge[platformEdgeOrder.up].w - level1PlatformEdge[platformEdgeOrder.down].w
-      ];
-    }
+    attack2.type = "tab";
+    attack2.reaction = 700;
+    attack2.changeTime = 1000;
+    attack2.endTime = 1000;
+    attack2.damage = 3;
+    attack2.cooldown = 150;
+    attack2.direction = directions[randomNumber];
+    attack2.height = 0.02 * height;
+    attack2.zone = [];
+    attack2.gravitaty = structuredClone(currentGravity);
+
+    // calculated damge zone COMPLETED
+    attack2.calculateDamageZone(level1PlatformEdge);
+
+    // push the attack in COMPLETED
     currentBones.push(attack2);
   }
 
-  // attack last
-  let attackLast = {type: "next round"};
-  currentBones.push(attackLast);
+  // attack last or attack 3
+  let attack3 = {type: "next round"};
+  currentBones.push(attack3);
 
   currentGravity = [gravitaty1,gravitaty2,gravitaty3];
   
 }
 function loadLevel2All(){
-  // level 2
-  // platformEdge
+  // level 2 innit COMPLETED
+  // platformEdge COMPLETED
   let platformEdge1={x: 0.5 * height,y: 0.5 * height,l: 0.51 * height,w: 0.01 * height};
   let platformEdge2={x: 0.25 * height,y: 0.625 * height,l: 0.01 * height,w: 0.26 * height};
   let platformEdge3={x: 0.5 * height,y: 0.75 * height,l: 0.51 * height,w: 0.01 * height};
@@ -845,9 +825,9 @@ function loadLevel2All(){
   let level2PlatformEdge = [platformEdge1,platformEdge2,platformEdge3,platformEdge4];
   currentPlatformEdge = level2PlatformEdge;
 
-  // bones
+  // bones COMPLETD
   // attack 1
-  // gravity
+  // gravity innit COMPLETED
   let gravitaty1 = {
     mode: "on",
     accerlerationX: 0,
@@ -876,6 +856,7 @@ function loadLevel2All(){
   currentGravity = [gravitaty1, gravitaty2, gravitaty3];
   currentGravityIndex = 0;
 
+  // initialize the varible of the attack 1 level 2 COMPLETED
   let attack1 = new TabAttack();
 
   attack1.type = "tab";
@@ -885,22 +866,18 @@ function loadLevel2All(){
   attack1.damage = 7;
   attack1.cooldown = 400;
   attack1.direction = "down";
-  attack1.height = 0.08;
-  attack1.rectangleInfo = [];
+  attack1.height = 0.08 * height;
+  attack1.zone = [];
   attack1.gravitaty = structuredClone(currentGravity);
-  attack1.platformEdge = structuredClone(level2PlatformEdge);
 
-  attack1.height = attack1.height * height;
-  attack1.rectangleInfo = [
-    level2PlatformEdge[platformEdgeOrder.down].x,
-    level2PlatformEdge[platformEdgeOrder.down].y - level2PlatformEdge[platformEdgeOrder.down].w / 2 - attack1.height / 2,
-    level2PlatformEdge[platformEdgeOrder.down].l - level2PlatformEdge[platformEdgeOrder.left].l - level2PlatformEdge[platformEdgeOrder.right].l,
-    attack1.height
-  ];
+  // calculated damge zone COMPLETED
+  attack1.calculateDamageZone(level1PlatformEdge);
+  
+  // push the attack in COMPLETED
   currentAttackIndex = 0;
   currentBones = [attack1];
   
-  // attack 2
+  // attack 2 TEMP
 
   for (let i = 0; i < 6; i++){
 
@@ -1032,7 +1009,7 @@ function loadLevel2All(){
       damage: 3,
       cooldown: 50,
       direction: directions[randomNumber],
-      rectangleInfo: [],
+      zone: [],
       gravitaty: structuredClone(currentGravity),
     };
 
@@ -1040,7 +1017,7 @@ function loadLevel2All(){
     attack2.gapDifference = attack2.gapDifference * (level2PlatformEdge[platformEdgeOrder.left].w - level2PlatformEdge[platformEdgeOrder.down].w - level2PlatformEdge[platformEdgeOrder.up].w);
     attack2.gapWidth = attack2.gapWidth * (level2PlatformEdge[platformEdgeOrder.down].l - level2PlatformEdge[platformEdgeOrder.left].l - level2PlatformEdge[platformEdgeOrder.right].l);
     if (attack2.direction === "down"){
-      attack2.rectangleInfo = [
+      attack2.zone = [
         [
           level2PlatformEdge[platformEdgeOrder.left].x - 0,
           level2PlatformEdge[platformEdgeOrder.up].y + level2PlatformEdge[platformEdgeOrder.up].w / 2 + level2PlatformEdge[platformEdgeOrder.left].w / 2 - level2PlatformEdge[platformEdgeOrder.down].w / 2 - level2PlatformEdge[platformEdgeOrder.up].w / 2 - attack2.gapHeight / 2 - attack2.gapDifference / 2,
@@ -1068,7 +1045,7 @@ function loadLevel2All(){
       ];
     }
     if (attack2.direction === "up"){
-      attack2.rectangleInfo = [
+      attack2.zone = [
         [
           level2PlatformEdge[platformEdgeOrder.left].x - 0,
           level2PlatformEdge[platformEdgeOrder.down].y - level2PlatformEdge[platformEdgeOrder.down].w / 2 - attack2.gapHeight / 2,
@@ -1096,7 +1073,7 @@ function loadLevel2All(){
       ];
     }
     // if (attack2.direction === "left"){
-    //   attack2.rectangleInfo = [
+    //   attack2.zone = [
     //     level2PlatformEdge[platformEdgeOrder.left].x + level2PlatformEdge[platformEdgeOrder.left].l / 2 + attack2.height / 2,
     //     level2PlatformEdge[platformEdgeOrder.left].y,
     //     attack2.height,
@@ -1104,7 +1081,7 @@ function loadLevel2All(){
     //   ];
     // }
     // if (attack2.direction === "right"){
-    //   attack2.rectangleInfo = [
+    //   attack2.zone = [
     //     level2PlatformEdge[platformEdgeOrder.right].x - level2PlatformEdge[platformEdgeOrder.right].l / 2 - attack2.height / 2,
     //     level2PlatformEdge[platformEdgeOrder.right].y,
     //     attack2.height,
@@ -1202,9 +1179,11 @@ function stopDown(){
   }
 }
 function mouseReleased(){
+  startMusic = true
   if (startMusic){
+    megalovania = loadSound("assets/audio/Megalovania.mp3");
     megalovania.jump(0);
     megalovania.play();
-    megalovania.setLoop(true);
+    megalovania.setLoop(true);    
   }
 }
