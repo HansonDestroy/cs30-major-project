@@ -8,6 +8,23 @@
 // I technically have 2d arrays because in the currentBones array there is a list of attacks and in each attack there is a list of gravities
 // it will always fit the screen's size
 
+class TabAttack{
+  constructor(reaction,changeTime,endTime,damage,cooldown,direction,height,rectangleInfo,gravitaty){
+    this.type = "tab";
+    this.reaction = reaction;
+    this.changeTime = changeTime;
+    this.endTime = endTime;
+    this.damage = damage;
+    this.cooldown = cooldown;
+    this.direction = direction;
+    this.height = height;
+    this.rectangleInfo = rectangleInfo;
+    this.gravitaty = gravitaty;
+  }
+  calculateZone(){
+
+  }
+}
 
 let state = "starting screen";
 let level = 0;
