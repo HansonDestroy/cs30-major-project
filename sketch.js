@@ -9,7 +9,7 @@
 // it will always fit the screen's size
 
 class TabAttack{
-  constructor(reaction,changeTime,endTime,damage,cooldown,direction,height,rectangleInfo,gravitaty){
+  constructor(reaction,changeTime,endTime,damage,cooldown,direction,height,rectangleInfo,gravitaty, platformEdge){
     this.type = "tab";
     this.reaction = reaction;
     this.changeTime = changeTime;
@@ -20,12 +20,42 @@ class TabAttack{
     this.height = height;
     this.rectangleInfo = rectangleInfo;
     this.gravitaty = gravitaty;
+    this.platformEdge = platformEdge;
   }
-  calculateZone(){
-
-  }
-  calculateReaction(){
-
+  calculateDamageZone(){
+    this.height = this.height * height;
+    if (this.direction === "up"){
+      this.rectangleInfo = [
+        this.platformEdge[platformEdgeOrder.up].x,
+        this.platformEdge[platformEdgeOrder.up].y + this.platformEdge[platformEdgeOrder.down].w / 2 + this.height / 2,
+        this.platformEdge[platformEdgeOrder.up].l - this.platformEdge[platformEdgeOrder.left].l - this.platformEdge[platformEdgeOrder.right].l,
+        this.height
+      ];
+    }
+    if (this.direction === "down"){
+      this.rectangleInfo = [
+        this.platformEdge[platformEdgeOrder.down].x,
+        this.platformEdge[platformEdgeOrder.down].y - this.platformEdge[platformEdgeOrder.down].w / 2 - this.height / 2,
+        this.platformEdge[platformEdgeOrder.down].l - this.platformEdge[platformEdgeOrder.left].l - this.platformEdge[platformEdgeOrder.right].l,
+        this.height
+      ];
+    }
+    if (this.direction === "left"){
+      this.rectangleInfo = [
+        this.platformEdge[platformEdgeOrder.left].x + this.platformEdge[platformEdgeOrder.left].l / 2 + this.height / 2,
+        this.platformEdge[platformEdgeOrder.left].y,
+        this.height,
+        this.platformEdge[platformEdgeOrder.left].w - this.platformEdge[platformEdgeOrder.up].w - this.platformEdge[platformEdgeOrder.down].w
+      ];
+    }
+    if (this.direction === "right"){
+      this.rectangleInfo = [
+        this.platformEdge[platformEdgeOrder.right].x - this.platformEdge[platformEdgeOrder.right].l / 2 - this.height / 2,
+        this.platformEdge[platformEdgeOrder.right].y,
+        this.height,
+        this.platformEdge[platformEdgeOrder.right].w - this.platformEdge[platformEdgeOrder.up].w - this.platformEdge[platformEdgeOrder.down].w
+      ];
+    }
   }
 }
 
@@ -38,7 +68,7 @@ let damgeTime = 0;
 let startMusic = false;
 
 let platformEdgeOrder = {
-  top : 0,
+  up : 0,
   left : 1,
   down: 2,
   right : 3,
@@ -558,7 +588,7 @@ function loadLevel1All(){
   let platformEdge2={x: 0.375 * height,y: 0.625 * height,l: 0.01 * height,w: 0.26 * height};
   let platformEdge3={x: 0.5 * height,y: 0.75 * height,l: 0.26 * height,w: 0.01 * height};
   let platformEdge4={x: 0.625 * height,y: 0.625 * height,l: 0.01 * height,w: 0.26 * height};
-  // let platformEdge1={x: 0.5,y: 0,l: 1,w: 0.025}; top
+  // let platformEdge1={x: 0.5,y: 0,l: 1,w: 0.025}; up
   // let platformEdge2={x: 0,y: 0.5,l: 0.025,w: 1}; left
   // let platformEdge3={x: 0.5,y: 1,l: 1,w: 0.025}; down
   // let platformEdge4={x: 1,y: 0.5,l: 0.025,w: 1}; right
@@ -596,24 +626,29 @@ function loadLevel1All(){
   currentGravity = [gravitaty1, gravitaty2, gravitaty3];
   currentGravityIndex = 0;
 
-  let attack1 = {
-    type: "tab",
-    reaction: 1000,
-    changeTime: 1200,
-    endTime: 3000,
-    damage: 7,
-    cooldown: 400,
-    direction: "down",
-    height: 0.08,
-    rectangleInfo: [],
-    gravitaty: structuredClone(currentGravity)
-  };
+  let attack1 = new TabAttack();
+
+  attack1.type = "tab";
+  attack1.reaction = 1000;
+  attack1.changeTime = 1200;
+  attack1.endTime = 3000;
+  attack1.damage = 7;
+  attack1.cooldown = 400;
+  attack1.direction = "down";
+  attack1.height = 0.08;
+  attack1.rectangleInfo = [];
+  attack1.gravitaty = structuredClone(currentGravity);
+  attack1.platformEdge = structuredClone(level1PlatformEdge);
 
   attack1.height = attack1.height * height;
   attack1.rectangleInfo = [
     level1PlatformEdge[platformEdgeOrder.down].x,
-    level1PlatformEdge[platformEdgeOrder.down].y - level1PlatformEdge[platformEdgeOrder.down].w / 2 - attack1.height / 2,
-    level1PlatformEdge[platformEdgeOrder.down].l - level1PlatformEdge[platformEdgeOrder.left].l - level1PlatformEdge[platformEdgeOrder.right].l,
+    level1PlatformEdge[platformEdgeOrder.down].y
+    - level1PlatformEdge[platformEdgeOrder.down].w / 2
+    - attack1.height / 2,
+    level1PlatformEdge[platformEdgeOrder.down].l
+    - level1PlatformEdge[platformEdgeOrder.left].l
+    - level1PlatformEdge[platformEdgeOrder.right].l,
     attack1.height
   ];
   currentAttackIndex = 0;
@@ -756,9 +791,9 @@ function loadLevel1All(){
     attack2.height = attack2.height * height;
     if (attack2.direction === "up"){
       attack2.rectangleInfo = [
-        level1PlatformEdge[platformEdgeOrder.top].x,
-        level1PlatformEdge[platformEdgeOrder.top].y + level1PlatformEdge[platformEdgeOrder.down].w / 2 + attack2.height / 2,
-        level1PlatformEdge[platformEdgeOrder.top].l - level1PlatformEdge[platformEdgeOrder.left].l - level1PlatformEdge[platformEdgeOrder.right].l,
+        level1PlatformEdge[platformEdgeOrder.up].x,
+        level1PlatformEdge[platformEdgeOrder.up].y + level1PlatformEdge[platformEdgeOrder.down].w / 2 + attack2.height / 2,
+        level1PlatformEdge[platformEdgeOrder.up].l - level1PlatformEdge[platformEdgeOrder.left].l - level1PlatformEdge[platformEdgeOrder.right].l,
         attack2.height
       ];
     }
@@ -775,7 +810,7 @@ function loadLevel1All(){
         level1PlatformEdge[platformEdgeOrder.left].x + level1PlatformEdge[platformEdgeOrder.left].l / 2 + attack2.height / 2,
         level1PlatformEdge[platformEdgeOrder.left].y,
         attack2.height,
-        level1PlatformEdge[platformEdgeOrder.left].w - level1PlatformEdge[platformEdgeOrder.top].w - level1PlatformEdge[platformEdgeOrder.down].w
+        level1PlatformEdge[platformEdgeOrder.left].w - level1PlatformEdge[platformEdgeOrder.up].w - level1PlatformEdge[platformEdgeOrder.down].w
       ];
     }
     if (attack2.direction === "right"){
@@ -783,7 +818,7 @@ function loadLevel1All(){
         level1PlatformEdge[platformEdgeOrder.right].x - level1PlatformEdge[platformEdgeOrder.right].l / 2 - attack2.height / 2,
         level1PlatformEdge[platformEdgeOrder.right].y,
         attack2.height,
-        level1PlatformEdge[platformEdgeOrder.right].w - level1PlatformEdge[platformEdgeOrder.top].w - level1PlatformEdge[platformEdgeOrder.down].w
+        level1PlatformEdge[platformEdgeOrder.right].w - level1PlatformEdge[platformEdgeOrder.up].w - level1PlatformEdge[platformEdgeOrder.down].w
       ];
     }
     currentBones.push(attack2);
@@ -841,18 +876,19 @@ function loadLevel2All(){
   currentGravity = [gravitaty1, gravitaty2, gravitaty3];
   currentGravityIndex = 0;
 
-  let attack1 = {
-    type: "tab",
-    reaction: 1000,
-    changeTime: 1200,
-    endTime: 3000,
-    damage: 7,
-    cooldown: 400,
-    direction: "down",
-    height: 0.08,
-    rectangleInfo: [],
-    gravitaty: structuredClone(currentGravity)
-  };
+  let attack1 = new TabAttack();
+
+  attack1.type = "tab";
+  attack1.reaction = 1000;
+  attack1.changeTime = 1200;
+  attack1.endTime = 3000;
+  attack1.damage = 7;
+  attack1.cooldown = 400;
+  attack1.direction = "down";
+  attack1.height = 0.08;
+  attack1.rectangleInfo = [];
+  attack1.gravitaty = structuredClone(currentGravity);
+  attack1.platformEdge = structuredClone(level2PlatformEdge);
 
   attack1.height = attack1.height * height;
   attack1.rectangleInfo = [
@@ -1000,16 +1036,16 @@ function loadLevel2All(){
       gravitaty: structuredClone(currentGravity),
     };
 
-    attack2.gapHeight = attack2.gapHeight * (level2PlatformEdge[platformEdgeOrder.left].w - level2PlatformEdge[platformEdgeOrder.down].w - level2PlatformEdge[platformEdgeOrder.top].w);
-    attack2.gapDifference = attack2.gapDifference * (level2PlatformEdge[platformEdgeOrder.left].w - level2PlatformEdge[platformEdgeOrder.down].w - level2PlatformEdge[platformEdgeOrder.top].w);
+    attack2.gapHeight = attack2.gapHeight * (level2PlatformEdge[platformEdgeOrder.left].w - level2PlatformEdge[platformEdgeOrder.down].w - level2PlatformEdge[platformEdgeOrder.up].w);
+    attack2.gapDifference = attack2.gapDifference * (level2PlatformEdge[platformEdgeOrder.left].w - level2PlatformEdge[platformEdgeOrder.down].w - level2PlatformEdge[platformEdgeOrder.up].w);
     attack2.gapWidth = attack2.gapWidth * (level2PlatformEdge[platformEdgeOrder.down].l - level2PlatformEdge[platformEdgeOrder.left].l - level2PlatformEdge[platformEdgeOrder.right].l);
     if (attack2.direction === "down"){
       attack2.rectangleInfo = [
         [
           level2PlatformEdge[platformEdgeOrder.left].x - 0,
-          level2PlatformEdge[platformEdgeOrder.top].y + level2PlatformEdge[platformEdgeOrder.top].w / 2 + level2PlatformEdge[platformEdgeOrder.left].w / 2 - level2PlatformEdge[platformEdgeOrder.down].w / 2 - level2PlatformEdge[platformEdgeOrder.top].w / 2 - attack2.gapHeight / 2 - attack2.gapDifference / 2,
+          level2PlatformEdge[platformEdgeOrder.up].y + level2PlatformEdge[platformEdgeOrder.up].w / 2 + level2PlatformEdge[platformEdgeOrder.left].w / 2 - level2PlatformEdge[platformEdgeOrder.down].w / 2 - level2PlatformEdge[platformEdgeOrder.up].w / 2 - attack2.gapHeight / 2 - attack2.gapDifference / 2,
           attack2.gapWidth,
-          level2PlatformEdge[platformEdgeOrder.top].w / 2 + (level2PlatformEdge[platformEdgeOrder.left].w - level2PlatformEdge[platformEdgeOrder.down].w - level2PlatformEdge[platformEdgeOrder.top].w) - attack2.gapHeight - attack2.gapDifference
+          level2PlatformEdge[platformEdgeOrder.up].w / 2 + (level2PlatformEdge[platformEdgeOrder.left].w - level2PlatformEdge[platformEdgeOrder.down].w - level2PlatformEdge[platformEdgeOrder.up].w) - attack2.gapHeight - attack2.gapDifference
         ],
         [
           level2PlatformEdge[platformEdgeOrder.left].x - 0,
@@ -1019,9 +1055,9 @@ function loadLevel2All(){
         ],
         [
           level2PlatformEdge[platformEdgeOrder.right].x - 0,
-          level2PlatformEdge[platformEdgeOrder.top].y + level2PlatformEdge[platformEdgeOrder.top].w / 2 + level2PlatformEdge[platformEdgeOrder.left].w / 2 - level2PlatformEdge[platformEdgeOrder.down].w / 2 - level2PlatformEdge[platformEdgeOrder.top].w / 2 - attack2.gapHeight / 2 - attack2.gapDifference / 2,
+          level2PlatformEdge[platformEdgeOrder.up].y + level2PlatformEdge[platformEdgeOrder.up].w / 2 + level2PlatformEdge[platformEdgeOrder.left].w / 2 - level2PlatformEdge[platformEdgeOrder.down].w / 2 - level2PlatformEdge[platformEdgeOrder.up].w / 2 - attack2.gapHeight / 2 - attack2.gapDifference / 2,
           attack2.gapWidth,
-          level2PlatformEdge[platformEdgeOrder.top].w / 2 + (level2PlatformEdge[platformEdgeOrder.left].w - level2PlatformEdge[platformEdgeOrder.down].w - level2PlatformEdge[platformEdgeOrder.top].w) - attack2.gapHeight - attack2.gapDifference
+          level2PlatformEdge[platformEdgeOrder.up].w / 2 + (level2PlatformEdge[platformEdgeOrder.left].w - level2PlatformEdge[platformEdgeOrder.down].w - level2PlatformEdge[platformEdgeOrder.up].w) - attack2.gapHeight - attack2.gapDifference
         ],
         [
           level2PlatformEdge[platformEdgeOrder.right].x - 0,
@@ -1041,7 +1077,7 @@ function loadLevel2All(){
         ],
         [
           level2PlatformEdge[platformEdgeOrder.left].x - 0,
-          level2PlatformEdge[platformEdgeOrder.top].y + level2PlatformEdge[platformEdgeOrder.top].w / 2 + (level2PlatformEdge[platformEdgeOrder.left].w - level2PlatformEdge[platformEdgeOrder.down].w - level2PlatformEdge[platformEdgeOrder.top].w) - attack2.gapHeight - attack2.gapDifference,
+          level2PlatformEdge[platformEdgeOrder.up].y + level2PlatformEdge[platformEdgeOrder.up].w / 2 + (level2PlatformEdge[platformEdgeOrder.left].w - level2PlatformEdge[platformEdgeOrder.down].w - level2PlatformEdge[platformEdgeOrder.up].w) - attack2.gapHeight - attack2.gapDifference,
           attack2.gapWidth,
           attack2.gapHeight
         ],
@@ -1064,7 +1100,7 @@ function loadLevel2All(){
     //     level2PlatformEdge[platformEdgeOrder.left].x + level2PlatformEdge[platformEdgeOrder.left].l / 2 + attack2.height / 2,
     //     level2PlatformEdge[platformEdgeOrder.left].y,
     //     attack2.height,
-    //     level2PlatformEdge[platformEdgeOrder.left].w - level2PlatformEdge[platformEdgeOrder.top].w - level2PlatformEdge[platformEdgeOrder.down].w
+    //     level2PlatformEdge[platformEdgeOrder.left].w - level2PlatformEdge[platformEdgeOrder.up].w - level2PlatformEdge[platformEdgeOrder.down].w
     //   ];
     // }
     // if (attack2.direction === "right"){
@@ -1072,7 +1108,7 @@ function loadLevel2All(){
     //     level2PlatformEdge[platformEdgeOrder.right].x - level2PlatformEdge[platformEdgeOrder.right].l / 2 - attack2.height / 2,
     //     level2PlatformEdge[platformEdgeOrder.right].y,
     //     attack2.height,
-    //     level2PlatformEdge[platformEdgeOrder.right].w - level2PlatformEdge[platformEdgeOrder.top].w - level2PlatformEdge[platformEdgeOrder.down].w
+    //     level2PlatformEdge[platformEdgeOrder.right].w - level2PlatformEdge[platformEdgeOrder.up].w - level2PlatformEdge[platformEdgeOrder.down].w
     //   ];
     // }
     currentBones.push(attack2);
