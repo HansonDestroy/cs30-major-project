@@ -24,6 +24,9 @@ class TabAttack{
   calculateZone(){
 
   }
+  calculateReaction(){
+
+  }
 }
 
 let state = "starting screen";
