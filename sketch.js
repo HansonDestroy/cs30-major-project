@@ -8,6 +8,11 @@
 // I technically have 2d arrays because in the currentBones array there is a list of attacks and in each attack there is a list of gravities
 // it will always fit the screen's size
 
+
+
+// note to my self
+// optimization
+// reation time not starting form the attack period but only when it hit the ground for bone tab
 class TabAttack{
   constructor(reaction,changeTime,endTime,damage,cooldown,direction,height,zone,gravitaty){
     // innit varible COMPLETED
@@ -124,8 +129,7 @@ function preload() {
   heartUp = loadImage("assets/image/heartUp.png");
   heartLeft = loadImage("assets/image/heartLeft.png");
   heartRight = loadImage("assets/image/heartRight.png");
-}
-function setup() {
+} function setup() {
   // set up COMPLETED
   // create canvas
   createCanvas(windowWidth, windowHeight);
@@ -153,8 +157,7 @@ function setup() {
   // startMusic = true;
   // load level 1
   loadLevel1All();  
-}
-function draw() {
+} function draw() {
   // draw TEMP
   background(100);
   if (state === "starting screen"){
@@ -200,8 +203,7 @@ function draw() {
     fill("white");
     text("die",50,50);
   }
-}
-function drawStartScreen(){
+} function drawStartScreen(){
   // draw the start screen COMPLETED
   // innitailize
   const TITLEHIEGHT = 0.25;
@@ -242,8 +244,7 @@ function drawStartScreen(){
     heart.width * scaleOfPlayer,
     heart.height * scaleOfPlayer
   );
-}
-function keyTyped(){
+} function keyTyped(){
   // chage mode or action COMPLETED
   // if key typed at the starting screen
   if (state === "starting screen"){
@@ -280,8 +281,7 @@ function keyTyped(){
     action = action % actions.length;
   }
   
-}
-function innit(){
+} function innit(){
   // innitialize the starting x,y position of the heart // reset timer // only run it once per level COMPLETED
   if(inttailizedAready === "no"){
     // innitail spawn
@@ -303,18 +303,27 @@ function innit(){
     // only run it once per level
     inttailizedAready = "yes";
   }
-}
-function displayBones(){
+} function displayBones(){
   // TEMP
+  // innitialize varible
   let leveltime = millis();
   let attack = currentBones[currentAttackIndex];
   if (attack.type === "tab"){
+    // the attack is tab
     if (leveltime - time < attack.reaction){
-      rectMode(CENTER);
-      fill(0,150,0);
-      rect(attack.zone[0],attack.zone[1],attack.zone[2],attack.zone[3]);
+      // if the time elapsed in this level(leveltime - time) is within(<) the reaction time(attack.reaction)
+      // then color the zone green as warning
+
+      // note if it is dropping to the ground at gravity1 or gravityIndex == 0 then do not display the box at all
+      if (currentGravityIndex !== 0){
+        // condition met draw green zone
+        rectMode(CENTER);
+        fill(0,150,0);
+        rect(attack.zone[0],attack.zone[1],attack.zone[2],attack.zone[3]);
+      }
     }
     else{
+      // your reation time have passed therefore your grace period is over and the zone is filled with white now
       rectMode(CENTER);
       fill(150,150,150);
       rect(attack.zone[0],attack.zone[1],attack.zone[2],attack.zone[3]);
@@ -395,8 +404,7 @@ function displayBones(){
     }
 
   }
-}
-function displayPlatformEdge(){
+} function displayPlatformEdge(){
   // given the currentPlatformEdge display each of them COMPLETED
   for (let platformEdge of currentPlatformEdge){
     rectMode(CENTER);
@@ -404,8 +412,7 @@ function displayPlatformEdge(){
     noStroke();
     rect(platformEdge.x, platformEdge.y, platformEdge.l, platformEdge.w);
   }
-}
-function movePlayer() {
+} function movePlayer() {
   // TEMP
   if (currentBones[currentAttackIndex].type === "next round"){
     // temppppppppp
@@ -560,8 +567,7 @@ function movePlayer() {
       }
     }
   }
-}
-function displayPlayer(){
+} function displayPlayer(){
   // TEMP
   if (currentBones[currentAttackIndex].type === "next round"){
     image(heart, player.x, player.y, heart.width * scaleOfPlayer, heart.height * scaleOfPlayer);
@@ -587,7 +593,9 @@ function displayPlayer(){
       }
     }
   }
-}
+} 
+
+// load levels
 function takeAction(){
   if (level === 1){
     loadLevel1All();
@@ -595,8 +603,7 @@ function takeAction(){
   if (level === 2){
     loadLevel2All();
   }
-}
-function loadLevel1All(){
+} function loadLevel1All(){
   // level 1 innit COMPLETED
   // platformEdge COMPLETED
   let platformEdge1={x: 0.5 * height,y: 0.5 * height,l: 0.26 * height,w: 0.01 * height};
@@ -810,8 +817,7 @@ function loadLevel1All(){
 
   currentGravity = [gravitaty1,gravitaty2,gravitaty3];
   
-}
-function loadLevel2All(){
+} function loadLevel2All(){
   // level 2 innit COMPLETED
   // platformEdge COMPLETED
   let platformEdge1={x: 0.5 * height,y: 0.5 * height,l: 0.51 * height,w: 0.01 * height};
@@ -1098,6 +1104,8 @@ function loadLevel2All(){
   currentGravity = [gravitaty1,gravitaty2,gravitaty3];
   
 }
+
+// stop functions
 function stopRight(){
   if (keyIsDown(68)){
     //d
@@ -1117,8 +1125,7 @@ function stopRight(){
       player.x += player.dx;
     }
   }  
-}
-function stopLeft(){
+} function stopLeft(){
   if (keyIsDown(65)) {
     //a
     let move = true;
@@ -1137,8 +1144,7 @@ function stopLeft(){
       player.x -= player.dx;
     }
   }
-}
-function stopUp(){
+} function stopUp(){
   if (keyIsDown(87)) {
     //w
     let move = true;
@@ -1157,8 +1163,7 @@ function stopUp(){
       player.y -= player.dy;
     }
   }  
-}
-function stopDown(){
+} function stopDown(){
   if (keyIsDown(83)) {
     //s
     let move = true;
@@ -1178,6 +1183,8 @@ function stopDown(){
     }
   }
 }
+
+// music
 function mouseReleased(){
   startMusic = true
   if (startMusic){
