@@ -28,6 +28,9 @@ class TabAttack{
     this.zone = zone;
     this.gravitaty = gravitaty;
   }
+
+
+  // damage function
   calculateDamageZone(platformEdge){
     // draw the right damge zone at the right place. very hard I wish not to look back at it. COMPLETED
     if (this.direction === "up"){
@@ -327,7 +330,7 @@ function displayBones(){
     // the attack is tab
 
     // draw the zone and determine if damage need to be taken
-    // need to seperate the two function
+    // need to seperate the two function TEMP
     if (leveltime - time < attack.reaction){
       // if the time elapsed in this level(leveltime - time) is within(<) the reaction time(attack.reaction)
       // then color the zone green as warning
@@ -360,6 +363,7 @@ function displayBones(){
       }
     }
 
+    // 
     if (leveltime - time > attack.changeTime){
       currentGravityIndex = 2;
     } else if(currentGravityIndex === 2){
