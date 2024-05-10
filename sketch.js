@@ -1,3 +1,4 @@
+/* eslint-disable brace-style */
 // Sans Boss fight from Undertale
 // Hanson
 // Date
@@ -340,8 +341,7 @@ function displayBones(){
       }
 
       // animation of sans throwing his hands down OPTIONAL
-    }
-    else{
+    } else{
       // your reation time have passed
       // therefore your grace period is over and the zone is filled with white now
       rectMode(CENTER);
@@ -362,8 +362,7 @@ function displayBones(){
 
     if (leveltime - time > attack.changeTime){
       currentGravityIndex = 2;
-    }
-    else if(currentGravityIndex === 2){
+    } else if(currentGravityIndex === 2){
       currentGravityIndex--;
       if (attack.direction === "down" || attack.direction === "up"){
         currentGravity[currentGravityIndex].dy = currentGravity[currentGravityIndex].dyOriginal;
@@ -899,7 +898,7 @@ function takeAction(){
   attack1.gravitaty = structuredClone(currentGravity);
 
   // calculated damge zone COMPLETED
-  attack1.calculateDamageZone(level1PlatformEdge);
+  attack1.calculateDamageZone(level2PlatformEdge);
   
   // push the attack in COMPLETED
   currentAttackIndex = 0;
@@ -1208,7 +1207,7 @@ function stopRight(){
 
 // music
 function mouseReleased(){
-  startMusic = true
+  startMusic = true;
   if (startMusic){
     megalovania = loadSound("assets/audio/Megalovania.mp3");
     megalovania.jump(0);
