@@ -40,7 +40,8 @@ Undertale Sans boss fight
     - right inertia for the platform
     - cancels gravity at the right time
     - semi-transparent able to jumpthough from under but not above
-- smooth curve
+- smooth curve for the heart
+- load sound faster using promise
 
 ## Probably not
 - Sans pixel art animation

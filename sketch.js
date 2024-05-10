@@ -80,12 +80,23 @@ class TabAttack{
   }
 }
 
+// what state are you on
 let state = "starting screen";
+
+// the level is seperated by action
 let level = 0;
+
+// scale of Player
 let scaleOfPlayer;
+
+// global time
 let time;
+// last time damage is taken
+let damageLastTime = 0;
+
+// make sure that innit is only triggered once per level
 let inttailizedAready = "no";
-let damgeTime = 0;
+// throw away useless varible
 let startMusic = false;
 
 let platformEdgeOrder = {
@@ -122,6 +133,7 @@ let player = {
   health: 92,
 };
 
+// useful functions that is COMPLETED
 function preload() {
   // preload COMPLETED
   heart = loadImage("assets/image/heart.png");
@@ -303,13 +315,18 @@ function preload() {
     // only run it once per level
     inttailizedAready = "yes";
   }
-} function displayBones(){
+}
+
+function displayBones(){
   // TEMP
   // innitialize varible
   let leveltime = millis();
   let attack = currentBones[currentAttackIndex];
   if (attack.type === "tab"){
     // the attack is tab
+
+    // draw the zone and determine if damage need to be taken
+    // need to seperate the two function
     if (leveltime - time < attack.reaction){
       // if the time elapsed in this level(leveltime - time) is within(<) the reaction time(attack.reaction)
       // then color the zone green as warning
@@ -321,20 +338,25 @@ function preload() {
         fill(0,150,0);
         rect(attack.zone[0],attack.zone[1],attack.zone[2],attack.zone[3]);
       }
+
+      // animation of sans throwing his hands down OPTIONAL
     }
     else{
-      // your reation time have passed therefore your grace period is over and the zone is filled with white now
+      // your reation time have passed
+      // therefore your grace period is over and the zone is filled with white now
       rectMode(CENTER);
       fill(150,150,150);
       rect(attack.zone[0],attack.zone[1],attack.zone[2],attack.zone[3]);
+      
+      // take damage
       if (
         player.x < attack.zone[0] + attack.zone[2] / 2 &&
         player.x > attack.zone[0] - attack.zone[2] / 2 &&
         player.y < attack.zone[1] + attack.zone[3] / 2 &&
         player.y > attack.zone[1] - attack.zone[3] / 2 &&
-        damgeTime + attack.cooldown < leveltime) {
+        damageLastTime + attack.cooldown < leveltime) {
         player.health -= attack.damage;
-        damgeTime = millis();
+        damageLastTime = millis();
       }
     }
 
@@ -377,9 +399,9 @@ function preload() {
         player.x > attack.zone[0] - attack.zone[2] / 2 &&
         player.y < attack.zone[1] + attack.zone[3] / 2 &&
         player.y > attack.zone[1] - attack.zone[3] / 2 &&
-        damgeTime + attack.cooldown < leveltime) {
+        damageLastTime + attack.cooldown < leveltime) {
         player.health -= attack.damage;
-        damgeTime = millis();
+        damageLastTime = millis();
       }
     }
 
