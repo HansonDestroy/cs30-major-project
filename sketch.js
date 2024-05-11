@@ -14,6 +14,7 @@
 // note to my self
 // optimization
 // reation time not starting form the attack period but only when it hit the ground for bone tab
+// display box only when it hit the ground for bone tab
 class TabAttack{
   constructor(reaction,changeTime,endTime,damage,cooldown,direction,height,zone,gravitaty){
     // innit varible COMPLETED
@@ -30,7 +31,7 @@ class TabAttack{
   }
 
 
-  // damage function
+  // calculate zone function
   calculateDamageZone(platformEdge){
     // draw the right damge zone at the right place. very hard I wish not to look back at it. COMPLETED
     if (this.direction === "up"){
@@ -82,7 +83,51 @@ class TabAttack{
       ];
     }
   }
+
+  // damage function
+  takeDamage(currentMillis){
+    if (
+      player.x < this.zone[0] + this.zone[2] / 2 &&
+      player.x > this.zone[0] - this.zone[2] / 2 &&
+      player.y < this.zone[1] + this.zone[3] / 2 &&
+      player.y > this.zone[1] - this.zone[3] / 2 &&
+      damageLastTime + this.cooldown < currentMillis) {
+      player.health -= this.damage;
+      damageLastTime = currentMillis;
+    }
+  }
+    
 }
+
+class Player{
+  constructor(){
+    this.x = 0
+    this.y = 0
+    this.dx = 0.005
+    this.dy = 0.005
+    this.health = 92
+  }
+
+  displayImage(imageName){
+    if (imageName == "heart"){
+      image(heart, this.x, this.y, heart.width * scaleOfPlayer, heart.height * scaleOfPlayer);
+    }
+    if (imageName == "down"){
+      image(heartDown, this.x, this.y, heartDown.width * scaleOfPlayer, heartDown.height * scaleOfPlayer);
+    }
+    if (imageName == "up"){
+      image(heartUp, this.x, this.y, heartUp.width * scaleOfPlayer, heartUp.height * scaleOfPlayer);
+    }
+    if (imageName == "right"){
+      image(heartRight, this.x, this.y, heartRight.width * scaleOfPlayer, heartRight.height * scaleOfPlayer);
+    }
+    if (imageName == "left"){
+      image(heartLeft, this.x, this.y, heartLeft.width * scaleOfPlayer, heartLeft.height * scaleOfPlayer);
+    }
+  }
+}
+
+let player = new Player();
 
 // what state are you on
 let state = "starting screen";
@@ -94,7 +139,7 @@ let level = 0;
 let scaleOfPlayer;
 
 // global time
-let time;
+let attackInitialTime;
 // last time damage is taken
 let damageLastTime = 0;
 
@@ -129,13 +174,7 @@ let heartLeft;
 let heartRight;
 let megalovania;
 
-let player = {
-  x: 0,
-  y: 0,
-  dx: 0.005,
-  dy: 0.005,
-  health: 92,
-};
+
 
 // useful functions that is COMPLETED
 function preload() {
@@ -222,44 +261,43 @@ function preload() {
 } function drawStartScreen(){
   // draw the start screen COMPLETED
   // innitailize
-  const TITLEHIEGHT = 0.25;
-  const TITLEWIDTH = 0.6;
-  const MODEWIDTH = 0.1;
-  const MODEHEIGHT = 0.45;
-  const MODEHEIGHTDIFFERENCE = 0.1;
+  const TITLE_HIEGHT = 0.25;
+  const TITLE_WIDTH = 0.6;
+  const MODE_WIDTH = 0.1;
+  const MODE_HEIGHT = 0.45;
+  const MODE_HEIGHT_DIFFERENCE = 0.1;
   // display the title being: Sans Boss Fight from Undertale
   // formating
   fill("white");
   textAlign(CENTER,CENTER);
   textSize(1);
-  for(let i = 0; textWidth("Sans Boss Fight from Undertale") < TITLEWIDTH * width; i++){
+  for(let i = 0; textWidth("Sans Boss Fight from Undertale") < TITLE_WIDTH * width; i++){
     textSize(i);
   }
   // display text
-  text("Sans Boss Fight from Undertale", width / 2, TITLEHIEGHT * height);
+  text("Sans Boss Fight from Undertale", width / 2, TITLE_HIEGHT * height);
 
   // display all the modes being: normal, endless....
   // formating
   fill("white");
   textAlign(LEFT,CENTER);
   textSize(1);
-  for(let i = 1; textWidth("Normal") < MODEWIDTH * width; i++){
+  for(let i = 1; textWidth("Normal") < MODE_WIDTH * width; i++){
     textSize(i);
   }
   
   // display text of modes
   for(let modeText of modes){
-    text(modeText.word, width/2, (MODEHEIGHT + MODEHEIGHTDIFFERENCE * modeText.position) * height);
+    text(modeText.word, width/2, (MODE_HEIGHT + MODE_HEIGHT_DIFFERENCE * modeText.position) * height);
   }
 
   // display heart at the right mode
-  let heartX = 0.45;
+  const HEART_X = 0.45;
   imageMode(CENTER);
-  image(heart,
-    heartX * width , (MODEHEIGHT + MODEHEIGHTDIFFERENCE * modes[mode].position) * height,
-    heart.width * scaleOfPlayer,
-    heart.height * scaleOfPlayer
-  );
+  player.x = HEART_X * width
+  player.y = (MODE_HEIGHT + MODE_HEIGHT_DIFFERENCE * modes[mode].position) * height
+  player.displayImage("heart")
+
 } function keyTyped(){
   // chage mode or action COMPLETED
   // if key typed at the starting screen
@@ -315,7 +353,7 @@ function preload() {
       - heart.height * scaleOfPlayer / 2;
     }
     // reset timer
-    time = millis();
+    attackInitialTime = millis();
     // only run it once per level
     inttailizedAready = "yes";
   }
@@ -324,19 +362,19 @@ function preload() {
 function displayBones(){
   // TEMP
   // innitialize varible
-  let leveltime = millis();
+  let currentMillis = millis();
   let attack = currentBones[currentAttackIndex];
   if (attack.type === "tab"){
     // the attack is tab
 
-    // draw the zone and determine if damage need to be taken
-    // need to seperate the two function TEMP
-    if (leveltime - time < attack.reaction){
-      // if the time elapsed in this level(leveltime - time) is within(<) the reaction time(attack.reaction)
+    // draw the zone and determine if damage need to be taken TEMP
+    // need to seperate the two function COMPLETE 
+    if (currentMillis - attackInitialTime < attack.reaction){
+      // if the time elapsed in this level(currentMillis - time) is within(<) the reaction time(attack.reaction)
       // then color the zone green as warning
 
-      // note if it is dropping to the ground at gravity1 or gravityIndex == 0 then do not display the box at all
-      if (currentGravityIndex !== 0){
+      // note if it is dropping to the ground at gravity1 or gravityIndex == 0 then do not display the box at all TEMP
+      if (currentGravityIndex !== 0 || true){
         // condition met draw green zone
         rectMode(CENTER);
         fill(0,150,0);
@@ -352,19 +390,11 @@ function displayBones(){
       rect(attack.zone[0],attack.zone[1],attack.zone[2],attack.zone[3]);
       
       // take damage
-      if (
-        player.x < attack.zone[0] + attack.zone[2] / 2 &&
-        player.x > attack.zone[0] - attack.zone[2] / 2 &&
-        player.y < attack.zone[1] + attack.zone[3] / 2 &&
-        player.y > attack.zone[1] - attack.zone[3] / 2 &&
-        damageLastTime + attack.cooldown < leveltime) {
-        player.health -= attack.damage;
-        damageLastTime = millis();
-      }
+      attack.takeDamage(currentMillis);
     }
 
     // 
-    if (leveltime - time > attack.changeTime){
+    if (currentMillis - attackInitialTime > attack.changeTime){
       currentGravityIndex = 2;
     } else if(currentGravityIndex === 2){
       currentGravityIndex--;
@@ -376,9 +406,9 @@ function displayBones(){
       }
     }
 
-    if (leveltime - time > attack.endTime){
+    if (currentMillis - attackInitialTime > attack.endTime){
       currentAttackIndex++;
-      time = millis();
+      attackInitialTime = millis();
       currentGravityIndex = 0;
       currentGravity = currentBones[currentAttackIndex].gravitaty;
     }
@@ -402,13 +432,13 @@ function displayBones(){
         player.x > attack.zone[0] - attack.zone[2] / 2 &&
         player.y < attack.zone[1] + attack.zone[3] / 2 &&
         player.y > attack.zone[1] - attack.zone[3] / 2 &&
-        damageLastTime + attack.cooldown < leveltime) {
+        damageLastTime + attack.cooldown < currentMillis) {
         player.health -= attack.damage;
         damageLastTime = millis();
       }
     }
 
-    if (leveltime - time > attack.changeTime){
+    if (currentMillis - attackInitialTime > attack.changeTime){
       currentGravityIndex = 2;
     }
     else if(currentGravityIndex === 2){
@@ -421,9 +451,9 @@ function displayBones(){
       }
     }
 
-    if (leveltime - time > attack.endTime){
+    if (currentMillis - attackInitialTime > attack.endTime){
       currentAttackIndex++;
-      time = millis();
+      attackInitialTime = millis();
       currentGravityIndex = 0;
       currentGravity = currentBones[currentAttackIndex].gravitaty;
     }
@@ -440,11 +470,11 @@ function displayBones(){
 } function movePlayer() {
   // TEMP
   if (currentBones[currentAttackIndex].type === "next round"){
-    // temppppppppp
+    // if the attack type is next round then
+    // make the heart go to the right place 
     player.x = actions[action].positionX;
     player.y = actions[action].positionY;
-  }
-  else{
+  } else{
     let gravitaty = currentGravity[currentGravityIndex];
     if(gravitaty.mode === "off"){
       stopDown();
@@ -487,7 +517,6 @@ function displayBones(){
           gravitaty.dy += gravitaty.accerlerationY;
         }
       }
-      
       if (gravitaty.accerlerationY > 0) {
         //s
         let move = true;
@@ -521,8 +550,8 @@ function displayBones(){
           player.y += gravitaty.dy;
           gravitaty.dy += gravitaty.accerlerationY;
         }
+
       }
-      
       if (gravitaty.accerlerationX > 0) {
         //d
         let move = true;
@@ -595,27 +624,16 @@ function displayBones(){
 } function displayPlayer(){
   // TEMP
   if (currentBones[currentAttackIndex].type === "next round"){
-    image(heart, player.x, player.y, heart.width * scaleOfPlayer, heart.height * scaleOfPlayer);
+    player.displayImage("heart");
   }
   else{
     let attack = currentBones[currentAttackIndex];
     let gravitaty = currentGravity[currentGravityIndex];
     if (gravitaty.mode === "off"){
-      image(heart, player.x, player.y, heart.width * scaleOfPlayer, heart.height * scaleOfPlayer);
+      player.displayImage("heart");
     }
     else{
-      if (attack.direction === "down"){
-        image(heartDown, player.x, player.y, heart.width * scaleOfPlayer, heart.height * scaleOfPlayer);
-      }
-      if (attack.direction === "up"){
-        image(heartUp, player.x, player.y, heart.width * scaleOfPlayer, heart.height * scaleOfPlayer);
-      }
-      if (attack.direction === "left"){
-        image(heartLeft, player.x, player.y, heart.width * scaleOfPlayer, heart.height * scaleOfPlayer);
-      }
-      if (attack.direction === "right"){
-        image(heartRight, player.x, player.y, heart.width * scaleOfPlayer, heart.height * scaleOfPlayer);
-      }
+      player.displayImage(attack.direction)
     }
   }
 } 
@@ -1130,7 +1148,8 @@ function takeAction(){
   
 }
 
-// stop functions
+// stop functions COMPLETED
+// NOTIFIED THE SYSTEM WHEN HIT HARD OPTIONAL
 function stopRight(){
   if (keyIsDown(68)){
     //d
