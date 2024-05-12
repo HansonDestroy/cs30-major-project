@@ -313,6 +313,7 @@ function keyTyped(){
     if (key === " "){
       level++;
       innit()
+      state = modes[mode].word
     }
     action += modes.length;
     action = action % actions.length;
@@ -322,10 +323,11 @@ function keyTyped(){
 
 
 function mainAttack(){
-  let currentMillis = millis()
+  //initailize COMPLETED
   let attack = currentBones[currentAttackIndex];
   let gravitaty = currentGravity[currentGravityIndex];
-  //initailize COMPLETED
+  let currentMillis = millis()
+
   // TEMP
   if (currentMillis - attackInitialTime > attack.changeTime){
     currentGravityIndex = 2;
@@ -337,16 +339,6 @@ function mainAttack(){
     if (attack.direction === "left" || attack.direction === "right"){
       currentGravity[currentGravityIndex].dx = currentGravity[currentGravityIndex].dxOriginal;
     }
-  }
-
-  // When the attack ends COMPLETED
-  if (currentMillis - attackInitialTime > attack.endTime){
-    // if the time in the attack excessed the end time then end it by moving to the next attack
-    currentAttackIndex++;
-    // reset everything
-    attackInitialTime = millis();
-    currentGravityIndex = 0;
-    currentGravity = currentBones[currentAttackIndex].gravitaty;
   }
 
 
@@ -370,12 +362,21 @@ function mainAttack(){
     state = "death";
   }
 
+  // When the attack ends COMPLETED
+  if (currentMillis - attackInitialTime > attack.endTime){
+    // if the time in the attack excessed the end time then end it by moving to the next attack
+    currentAttackIndex++;
+    attack = currentBones[currentAttackIndex]
+    // reset everything
+    attackInitialTime = millis();
+    currentGravityIndex = 0;
+    currentGravity = attack.gravitaty
+  }
+
+  // when the level ends COMPLETED
   // if the attack type is next round then it is the last atack thus advance level COMPLETED
   if (attack.type === "next round"){
     state = "action time";
-  }
-  else{
-    state = modes[mode].word
   }
 
   // a way to track the player DEBUG
@@ -469,7 +470,6 @@ function displayBones(attack, currentMillis){
 
 function movePlayer(gravitaty) {
   // TEMP
-  print(gravitaty)
   if(gravitaty.mode === "off"){
     stopAtDown();
     stopAtUp();
@@ -682,7 +682,7 @@ function innit(){
   attack1.type = "tab";
   attack1.reaction = 1000;
   attack1.changeTime = 1200;
-  attack1.endTime = 300000;
+  attack1.endTime = 3000;
   attack1.damage = 7;
   attack1.cooldown = 400;
   attack1.direction = "down";
