@@ -345,13 +345,10 @@ function mainAttack(){
   // move player TEMP
   movePlayer(gravitaty);
 
-  // display bones COMPLETED
+  // display bones, player, action boxes, platform edgeCOMPLETED
   displayBones(attack, currentMillis);
-  // display platform edge COMPLETED
   displayPlatformEdge();
-  // display action boxes COMPLETED
   displayActions()
-  // display player COMPLETED
   displayPlayer(attack, gravitaty);
   
   
@@ -366,10 +363,10 @@ function mainAttack(){
   if (currentMillis - attackInitialTime > attack.endTime){
     // if the time in the attack excessed the end time then end it by moving to the next attack
     currentAttackIndex++;
-    attack = currentBones[currentAttackIndex]
+    currentGravityIndex = 0;
     // reset everything
     attackInitialTime = millis();
-    currentGravityIndex = 0;
+    attack = currentBones[currentAttackIndex]
     currentGravity = attack.gravitaty
   }
 
@@ -386,12 +383,10 @@ function mainAttack(){
 }
 
 function displayBones(attack, currentMillis){
-  // TEMP
-  // innitialize varible
+  // damage is built in this function other than displaying bones
   if (attack.type === "tab"){
     // the attack is tab
-    // draw the zone and determine if damage need to be taken TEMP
-    // need to seperate the two function  
+    // draw the zone and determine if damage need to be taken
     if (currentMillis - attackInitialTime < attack.reaction){
       // if the time elapsed in this level(currentMillis - time) is within(<) the reaction time(attack.reaction)
       // then color the zone green as warning
@@ -452,16 +447,18 @@ function displayBones(attack, currentMillis){
     rect(platformEdge.x, platformEdge.y, platformEdge.l, platformEdge.w);
   }
 } function displayActions(){
-  // display the text of actions COMPLETED
+  // display all the text of actions COMPLETED
   textAlign(LEFT);
   for (let actionText of actions){
     text(actionText.word,actionText.positionX,actionText.positionY);
   }
 } function displayPlayer(attack, gravitaty){
   // COMPLETED
+  // display red heart if no gravity
   if (gravitaty.mode === "off"){
     player.displayImage("heart");
   }
+  // display the blue heart at the right direction
   else{
     player.displayImage(attack.direction)
   }
