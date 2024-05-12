@@ -139,12 +139,12 @@ let level = 0;
 let scaleOfPlayer;
 
 // global time
-let attackInitialTime;
+// let currentMillis;
+// initial attack time
+let attackInitialTime = 0;
 // last time damage is taken
 let damageLastTime = 0;
 
-// make sure that innit is only triggered once per level
-let inttailizedAready = "no";
 // throw away useless varible
 let startMusic = false;
 
@@ -176,7 +176,8 @@ let megalovania;
 
 
 
-// useful functions that is COMPLETED
+// load everthing COMPLETE
+// could use promise to preload OPTIONAL
 function preload() {
   // preload COMPLETED
   heart = loadImage("assets/image/heart.png");
@@ -184,7 +185,9 @@ function preload() {
   heartUp = loadImage("assets/image/heartUp.png");
   heartLeft = loadImage("assets/image/heartLeft.png");
   heartRight = loadImage("assets/image/heartRight.png");
-} function setup() {
+  megalovania = loadSound("assets/audio/Megalovania.mp3");
+} 
+function setup() {
   // set up COMPLETED
   // create canvas
   createCanvas(windowWidth, windowHeight);
@@ -210,55 +213,35 @@ function preload() {
   // megalovania.play();
   // megalovania.setLoop(true);
   // startMusic = true;
-  // load level 1
-  loadLevel1All();  
-} function draw() {
+} 
+function draw() {
   // draw TEMP
   background(100);
   if (state === "starting screen"){
     drawStartScreen();
   }
+  else if (state === "action time"){
+    displayPlatformEdge()
+    displayActions()
+    // make the heart go to the right place 
+    player.x = actions[action].positionX;
+    player.y = actions[action].positionY;
+    // display the heart
+    player.displayImage("heart");
+  }
   else if (state !== "death"){
-    //initailize COMPLETED
-    innit();
-    // display bones TEMP
-    displayBones();
-    // display platform edge COMPLETED
-    displayPlatformEdge();
-    // move player TEMP
-    movePlayer();
-    // display player TEMP
-    displayPlayer();
-
-    // health bar and health COMPLETED
-    text(player.health,50,50);
-    rect(300,50,player.health*2,30);
-    if (player.health < 0){
-      state = "death";
-    }
     
-    // display the text of actions
-    textAlign(LEFT);
-    for (let actionText of actions){
-      text(actionText.word,actionText.positionX,actionText.positionY);
-    }
-
-    // if the attack type is next round then it is the last atack thus advance level
-    if (currentBones[currentAttackIndex].type === "next round"){
-      state = "action time";
-    }
-
-    // a way to track the player DEBUG
-    // line(player.x, 0, player.x, height);
-    // line(0, player.y, width, player.y);
-    // circle(player.x, player.y, heart.width * scaleOfPlayer)
+    // main attack funciton TEMP
+    mainAttack()
   }
   else{
+    // death screen
     background(0);
     fill("white");
     text("die",50,50);
   }
-} function drawStartScreen(){
+} 
+function drawStartScreen(){
   // draw the start screen COMPLETED
   // innitailize
   const TITLE_HIEGHT = 0.25;
@@ -298,7 +281,8 @@ function preload() {
   player.y = (MODE_HEIGHT + MODE_HEIGHT_DIFFERENCE * modes[mode].position) * height
   player.displayImage("heart")
 
-} function keyTyped(){
+}
+function keyTyped(){
   // chage mode or action COMPLETED
   // if key typed at the starting screen
   if (state === "starting screen"){
@@ -311,6 +295,7 @@ function preload() {
     else if (key === " "){
       state = modes[mode].word;
       level++;
+      innit()
       scaleOfPlayer = 0.000045 * height;
     }
     mode += modes.length;
@@ -326,55 +311,92 @@ function preload() {
       action--;
     }
     if (key === " "){
-      console.log("total reset");
       level++;
-      inttailizedAready = "no";
-      takeAction();
+      innit()
     }
     action += modes.length;
     action = action % actions.length;
   }
   
-} function innit(){
-  // innitialize the starting x,y position of the heart // reset timer // only run it once per level COMPLETED
-  if(inttailizedAready === "no"){
-    // innitail spawn
-    if(level === 1){
-      // mid mid
-      player.x = currentPlatformEdge[2].x;
-      player.y = currentPlatformEdge[1].y;
-    }
-    if(level === 2){
-      // bottom mid
-      player.x = currentPlatformEdge[platformEdgeOrder.down].x;
-      // the y need to stand on top of the edge
-      player.y = currentPlatformEdge[platformEdgeOrder.down].y
-      - currentPlatformEdge[platformEdgeOrder.down].w / 2 
-      - heart.height * scaleOfPlayer / 2;
-    }
-    // reset timer
-    attackInitialTime = millis();
-    // only run it once per level
-    inttailizedAready = "yes";
-  }
 }
 
-function displayBones(){
+
+function mainAttack(){
+  let currentMillis = millis()
+  let attack = currentBones[currentAttackIndex];
+  let gravitaty = currentGravity[currentGravityIndex];
+  //initailize COMPLETED
+  // TEMP
+  if (currentMillis - attackInitialTime > attack.changeTime){
+    currentGravityIndex = 2;
+  } else if(currentGravityIndex === 2){
+    currentGravityIndex--;
+    if (attack.direction === "down" || attack.direction === "up"){
+      currentGravity[currentGravityIndex].dy = currentGravity[currentGravityIndex].dyOriginal;
+    }
+    if (attack.direction === "left" || attack.direction === "right"){
+      currentGravity[currentGravityIndex].dx = currentGravity[currentGravityIndex].dxOriginal;
+    }
+  }
+
+  // When the attack ends COMPLETED
+  if (currentMillis - attackInitialTime > attack.endTime){
+    // if the time in the attack excessed the end time then end it by moving to the next attack
+    currentAttackIndex++;
+    // reset everything
+    attackInitialTime = millis();
+    currentGravityIndex = 0;
+    currentGravity = currentBones[currentAttackIndex].gravitaty;
+  }
+
+
+  // move player TEMP
+  movePlayer(gravitaty);
+
+  // display bones COMPLETED
+  displayBones(attack, currentMillis);
+  // display platform edge COMPLETED
+  displayPlatformEdge();
+  // display action boxes COMPLETED
+  displayActions()
+  // display player COMPLETED
+  displayPlayer(attack, gravitaty);
+  
+  
+  // health bar and health COMPLETED
+  text(player.health,50,50);
+  rect(300,50,player.health*2,30);
+  if (player.health < 0){
+    state = "death";
+  }
+
+  // if the attack type is next round then it is the last atack thus advance level COMPLETED
+  if (attack.type === "next round"){
+    state = "action time";
+  }
+  else{
+    state = modes[mode].word
+  }
+
+  // a way to track the player DEBUG
+  // line(player.x, 0, player.x, height);
+  // line(0, player.y, width, player.y);
+  // circle(player.x, player.y, heart.width * scaleOfPlayer)
+}
+
+function displayBones(attack, currentMillis){
   // TEMP
   // innitialize varible
-  let currentMillis = millis();
-  let attack = currentBones[currentAttackIndex];
   if (attack.type === "tab"){
     // the attack is tab
-
     // draw the zone and determine if damage need to be taken TEMP
-    // need to seperate the two function COMPLETE 
+    // need to seperate the two function  
     if (currentMillis - attackInitialTime < attack.reaction){
       // if the time elapsed in this level(currentMillis - time) is within(<) the reaction time(attack.reaction)
       // then color the zone green as warning
 
       // note if it is dropping to the ground at gravity1 or gravityIndex == 0 then do not display the box at all TEMP
-      if (currentGravityIndex !== 0 || true){
+      if (currentGravityIndex !== 0){
         // condition met draw green zone
         rectMode(CENTER);
         fill(0,150,0);
@@ -382,6 +404,8 @@ function displayBones(){
       }
 
       // animation of sans throwing his hands down OPTIONAL
+      // code here
+
     } else{
       // your reation time have passed
       // therefore your grace period is over and the zone is filled with white now
@@ -392,27 +416,6 @@ function displayBones(){
       // take damage
       attack.takeDamage(currentMillis);
     }
-
-    // 
-    if (currentMillis - attackInitialTime > attack.changeTime){
-      currentGravityIndex = 2;
-    } else if(currentGravityIndex === 2){
-      currentGravityIndex--;
-      if (attack.direction === "down" || attack.direction === "up"){
-        currentGravity[currentGravityIndex].dy = currentGravity[currentGravityIndex].dyOriginal;
-      }
-      if (attack.direction === "left" || attack.direction === "right"){
-        currentGravity[currentGravityIndex].dx = currentGravity[currentGravityIndex].dxOriginal;
-      }
-    }
-
-    if (currentMillis - attackInitialTime > attack.endTime){
-      currentAttackIndex++;
-      attackInitialTime = millis();
-      currentGravityIndex = 0;
-      currentGravity = currentBones[currentAttackIndex].gravitaty;
-    }
-
   }
   if (attack.type === "gap"){
     if (state !== "dsfkad;lfksal;dkasdfk;slakdf;lak"){
@@ -438,26 +441,6 @@ function displayBones(){
       }
     }
 
-    if (currentMillis - attackInitialTime > attack.changeTime){
-      currentGravityIndex = 2;
-    }
-    else if(currentGravityIndex === 2){
-      currentGravityIndex--;
-      if (attack.direction === "down" || attack.direction === "up"){
-        currentGravity[currentGravityIndex].dy = currentGravity[currentGravityIndex].dyOriginal;
-      }
-      if (attack.direction === "left" || attack.direction === "right"){
-        currentGravity[currentGravityIndex].dx = currentGravity[currentGravityIndex].dxOriginal;
-      }
-    }
-
-    if (currentMillis - attackInitialTime > attack.endTime){
-      currentAttackIndex++;
-      attackInitialTime = millis();
-      currentGravityIndex = 0;
-      currentGravity = currentBones[currentAttackIndex].gravitaty;
-    }
-
   }
 } function displayPlatformEdge(){
   // given the currentPlatformEdge display each of them COMPLETED
@@ -467,185 +450,187 @@ function displayBones(){
     noStroke();
     rect(platformEdge.x, platformEdge.y, platformEdge.l, platformEdge.w);
   }
-} function movePlayer() {
-  // TEMP
-  if (currentBones[currentAttackIndex].type === "next round"){
-    // if the attack type is next round then
-    // make the heart go to the right place 
-    player.x = actions[action].positionX;
-    player.y = actions[action].positionY;
-  } else{
-    let gravitaty = currentGravity[currentGravityIndex];
-    if(gravitaty.mode === "off"){
-      stopDown();
-      stopUp();
-      stopLeft();
-      stopRight();
-    }
-    else{
-      if (gravitaty.accerlerationY < 0) {
-        //throw up
-        let move = true;
-        for (let platformEdge of currentPlatformEdge) {
-          if (
-            player.y > platformEdge.y &&
-            platformEdge.x + platformEdge.l / 2 > player.x - heart.width * scaleOfPlayer / 2 &&
-            platformEdge.x - platformEdge.l / 2 < player.x + heart.width * scaleOfPlayer / 2 &&
-            player.y - heart.height * scaleOfPlayer / 2 + gravitaty.dy < platformEdge.y + platformEdge.w / 2
-          ) {
-            move = false;
-            if (keyIsDown(83)){
-              currentGravityIndex++;
-            }
-            player.y = platformEdge.y + platformEdge.w / 2 + heart.height * scaleOfPlayer / 2;
-          }
-        }
-
-        if (keyIsDown(65)){
-          stopLeft();
-        }
-        else if (keyIsDown(68)){
-          stopRight();
-        }
-
-        if (gravitaty.dy > 0 && !keyIsDown(83)){
-          gravitaty.dy = 0;
-        }
-
-        if (move) {
-          player.y += gravitaty.dy;
-          gravitaty.dy += gravitaty.accerlerationY;
-        }
-      }
-      if (gravitaty.accerlerationY > 0) {
-        //s
-        let move = true;
-        for (let platformEdge of currentPlatformEdge) {
-          if (
-            player.y < platformEdge.y &&
-            platformEdge.x + platformEdge.l / 2 > player.x - heart.width * scaleOfPlayer / 2 &&
-            platformEdge.x - platformEdge.l / 2 < player.x + heart.width * scaleOfPlayer / 2 &&
-            player.y + heart.height * scaleOfPlayer / 2 + gravitaty.dy > platformEdge.y - platformEdge.w / 2
-          ) {
-            move = false;
-            player.y = platformEdge.y - platformEdge.w / 2 - heart.height * scaleOfPlayer / 2;
-            if (keyIsDown(87)){
-              currentGravityIndex++;
-            }
-          }
-        }
-        
-        if (keyIsDown(65)){
-          stopLeft();
-        }
-        else if (keyIsDown(68)){
-          stopRight();
-        }
-
-        if (gravitaty.dy < 0 && !keyIsDown(87)){
-          gravitaty.dy = 0;
-        }
-
-        if (move) {
-          player.y += gravitaty.dy;
-          gravitaty.dy += gravitaty.accerlerationY;
-        }
-
-      }
-      if (gravitaty.accerlerationX > 0) {
-        //d
-        let move = true;
-        for (let platformEdge of currentPlatformEdge) {
-          if (
-            player.x < platformEdge.x &&
-            platformEdge.y + platformEdge.w / 2 > player.y - heart.height * scaleOfPlayer / 2 &&
-            platformEdge.y - platformEdge.w / 2 < player.y + heart.height * scaleOfPlayer / 2 &&
-            player.x + heart.width * scaleOfPlayer / 2 + gravitaty.dx > platformEdge.x - platformEdge.l / 2
-          ) {
-            move = false;
-            if (keyIsDown(65)){
-              currentGravityIndex++;
-            }
-            player.x = platformEdge.x - platformEdge.l / 2 - heart.width * scaleOfPlayer / 2;
-          }
-        }
-
-        if (keyIsDown(87)){
-          stopUp();
-        }
-        else if (keyIsDown(83)){
-          stopDown();
-        }
-
-        if (gravitaty.dx < 0 && !keyIsDown(65)){
-          gravitaty.dx = 0;
-        }
-        if (move) {
-          player.x += gravitaty.dx;
-          gravitaty.dx += gravitaty.accerlerationX;
-        }
-      }
-      if (gravitaty.accerlerationX < 0) {
-        //a
-        let move = true;
-        for (let platformEdge of currentPlatformEdge) {
-          if (
-            player.x > platformEdge.x &&
-            platformEdge.y + platformEdge.w / 2 > player.y - heart.height * scaleOfPlayer / 2 &&
-            platformEdge.y - platformEdge.w / 2 < player.y + heart.height * scaleOfPlayer / 2 &&
-            player.x - heart.width * scaleOfPlayer / 2 + gravitaty.dx < platformEdge.x + platformEdge.l / 2
-          ) {
-            move = false;
-            if (keyIsDown(68)){
-              currentGravityIndex++;
-            }
-            player.x = platformEdge.x + platformEdge.l / 2 + heart.width * scaleOfPlayer / 2;
-          }
-        }
-        
-        if (keyIsDown(87)){
-          stopUp();
-        }
-        else if (keyIsDown(83)){
-          stopDown();
-        }
-
-        if (gravitaty.dx > 0 && !keyIsDown(68)){
-          gravitaty.dx = 0;
-        }
-
-        if (move) {
-          player.x += gravitaty.dx;
-          gravitaty.dx += gravitaty.accerlerationX;
-        }
-      }
-    }
+} function displayActions(){
+  // display the text of actions COMPLETED
+  textAlign(LEFT);
+  for (let actionText of actions){
+    text(actionText.word,actionText.positionX,actionText.positionY);
   }
-} function displayPlayer(){
-  // TEMP
-  if (currentBones[currentAttackIndex].type === "next round"){
+} function displayPlayer(attack, gravitaty){
+  // COMPLETED
+  if (gravitaty.mode === "off"){
     player.displayImage("heart");
   }
   else{
-    let attack = currentBones[currentAttackIndex];
-    let gravitaty = currentGravity[currentGravityIndex];
-    if (gravitaty.mode === "off"){
-      player.displayImage("heart");
+    player.displayImage(attack.direction)
+  }
+
+} 
+
+function movePlayer(gravitaty) {
+  // TEMP
+  print(gravitaty)
+  if(gravitaty.mode === "off"){
+    stopAtDown();
+    stopAtUp();
+    stopAtLeft();
+    stopAtRight();
+  }
+  else{
+    if (gravitaty.accerlerationY < 0) {
+      //throw up
+      let move = true;
+      for (let platformEdge of currentPlatformEdge) {
+        if (
+          player.y > platformEdge.y &&
+          platformEdge.x + platformEdge.l / 2 > player.x - heart.width * scaleOfPlayer / 2 &&
+          platformEdge.x - platformEdge.l / 2 < player.x + heart.width * scaleOfPlayer / 2 &&
+          player.y - heart.height * scaleOfPlayer / 2 + gravitaty.dy < platformEdge.y + platformEdge.w / 2
+        ) {
+          move = false;
+          if (keyIsDown(83)){
+            currentGravityIndex++;
+          }
+          player.y = platformEdge.y + platformEdge.w / 2 + heart.height * scaleOfPlayer / 2;
+        }
+      }
+      if (keyIsDown(65)){
+        stopAtLeft();
+      }
+      else if (keyIsDown(68)){
+        stopAtRight();
+      }
+      if (gravitaty.dy > 0 && !keyIsDown(83)){
+        gravitaty.dy = 0;
+      }
+      if (move) {
+        player.y += gravitaty.dy;
+        gravitaty.dy += gravitaty.accerlerationY;
+      }
     }
-    else{
-      player.displayImage(attack.direction)
+    if (gravitaty.accerlerationY > 0) {
+      //s
+      let move = true;
+      for (let platformEdge of currentPlatformEdge) {
+        if (
+          player.y < platformEdge.y &&
+          platformEdge.x + platformEdge.l / 2 > player.x - heart.width * scaleOfPlayer / 2 &&
+          platformEdge.x - platformEdge.l / 2 < player.x + heart.width * scaleOfPlayer / 2 &&
+          player.y + heart.height * scaleOfPlayer / 2 + gravitaty.dy > platformEdge.y - platformEdge.w / 2
+        ) {
+          move = false;
+          player.y = platformEdge.y - platformEdge.w / 2 - heart.height * scaleOfPlayer / 2;
+          if (keyIsDown(87)){
+            currentGravityIndex++;
+          }
+        }
+      }
+      if (keyIsDown(65)){
+        stopAtLeft();
+      }
+      else if (keyIsDown(68)){
+        stopAtRight();
+      }
+      if (gravitaty.dy < 0 && !keyIsDown(87)){
+        gravitaty.dy = 0;
+      }
+      if (move) {
+        player.y += gravitaty.dy;
+        gravitaty.dy += gravitaty.accerlerationY;
+      }
+    }
+    if (gravitaty.accerlerationX > 0) {
+      //d
+      let move = true;
+      for (let platformEdge of currentPlatformEdge) {
+        if (
+          player.x < platformEdge.x &&
+          platformEdge.y + platformEdge.w / 2 > player.y - heart.height * scaleOfPlayer / 2 &&
+          platformEdge.y - platformEdge.w / 2 < player.y + heart.height * scaleOfPlayer / 2 &&
+          player.x + heart.width * scaleOfPlayer / 2 + gravitaty.dx > platformEdge.x - platformEdge.l / 2
+        ) {
+          move = false;
+          if (keyIsDown(65)){
+            currentGravityIndex++;
+          }
+          player.x = platformEdge.x - platformEdge.l / 2 - heart.width * scaleOfPlayer / 2;
+        }
+      }
+      if (keyIsDown(87)){
+        stopAtUp();
+      }
+      else if (keyIsDown(83)){
+        stopAtDown();
+      }
+      if (gravitaty.dx < 0 && !keyIsDown(65)){
+        gravitaty.dx = 0;
+      }
+      if (move) {
+        player.x += gravitaty.dx;
+        gravitaty.dx += gravitaty.accerlerationX;
+      }
+    }
+    if (gravitaty.accerlerationX < 0) {
+      //a
+      let move = true;
+      for (let platformEdge of currentPlatformEdge) {
+        if (
+          player.x > platformEdge.x &&
+          platformEdge.y + platformEdge.w / 2 > player.y - heart.height * scaleOfPlayer / 2 &&
+          platformEdge.y - platformEdge.w / 2 < player.y + heart.height * scaleOfPlayer / 2 &&
+          player.x - heart.width * scaleOfPlayer / 2 + gravitaty.dx < platformEdge.x + platformEdge.l / 2
+        ) {
+          move = false;
+          if (keyIsDown(68)){
+            currentGravityIndex++;
+          }
+          player.x = platformEdge.x + platformEdge.l / 2 + heart.width * scaleOfPlayer / 2;
+        }
+      }
+      
+      if (keyIsDown(87)){
+        stopAtUp();
+      }
+      else if (keyIsDown(83)){
+        stopAtDown();
+      }
+      if (gravitaty.dx > 0 && !keyIsDown(68)){
+        gravitaty.dx = 0;
+      }
+      if (move) {
+        player.x += gravitaty.dx;
+        gravitaty.dx += gravitaty.accerlerationX;
+      }
     }
   }
 } 
 
 // load levels
-function takeAction(){
-  if (level === 1){
-    loadLevel1All();
+function innit(){
+  // innitialize the starting x,y position of the heart // reset timer // only run it once per level COMPLETED
+
+  // innitail spawn
+  if(level === 1){
+    // load attack
+    loadLevel1All()
+
+    // mid mid spawn
+    player.x = currentPlatformEdge[2].x;
+    player.y = currentPlatformEdge[1].y;
   }
-  if (level === 2){
-    loadLevel2All();
+  if(level === 2){
+    // load attack
+    loadLevel2All()
+
+    // bottom mid spawn
+    player.x = currentPlatformEdge[platformEdgeOrder.down].x;
+    // the y need to stand on top of the edge
+    player.y = currentPlatformEdge[platformEdgeOrder.down].y
+    - currentPlatformEdge[platformEdgeOrder.down].w / 2 
+    - heart.height * scaleOfPlayer / 2;
   }
+  // reset timer
+  attackInitialTime = millis();
 } function loadLevel1All(){
   // level 1 innit COMPLETED
   // platformEdge COMPLETED
@@ -697,7 +682,7 @@ function takeAction(){
   attack1.type = "tab";
   attack1.reaction = 1000;
   attack1.changeTime = 1200;
-  attack1.endTime = 3000;
+  attack1.endTime = 300000;
   attack1.damage = 7;
   attack1.cooldown = 400;
   attack1.direction = "down";
@@ -1150,7 +1135,7 @@ function takeAction(){
 
 // stop functions COMPLETED
 // NOTIFIED THE SYSTEM WHEN HIT HARD OPTIONAL
-function stopRight(){
+function stopAtRight(){
   if (keyIsDown(68)){
     //d
     let move = true;
@@ -1169,7 +1154,7 @@ function stopRight(){
       player.x += player.dx;
     }
   }  
-} function stopLeft(){
+} function stopAtLeft(){
   if (keyIsDown(65)) {
     //a
     let move = true;
@@ -1188,7 +1173,7 @@ function stopRight(){
       player.x -= player.dx;
     }
   }
-} function stopUp(){
+} function stopAtUp(){
   if (keyIsDown(87)) {
     //w
     let move = true;
@@ -1207,7 +1192,7 @@ function stopRight(){
       player.y -= player.dy;
     }
   }  
-} function stopDown(){
+} function stopAtDown(){
   if (keyIsDown(83)) {
     //s
     let move = true;
@@ -1232,7 +1217,6 @@ function stopRight(){
 function mouseReleased(){
   startMusic = true;
   if (startMusic){
-    megalovania = loadSound("assets/audio/Megalovania.mp3");
     megalovania.jump(0);
     megalovania.play();
     megalovania.setLoop(true);    
