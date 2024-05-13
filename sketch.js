@@ -105,7 +105,7 @@ class Player{
     this.y = 0
     this.dx = 0.005
     this.dy = 0.005
-    this.health = 92
+    this.health = 9299
   }
 
   displayImage(imageName){
@@ -508,14 +508,13 @@ function movePlayer(gravity) {
         }
       }
 
-      // move left and right normally
-      if (keyIsDown(65)){
+      // move left and right normally only if there is no gravity on the x direction
+      if (gravity.accerlerationX !== 0){
         stopAtLeft();
-      } else if (keyIsDown(68)){
         stopAtRight();
       }
 
-      // temp
+      // if you stoped clicking the s button then you immidiately stop going
       if (gravity.dy > 0 && !keyIsDown(83)){
         gravity.dy = 0;
       }
@@ -723,8 +722,6 @@ function innit(){
     // random attack
     // select a random direction
     let randomNumber = floor(random(4));
-    // randomNumber = 0
-    // // hard hard temp
     let directions = ["up", "down", "left", "right"];
 
     // gravity innit COMPLETED
