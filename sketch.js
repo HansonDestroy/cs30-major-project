@@ -505,12 +505,12 @@ function movePlayer(gravity) {
           // if you are pressing "s"
           // reset the gravity and go
           currentGravity[currentGravityIndex].dy = currentGravity[currentGravityIndex].dyOriginal;
-          move = true;
+          move = false;
         }
       }
 
       // move left and right normally only if there is no gravity on the x direction
-      if (gravity.accerlerationX !== 0){
+      if (gravity.accerlerationX === 0){
         stopAtLeft();
         stopAtRight();
       }
@@ -527,10 +527,9 @@ function movePlayer(gravity) {
         // dy accelerates
         gravity.dy += gravity.accerlerationY;
       }
-    }
-    if (gravity.accerlerationY > 0) {
-      //gravity is accelerating upwards
-      //initialize move and the up platform
+    } if (gravity.accerlerationY > 0) {
+      //gravity is accelerating dwnnwards
+      //initialize move and the platform
       let move = true;
       let platformEdge = currentPlatformEdge[platformEdgeOrder.down];
       // if player is above the platform
@@ -554,12 +553,15 @@ function movePlayer(gravity) {
           // if you are pressing "w"
           // reset the gravity and go
           currentGravity[currentGravityIndex].dy = currentGravity[currentGravityIndex].dyOriginal;
-          move = true;
+          // move is still false because you updated the current gravity indext but not the gravity yet
+          // try next time
+          move = false;
         }
       }
 
+      
       // move left and right normally only if there is no gravity on the x direction
-      if (gravity.accerlerationX !== 0){
+      if (gravity.accerlerationX === 0){
         stopAtLeft();
         stopAtRight();
       }
@@ -576,8 +578,7 @@ function movePlayer(gravity) {
         // dy accelerates
         gravity.dy += gravity.accerlerationY;
       }
-    }
-    if (gravity.accerlerationX > 0) {
+    } if (gravity.accerlerationX > 0) {
       //gravity is accelerating towards right
       //initialize move and the up platform
       let move = true;
@@ -585,7 +586,7 @@ function movePlayer(gravity) {
       // if player is on the left of platform
       // and if the [bottom of the platform] covers (aka > than)  [top of the player]
       // and if the [top of the platform] covers (aka < than)  [bottom of the player]
-      // and if the [right of the player] + gravity.dy is more right (aka < than) [left of the edge]
+      // and if the [right of the player] + gravity.dy is more right (aka > than) [left of the edge]
       // then you will go throught the wall. Thus hit the ground
       if (
         player.x < platformEdge.x &&
@@ -597,19 +598,19 @@ function movePlayer(gravity) {
         move = false;
         // gravity index change mode since you hit the ground
         currentGravityIndex = 1;
-        // place the player at the below of the left edge
+        // place the player's right at the left of the right edge
         player.x = platformEdge.x - platformEdge.l / 2 - heart.width * scaleOfPlayer / 2;
         if (keyIsDown(65)){
           // if you are pressing "a"
           // reset the gravity and go
           currentGravity[currentGravityIndex].dx = currentGravity[currentGravityIndex].dxOriginal;
-          move = true;
+          move = false;
         }
       }
       
 
       // move up and down normally only if there is no gravity on the x direction
-      if (gravity.accerlerationY !== 0){
+      if (gravity.accerlerationY === 0){
         stopAtUp();
         stopAtDown();
       }
@@ -621,41 +622,58 @@ function movePlayer(gravity) {
 
       // if will not break the barrier then
       if (move) {
-        // move player by the dy
-        player.y += gravity.dy;
+        // move player by the dx
+        player.x += gravity.dx;
         // dy accelerates
-        gravity.dy += gravity.accerlerationY;
+        gravity.dx += gravity.accerlerationX;
       }
-    }
-    if (gravity.accerlerationX < 0) {
-      //a
+    } if (gravity.accerlerationX < 0) {
+      //gravity is accelerating towards left
+      //initialize move and the up platform
       let move = true;
-      for (let platformEdge of currentPlatformEdge) {
-        if (
-          player.x > platformEdge.x &&
-          platformEdge.y + platformEdge.w / 2 > player.y - heart.height * scaleOfPlayer / 2 &&
-          platformEdge.y - platformEdge.w / 2 < player.y + heart.height * scaleOfPlayer / 2 &&
-          player.x - heart.width * scaleOfPlayer / 2 + gravity.dx < platformEdge.x + platformEdge.l / 2
-        ) {
+      let platformEdge = currentPlatformEdge[platformEdgeOrder.left];
+      // if player is on the right of platform
+      // and if the [bottom of the platform] covers (aka > than)  [top of the player]
+      // and if the [top of the platform] covers (aka < than)  [bottom of the player]
+      // and if the [left of the player] + gravity.dy is more left (aka < than) [right of the edge]
+      // then you will go throught the wall. Thus hit the ground
+
+      if (
+        player.x > platformEdge.x &&
+        platformEdge.y + platformEdge.w / 2 > player.y - heart.height * scaleOfPlayer / 2 &&
+        platformEdge.y - platformEdge.w / 2 < player.y + heart.height * scaleOfPlayer / 2 &&
+        player.x - heart.width * scaleOfPlayer / 2 + gravity.dx < platformEdge.x + platformEdge.l / 2
+      ) {
+        // move = false so you stop moving throught the wall
+        move = false;
+        // gravity index change mode since you hit the ground
+        currentGravityIndex = 1;
+        // place the player's left at the right of the left edge
+        player.x = platformEdge.x + platformEdge.l / 2 + heart.width * scaleOfPlayer / 2;
+        if (keyIsDown(68)){
+          // if you are pressing "d"
+          // reset the gravity and go
+          currentGravity[currentGravityIndex].dx = currentGravity[currentGravityIndex].dxOriginal;
           move = false;
-          if (keyIsDown(68)){
-            currentGravityIndex++;
-          }
-          player.x = platformEdge.x + platformEdge.l / 2 + heart.width * scaleOfPlayer / 2;
-        }
+        }        
       }
       
-      if (keyIsDown(87)){
+      // move up and down normally only if there is no gravity on the x direction
+      if (gravity.accerlerationY === 0){
         stopAtUp();
-      }
-      else if (keyIsDown(83)){
         stopAtDown();
       }
+
+      // if you stoped clicking the a button then you immidiately stop going
       if (gravity.dx > 0 && !keyIsDown(68)){
         gravity.dx = 0;
       }
+      
+      // if will not break the barrier then
       if (move) {
+        // move player by the dx
         player.x += gravity.dx;
+        // dy accelerates
         gravity.dx += gravity.accerlerationX;
       }
     }
