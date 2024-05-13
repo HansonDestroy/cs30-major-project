@@ -101,27 +101,27 @@ class TabAttack{
 
 class Player{
   constructor(){
-    this.x = 0
-    this.y = 0
-    this.dx = 0.005
-    this.dy = 0.005
-    this.health = 9299
+    this.x = 0;
+    this.y = 0;
+    this.dx = 0.005;
+    this.dy = 0.005;
+    this.health = 9299;
   }
 
   displayImage(imageName){
-    if (imageName == "heart"){
+    if (imageName === "heart"){
       image(heart, this.x, this.y, heart.width * scaleOfPlayer, heart.height * scaleOfPlayer);
     }
-    if (imageName == "down"){
+    if (imageName === "down"){
       image(heartDown, this.x, this.y, heartDown.width * scaleOfPlayer, heartDown.height * scaleOfPlayer);
     }
-    if (imageName == "up"){
+    if (imageName === "up"){
       image(heartUp, this.x, this.y, heartUp.width * scaleOfPlayer, heartUp.height * scaleOfPlayer);
     }
-    if (imageName == "right"){
+    if (imageName === "right"){
       image(heartRight, this.x, this.y, heartRight.width * scaleOfPlayer, heartRight.height * scaleOfPlayer);
     }
-    if (imageName == "left"){
+    if (imageName === "left"){
       image(heartLeft, this.x, this.y, heartLeft.width * scaleOfPlayer, heartLeft.height * scaleOfPlayer);
     }
   }
@@ -221,8 +221,8 @@ function draw() {
     drawStartScreen();
   }
   else if (state === "action time"){
-    displayPlatformEdge()
-    displayActions()
+    displayPlatformEdge();
+    displayActions();
     // make the heart go to the right place 
     player.x = actions[action].positionX;
     player.y = actions[action].positionY;
@@ -232,7 +232,7 @@ function draw() {
   else if (state !== "death"){
     
     // main attack funciton TEMP
-    mainAttack()
+    mainAttack();
   }
   else{
     // death screen
@@ -277,9 +277,9 @@ function drawStartScreen(){
   // display heart at the right mode
   const HEART_X = 0.45;
   imageMode(CENTER);
-  player.x = HEART_X * width
-  player.y = (MODE_HEIGHT + MODE_HEIGHT_DIFFERENCE * modes[mode].position) * height
-  player.displayImage("heart")
+  player.x = HEART_X * width;
+  player.y = (MODE_HEIGHT + MODE_HEIGHT_DIFFERENCE * modes[mode].position) * height;
+  player.displayImage("heart");
 
 }
 function keyTyped(){
@@ -295,7 +295,7 @@ function keyTyped(){
     else if (key === " "){
       state = modes[mode].word;
       level++;
-      innit()
+      innit();
       scaleOfPlayer = 0.000045 * height;
     }
     mode += modes.length;
@@ -312,8 +312,8 @@ function keyTyped(){
     }
     if (key === " "){
       level++;
-      innit()
-      state = modes[mode].word
+      innit();
+      state = modes[mode].word;
     }
     action += modes.length;
     action = action % actions.length;
@@ -326,7 +326,7 @@ function mainAttack(){
   //initailize COMPLETED
   let attack = currentBones[currentAttackIndex];
   let gravity = currentGravity[currentGravityIndex];
-  let currentMillis = millis()
+  let currentMillis = millis();
 
   // Change gravity to the right mode depending on the timming of attack.changeTime
   if (attack.type === "tab"){
@@ -354,7 +354,7 @@ function mainAttack(){
   // display bones, player, action boxes, platform edgeCOMPLETED
   displayBones(attack, currentMillis);
   displayPlatformEdge();
-  displayActions()
+  displayActions();
   displayPlayer(attack, gravity);
   
   
@@ -372,8 +372,8 @@ function mainAttack(){
     currentGravityIndex = 0;
     // reset everything
     attackInitialTime = millis();
-    attack = currentBones[currentAttackIndex]
-    currentGravity = attack.gravity
+    attack = currentBones[currentAttackIndex];
+    currentGravity = attack.gravity;
   }
 
   // when the level ends COMPLETED
@@ -466,7 +466,7 @@ function displayBones(attack, currentMillis){
   }
   // display the blue heart at the right direction
   else{
-    player.displayImage(attack.direction)
+    player.displayImage(attack.direction);
   }
 
 } 
@@ -483,12 +483,12 @@ function movePlayer(gravity) {
       //gravity is accelerating upwards
       //initialize move and the up platform
       let move = true;
-      let platformEdge = currentPlatformEdge[platformEdgeOrder.up]
+      let platformEdge = currentPlatformEdge[platformEdgeOrder.up];
       // if player is below the platform
       // and if the [right side of the platform] covers (aka > than)  [left side of the player]
       // and if the [left side of the platform] covers (aka < than)  [right side of the player]
       // and if the [top of the player] + gravity.dy is above (aka < than) [the bottom of the edge]
-      // then you will go throught the wall and hit the ground
+      // then you will go throught the wall. Thus hit the ground
       if (
         player.y > platformEdge.y &&
         platformEdge.x + platformEdge.l / 2 > player.x - heart.width * scaleOfPlayer / 2 &&
@@ -499,12 +499,13 @@ function movePlayer(gravity) {
         move = false;
         // gravity index change mode since you hit the ground
         currentGravityIndex = 1;
-        // place the player at the top of the wall
+        // place the player at the below of the top edge
         player.y = platformEdge.y + platformEdge.w / 2 + heart.height * scaleOfPlayer / 2;
         if (keyIsDown(83)){
           // if you are pressing "s"
           // reset the gravity and go
           currentGravity[currentGravityIndex].dy = currentGravity[currentGravityIndex].dyOriginal;
+          move = true;
         }
       }
 
@@ -528,65 +529,102 @@ function movePlayer(gravity) {
       }
     }
     if (gravity.accerlerationY > 0) {
-      //s
+      //gravity is accelerating upwards
+      //initialize move and the up platform
       let move = true;
-      for (let platformEdge of currentPlatformEdge) {
-        if (
-          player.y < platformEdge.y &&
-          platformEdge.x + platformEdge.l / 2 > player.x - heart.width * scaleOfPlayer / 2 &&
-          platformEdge.x - platformEdge.l / 2 < player.x + heart.width * scaleOfPlayer / 2 &&
-          player.y + heart.height * scaleOfPlayer / 2 + gravity.dy > platformEdge.y - platformEdge.w / 2
-        ) {
-          move = false;
-          player.y = platformEdge.y - platformEdge.w / 2 - heart.height * scaleOfPlayer / 2;
-          if (keyIsDown(87)){
-            currentGravityIndex++;
-          }
+      let platformEdge = currentPlatformEdge[platformEdgeOrder.down];
+      // if player is above the platform
+      // and if the [right side of the platform] covers (aka > than)  [left side of the player]
+      // and if the [left side of the platform] covers (aka < than)  [right side of the player]
+      // and if the [bottom of the player] + gravity.dy is below (aka > than) [the top of the edge]
+      // then you will go throught the wall. Thus hit the ground
+      if (
+        player.y < platformEdge.y &&
+        platformEdge.x + platformEdge.l / 2 > player.x - heart.width * scaleOfPlayer / 2 &&
+        platformEdge.x - platformEdge.l / 2 < player.x + heart.width * scaleOfPlayer / 2 &&
+        player.y + heart.height * scaleOfPlayer / 2 + gravity.dy > platformEdge.y - platformEdge.w / 2
+      ) {
+        // move = false so you stop moving throught the wall
+        move = false;
+        // gravity index change mode since you hit the ground
+        currentGravityIndex = 1;
+        // place the player at the top of bottom edge
+        player.y = platformEdge.y - platformEdge.w / 2 - heart.height * scaleOfPlayer / 2;
+        if (keyIsDown(87)){
+          // if you are pressing "w"
+          // reset the gravity and go
+          currentGravity[currentGravityIndex].dy = currentGravity[currentGravityIndex].dyOriginal;
+          move = true;
         }
       }
-      if (keyIsDown(65)){
+
+      // move left and right normally only if there is no gravity on the x direction
+      if (gravity.accerlerationX !== 0){
         stopAtLeft();
-      }
-      else if (keyIsDown(68)){
         stopAtRight();
       }
+
+      // if you stoped clicking the s button then you immidiately stop going
       if (gravity.dy < 0 && !keyIsDown(87)){
         gravity.dy = 0;
       }
+
+      // if will not break the barrier then
       if (move) {
+        // move player by the dy
         player.y += gravity.dy;
+        // dy accelerates
         gravity.dy += gravity.accerlerationY;
       }
     }
     if (gravity.accerlerationX > 0) {
-      //d
+      //gravity is accelerating towards right
+      //initialize move and the up platform
       let move = true;
-      for (let platformEdge of currentPlatformEdge) {
-        if (
-          player.x < platformEdge.x &&
-          platformEdge.y + platformEdge.w / 2 > player.y - heart.height * scaleOfPlayer / 2 &&
-          platformEdge.y - platformEdge.w / 2 < player.y + heart.height * scaleOfPlayer / 2 &&
-          player.x + heart.width * scaleOfPlayer / 2 + gravity.dx > platformEdge.x - platformEdge.l / 2
-        ) {
-          move = false;
-          if (keyIsDown(65)){
-            currentGravityIndex++;
-          }
-          player.x = platformEdge.x - platformEdge.l / 2 - heart.width * scaleOfPlayer / 2;
+      let platformEdge = currentPlatformEdge[platformEdgeOrder.right];
+      // if player is on the left of platform
+      // and if the [bottom of the platform] covers (aka > than)  [top of the player]
+      // and if the [top of the platform] covers (aka < than)  [bottom of the player]
+      // and if the [right of the player] + gravity.dy is more right (aka < than) [left of the edge]
+      // then you will go throught the wall. Thus hit the ground
+      if (
+        player.x < platformEdge.x &&
+        platformEdge.y + platformEdge.w / 2 > player.y - heart.height * scaleOfPlayer / 2 &&
+        platformEdge.y - platformEdge.w / 2 < player.y + heart.height * scaleOfPlayer / 2 &&
+        player.x + heart.width * scaleOfPlayer / 2 + gravity.dx > platformEdge.x - platformEdge.l / 2
+      ) {
+        // move = false so you stop moving throught the wall
+        move = false;
+        // gravity index change mode since you hit the ground
+        currentGravityIndex = 1;
+        // place the player at the below of the left edge
+        player.x = platformEdge.x - platformEdge.l / 2 - heart.width * scaleOfPlayer / 2;
+        if (keyIsDown(65)){
+          // if you are pressing "a"
+          // reset the gravity and go
+          currentGravity[currentGravityIndex].dx = currentGravity[currentGravityIndex].dxOriginal;
+          move = true;
         }
       }
-      if (keyIsDown(87)){
+      
+
+      // move up and down normally only if there is no gravity on the x direction
+      if (gravity.accerlerationY !== 0){
         stopAtUp();
-      }
-      else if (keyIsDown(83)){
         stopAtDown();
       }
+
+      // if you stoped clicking the a button then you immidiately stop going
       if (gravity.dx < 0 && !keyIsDown(65)){
         gravity.dx = 0;
       }
+
+      // if will not break the barrier then
       if (move) {
-        player.x += gravity.dx;
-        gravity.dx += gravity.accerlerationX;
+        // move player by the dy
+        player.y += gravity.dy;
+        // dy accelerates
+        gravity.dy += gravity.accerlerationY;
       }
     }
     if (gravity.accerlerationX < 0) {
@@ -631,7 +669,7 @@ function innit(){
   // innitail spawn
   if(level === 1){
     // load attack
-    loadLevel1All()
+    loadLevel1All();
 
     // mid mid spawn
     player.x = currentPlatformEdge[2].x;
@@ -639,7 +677,7 @@ function innit(){
   }
   if(level === 2){
     // load attack
-    loadLevel2All()
+    loadLevel2All();
 
     // bottom mid spawn
     player.x = currentPlatformEdge[platformEdgeOrder.down].x;
