@@ -16,7 +16,7 @@
 // reation time not starting form the attack period but only when it hit the ground for bone tab
 // display box only when it hit the ground for bone tab
 class TabAttack{
-  constructor(reaction,changeTime,endTime,damage,cooldown,direction,height,zone,gravitaty){
+  constructor(reaction,changeTime,endTime,damage,cooldown,direction,height,zone,gravity){
     // innit varible COMPLETED
     this.type = "tab";
     this.reaction = reaction;
@@ -27,7 +27,7 @@ class TabAttack{
     this.direction = direction;
     this.height = this.height * height;
     this.zone = zone;
-    this.gravitaty = gravitaty;
+    this.gravity = gravity;
   }
 
 
@@ -325,31 +325,37 @@ function keyTyped(){
 function mainAttack(){
   //initailize COMPLETED
   let attack = currentBones[currentAttackIndex];
-  let gravitaty = currentGravity[currentGravityIndex];
+  let gravity = currentGravity[currentGravityIndex];
   let currentMillis = millis()
 
-  // TEMP
-  if (currentMillis - attackInitialTime > attack.changeTime){
-    currentGravityIndex = 2;
-  } else if(currentGravityIndex === 2){
-    currentGravityIndex--;
-    if (attack.direction === "down" || attack.direction === "up"){
-      currentGravity[currentGravityIndex].dy = currentGravity[currentGravityIndex].dyOriginal;
-    }
-    if (attack.direction === "left" || attack.direction === "right"){
-      currentGravity[currentGravityIndex].dx = currentGravity[currentGravityIndex].dxOriginal;
-    }
+  // Change gravity to the right mode depending on the timming of attack.changeTime
+  if (attack.type === "tab"){
+    if (currentMillis - attackInitialTime > attack.changeTime){
+      currentGravityIndex = 2;
+      gravity = currentGravity[currentGravityIndex];
+    } 
+    // else if(currentGravityIndex === 2){
+    //   currentGravityIndex = 1;
+    //   gravity = currentGravity[currentGravityIndex];
+    //   if (attack.direction === "down" || attack.direction === "up"){
+    //     currentGravity[currentGravityIndex].dy = currentGravity[currentGravityIndex].dyOriginal;
+    //   }
+    //   if (attack.direction === "left" || attack.direction === "right"){
+    //     currentGravity[currentGravityIndex].dx = currentGravity[currentGravityIndex].dxOriginal;
+    //   }
+    // }
   }
 
 
+
   // move player TEMP
-  movePlayer(gravitaty);
+  movePlayer(gravity);
 
   // display bones, player, action boxes, platform edgeCOMPLETED
   displayBones(attack, currentMillis);
   displayPlatformEdge();
   displayActions()
-  displayPlayer(attack, gravitaty);
+  displayPlayer(attack, gravity);
   
   
   // health bar and health COMPLETED
@@ -367,7 +373,7 @@ function mainAttack(){
     // reset everything
     attackInitialTime = millis();
     attack = currentBones[currentAttackIndex]
-    currentGravity = attack.gravitaty
+    currentGravity = attack.gravity
   }
 
   // when the level ends COMPLETED
@@ -452,10 +458,10 @@ function displayBones(attack, currentMillis){
   for (let actionText of actions){
     text(actionText.word,actionText.positionX,actionText.positionY);
   }
-} function displayPlayer(attack, gravitaty){
+} function displayPlayer(attack, gravity){
   // COMPLETED
   // display red heart if no gravity
-  if (gravitaty.mode === "off"){
+  if (gravity.mode === "off"){
     player.displayImage("heart");
   }
   // display the blue heart at the right direction
@@ -465,47 +471,64 @@ function displayBones(attack, currentMillis){
 
 } 
 
-function movePlayer(gravitaty) {
+function movePlayer(gravity) {
   // TEMP
-  if(gravitaty.mode === "off"){
+  if(gravity.mode === "off"){
     stopAtDown();
     stopAtUp();
     stopAtLeft();
     stopAtRight();
-  }
-  else{
-    if (gravitaty.accerlerationY < 0) {
-      //throw up
+  } else{
+    if (gravity.accerlerationY < 0) {
+      //gravity is accelerating upwards
+      //initialize move and the up platform
       let move = true;
-      for (let platformEdge of currentPlatformEdge) {
-        if (
-          player.y > platformEdge.y &&
-          platformEdge.x + platformEdge.l / 2 > player.x - heart.width * scaleOfPlayer / 2 &&
-          platformEdge.x - platformEdge.l / 2 < player.x + heart.width * scaleOfPlayer / 2 &&
-          player.y - heart.height * scaleOfPlayer / 2 + gravitaty.dy < platformEdge.y + platformEdge.w / 2
-        ) {
-          move = false;
-          if (keyIsDown(83)){
-            currentGravityIndex++;
-          }
-          player.y = platformEdge.y + platformEdge.w / 2 + heart.height * scaleOfPlayer / 2;
+      let platformEdge = currentPlatformEdge[platformEdgeOrder.up]
+      // if player is below the platform
+      // and if the [right side of the platform] covers (aka > than)  [left side of the player]
+      // and if the [left side of the platform] covers (aka < than)  [right side of the player]
+      // and if the [top of the player] + gravity.dy is above (aka < than) [the bottom of the edge]
+      // then you will go throught the wall and hit the ground
+      if (
+        player.y > platformEdge.y &&
+        platformEdge.x + platformEdge.l / 2 > player.x - heart.width * scaleOfPlayer / 2 &&
+        platformEdge.x - platformEdge.l / 2 < player.x + heart.width * scaleOfPlayer / 2 &&
+        player.y - heart.height * scaleOfPlayer / 2 + gravity.dy < platformEdge.y + platformEdge.w / 2
+      ) {
+        // move = false so you stop moving throught the wall
+        move = false;
+        // gravity index change mode since you hit the ground
+        currentGravityIndex = 1;
+        // place the player at the top of the wall
+        player.y = platformEdge.y + platformEdge.w / 2 + heart.height * scaleOfPlayer / 2;
+        if (keyIsDown(83)){
+          // if you are pressing "s"
+          // reset the gravity and go
+          currentGravity[currentGravityIndex].dy = currentGravity[currentGravityIndex].dyOriginal;
         }
       }
+
+      // move left and right normally
       if (keyIsDown(65)){
         stopAtLeft();
-      }
-      else if (keyIsDown(68)){
+      } else if (keyIsDown(68)){
         stopAtRight();
       }
-      if (gravitaty.dy > 0 && !keyIsDown(83)){
-        gravitaty.dy = 0;
+
+      // temp
+      if (gravity.dy > 0 && !keyIsDown(83)){
+        gravity.dy = 0;
       }
+
+      // if will not break the barrier then
       if (move) {
-        player.y += gravitaty.dy;
-        gravitaty.dy += gravitaty.accerlerationY;
+        // move player by the dy
+        player.y += gravity.dy;
+        // dy accelerates
+        gravity.dy += gravity.accerlerationY;
       }
     }
-    if (gravitaty.accerlerationY > 0) {
+    if (gravity.accerlerationY > 0) {
       //s
       let move = true;
       for (let platformEdge of currentPlatformEdge) {
@@ -513,7 +536,7 @@ function movePlayer(gravitaty) {
           player.y < platformEdge.y &&
           platformEdge.x + platformEdge.l / 2 > player.x - heart.width * scaleOfPlayer / 2 &&
           platformEdge.x - platformEdge.l / 2 < player.x + heart.width * scaleOfPlayer / 2 &&
-          player.y + heart.height * scaleOfPlayer / 2 + gravitaty.dy > platformEdge.y - platformEdge.w / 2
+          player.y + heart.height * scaleOfPlayer / 2 + gravity.dy > platformEdge.y - platformEdge.w / 2
         ) {
           move = false;
           player.y = platformEdge.y - platformEdge.w / 2 - heart.height * scaleOfPlayer / 2;
@@ -528,15 +551,15 @@ function movePlayer(gravitaty) {
       else if (keyIsDown(68)){
         stopAtRight();
       }
-      if (gravitaty.dy < 0 && !keyIsDown(87)){
-        gravitaty.dy = 0;
+      if (gravity.dy < 0 && !keyIsDown(87)){
+        gravity.dy = 0;
       }
       if (move) {
-        player.y += gravitaty.dy;
-        gravitaty.dy += gravitaty.accerlerationY;
+        player.y += gravity.dy;
+        gravity.dy += gravity.accerlerationY;
       }
     }
-    if (gravitaty.accerlerationX > 0) {
+    if (gravity.accerlerationX > 0) {
       //d
       let move = true;
       for (let platformEdge of currentPlatformEdge) {
@@ -544,7 +567,7 @@ function movePlayer(gravitaty) {
           player.x < platformEdge.x &&
           platformEdge.y + platformEdge.w / 2 > player.y - heart.height * scaleOfPlayer / 2 &&
           platformEdge.y - platformEdge.w / 2 < player.y + heart.height * scaleOfPlayer / 2 &&
-          player.x + heart.width * scaleOfPlayer / 2 + gravitaty.dx > platformEdge.x - platformEdge.l / 2
+          player.x + heart.width * scaleOfPlayer / 2 + gravity.dx > platformEdge.x - platformEdge.l / 2
         ) {
           move = false;
           if (keyIsDown(65)){
@@ -559,15 +582,15 @@ function movePlayer(gravitaty) {
       else if (keyIsDown(83)){
         stopAtDown();
       }
-      if (gravitaty.dx < 0 && !keyIsDown(65)){
-        gravitaty.dx = 0;
+      if (gravity.dx < 0 && !keyIsDown(65)){
+        gravity.dx = 0;
       }
       if (move) {
-        player.x += gravitaty.dx;
-        gravitaty.dx += gravitaty.accerlerationX;
+        player.x += gravity.dx;
+        gravity.dx += gravity.accerlerationX;
       }
     }
-    if (gravitaty.accerlerationX < 0) {
+    if (gravity.accerlerationX < 0) {
       //a
       let move = true;
       for (let platformEdge of currentPlatformEdge) {
@@ -575,7 +598,7 @@ function movePlayer(gravitaty) {
           player.x > platformEdge.x &&
           platformEdge.y + platformEdge.w / 2 > player.y - heart.height * scaleOfPlayer / 2 &&
           platformEdge.y - platformEdge.w / 2 < player.y + heart.height * scaleOfPlayer / 2 &&
-          player.x - heart.width * scaleOfPlayer / 2 + gravitaty.dx < platformEdge.x + platformEdge.l / 2
+          player.x - heart.width * scaleOfPlayer / 2 + gravity.dx < platformEdge.x + platformEdge.l / 2
         ) {
           move = false;
           if (keyIsDown(68)){
@@ -591,12 +614,12 @@ function movePlayer(gravitaty) {
       else if (keyIsDown(83)){
         stopAtDown();
       }
-      if (gravitaty.dx > 0 && !keyIsDown(68)){
-        gravitaty.dx = 0;
+      if (gravity.dx > 0 && !keyIsDown(68)){
+        gravity.dx = 0;
       }
       if (move) {
-        player.x += gravitaty.dx;
-        gravitaty.dx += gravitaty.accerlerationX;
+        player.x += gravity.dx;
+        gravity.dx += gravity.accerlerationX;
       }
     }
   }
@@ -645,7 +668,7 @@ function innit(){
   // bones COMPLETD
   // attack 1
   // gravity innit COMPLETED
-  let gravitaty1 = {
+  let gravity1 = {
     mode: "on",
     accerlerationX: 0,
     dx: 0,
@@ -653,7 +676,7 @@ function innit(){
     dy: 3 / 662 * height,
   };
 
-  let gravitaty2 = {
+  let gravity2 = {
     mode: "on",
     accerlerationX: 0,
     dx: 0,
@@ -662,7 +685,7 @@ function innit(){
     dyOriginal: -3.5 / 662 * height,
   };
 
-  let gravitaty3 = {
+  let gravity3 = {
     mode: "off",
     accerlerationX: 0.0,
     dx: 0,
@@ -670,7 +693,7 @@ function innit(){
     dy: 0,
   };
 
-  currentGravity = [gravitaty1, gravitaty2, gravitaty3];
+  currentGravity = [gravity1, gravity2, gravity3];
   currentGravityIndex = 0;
 
   // initialize the varible of the attack 1 level 1 COMPLETED
@@ -685,7 +708,7 @@ function innit(){
   attack1.direction = "down";
   attack1.height = 0.08 * height;
   attack1.zone = [];
-  attack1.gravitaty = structuredClone(currentGravity);
+  attack1.gravity = structuredClone(currentGravity);
 
   // calculated damge zone COMPLETED
   attack1.calculateDamageZone(level1PlatformEdge);
@@ -700,11 +723,13 @@ function innit(){
     // random attack
     // select a random direction
     let randomNumber = floor(random(4));
+    // randomNumber = 0
+    // // hard hard temp
     let directions = ["up", "down", "left", "right"];
 
     // gravity innit COMPLETED
     if (directions[randomNumber] === "down"){
-      let gravitaty4 = {
+      let gravity4 = {
         mode: "on",
         accerlerationX: 0,
         dx: 0,
@@ -712,7 +737,7 @@ function innit(){
         dy: 5 / 662 * height,
       };
 
-      let gravitaty5 = {
+      let gravity5 = {
         mode: "on",
         accerlerationX: 0,
         dx: 0,
@@ -721,18 +746,18 @@ function innit(){
         dyOriginal: -3.5 / 662 * height,
       };
 
-      let gravitaty6 = {
+      let gravity6 = {
         mode: "off",
         accerlerationX: 0.0,
         dx: 0,
         accerlerationY: 0,
         dy: 0,
       };
-      currentGravity = [gravitaty4,gravitaty5,gravitaty6];
+      currentGravity = [gravity4,gravity5,gravity6];
     }
 
     if (directions[randomNumber] === "up"){
-      let gravitaty4 = {
+      let gravity4 = {
         mode: "on",
         accerlerationX: 0,
         dx: 0,
@@ -740,7 +765,7 @@ function innit(){
         dy: -9 / 662 * height,
       };
 
-      let gravitaty5 = {
+      let gravity5 = {
         mode: "on",
         accerlerationX: 0,
         dx: 0,
@@ -749,18 +774,18 @@ function innit(){
         dyOriginal: 3.5 / 662 * height,
       };
 
-      let gravitaty6 = {
+      let gravity6 = {
         mode: "off",
         accerlerationX: 0.0,
         dx: 0,
         accerlerationY: 0,
         dy: 0,
       };
-      currentGravity = [gravitaty4,gravitaty5,gravitaty6];
+      currentGravity = [gravity4,gravity5,gravity6];
     }
 
     if (directions[randomNumber] === "right"){
-      let gravitaty4 = {
+      let gravity4 = {
         mode: "on",
         accerlerationX: 0.9 / 662 * height,
         dx: 9 / 662 * height,
@@ -768,7 +793,7 @@ function innit(){
         dy: 0,
       };
 
-      let gravitaty5 = {
+      let gravity5 = {
         mode: "on",
         accerlerationX: 0.1 / 662 * height,
         dx: -3.5 / 662 * height,
@@ -777,18 +802,18 @@ function innit(){
         dy: 0,
       };
 
-      let gravitaty6 = {
+      let gravity6 = {
         mode: "off",
         accerlerationX: 0.0,
         dx: 0,
         accerlerationY: 0,
         dy: 0,
       };
-      currentGravity = [gravitaty4,gravitaty5,gravitaty6];
+      currentGravity = [gravity4,gravity5,gravity6];
     }
 
     if (directions[randomNumber] === "left"){
-      let gravitaty4 = {
+      let gravity4 = {
         mode: "on",
         accerlerationX: -0.9 / 662 * height,
         dx: -9 / 662 * height,
@@ -796,7 +821,7 @@ function innit(){
         dy: 0,
       };
 
-      let gravitaty5 = {
+      let gravity5 = {
         mode: "on",
         accerlerationX: -0.1 / 662 * height,
         dx: 3.5 / 662 * height,
@@ -805,14 +830,14 @@ function innit(){
         dy: 0,
       };
 
-      let gravitaty6 = {
+      let gravity6 = {
         mode: "off",
         accerlerationX: 0.0,
         dx: 0,
         accerlerationY: 0,
         dy: 0,
       };
-      currentGravity = [gravitaty4,gravitaty5,gravitaty6];
+      currentGravity = [gravity4,gravity5,gravity6];
     }
 
     // initialize the varible of the attack 1 level 1 COMPLETED
@@ -820,14 +845,14 @@ function innit(){
 
     attack2.type = "tab";
     attack2.reaction = 700;
-    attack2.changeTime = 1000;
+    attack2.changeTime = 5000;
     attack2.endTime = 1000;
     attack2.damage = 3;
     attack2.cooldown = 150;
     attack2.direction = directions[randomNumber];
     attack2.height = 0.02 * height;
     attack2.zone = [];
-    attack2.gravitaty = structuredClone(currentGravity);
+    attack2.gravity = structuredClone(currentGravity);
 
     // calculated damge zone COMPLETED
     attack2.calculateDamageZone(level1PlatformEdge);
@@ -840,7 +865,7 @@ function innit(){
   let attack3 = {type: "next round"};
   currentBones.push(attack3);
 
-  currentGravity = [gravitaty1,gravitaty2,gravitaty3];
+  currentGravity = [gravity1,gravity2,gravity3];
   
 } function loadLevel2All(){
   // level 2 innit COMPLETED
@@ -859,7 +884,7 @@ function innit(){
   // bones COMPLETD
   // attack 1
   // gravity innit COMPLETED
-  let gravitaty1 = {
+  let gravity1 = {
     mode: "on",
     accerlerationX: 0,
     dx: 0,
@@ -867,7 +892,7 @@ function innit(){
     dy: 3 / 662 * height,
   };
 
-  let gravitaty2 = {
+  let gravity2 = {
     mode: "on",
     accerlerationX: 0,
     dx: 0,
@@ -876,7 +901,7 @@ function innit(){
     dyOriginal: -3.5 / 662 * height,
   };
 
-  let gravitaty3 = {
+  let gravity3 = {
     mode: "off",
     accerlerationX: 0.0,
     dx: 0,
@@ -884,7 +909,7 @@ function innit(){
     dy: 0,
   };
 
-  currentGravity = [gravitaty1, gravitaty2, gravitaty3];
+  currentGravity = [gravity1, gravity2, gravity3];
   currentGravityIndex = 0;
 
   // initialize the varible of the attack 1 level 2 COMPLETED
@@ -899,7 +924,7 @@ function innit(){
   attack1.direction = "down";
   attack1.height = 0.08 * height;
   attack1.zone = [];
-  attack1.gravitaty = structuredClone(currentGravity);
+  attack1.gravity = structuredClone(currentGravity);
 
   // calculated damge zone COMPLETED
   attack1.calculateDamageZone(level2PlatformEdge);
@@ -917,7 +942,7 @@ function innit(){
 
     // gravity
     if (directions[randomNumber] === "down"){
-      let gravitaty4 = {
+      let gravity4 = {
         mode: "on",
         accerlerationX: 0,
         dx: 0,
@@ -925,7 +950,7 @@ function innit(){
         dy: 5 / 662 * height,
       };
 
-      let gravitaty5 = {
+      let gravity5 = {
         mode: "on",
         accerlerationX: 0,
         dx: 0,
@@ -934,17 +959,17 @@ function innit(){
         dyOriginal: -3.5 / 662 * height,
       };
 
-      let gravitaty6 = {
+      let gravity6 = {
         mode: "off",
         accerlerationX: 0.0,
         dx: 0,
         accerlerationY: 0,
         dy: 0,
       };
-      currentGravity = [gravitaty4,gravitaty5,gravitaty6];
+      currentGravity = [gravity4,gravity5,gravity6];
     }
     if (directions[randomNumber] === "up"){
-      let gravitaty4 = {
+      let gravity4 = {
         mode: "on",
         accerlerationX: 0,
         dx: 0,
@@ -952,7 +977,7 @@ function innit(){
         dy: -9 / 662 * height,
       };
 
-      let gravitaty5 = {
+      let gravity5 = {
         mode: "on",
         accerlerationX: 0,
         dx: 0,
@@ -961,17 +986,17 @@ function innit(){
         dyOriginal: 3.5 / 662 * height,
       };
 
-      let gravitaty6 = {
+      let gravity6 = {
         mode: "off",
         accerlerationX: 0.0,
         dx: 0,
         accerlerationY: 0,
         dy: 0,
       };
-      currentGravity = [gravitaty4,gravitaty5,gravitaty6];
+      currentGravity = [gravity4,gravity5,gravity6];
     }
     if (directions[randomNumber] === "right"){
-      let gravitaty4 = {
+      let gravity4 = {
         mode: "on",
         accerlerationX: 0.9 / 662 * height,
         dx: 9 / 662 * height,
@@ -979,7 +1004,7 @@ function innit(){
         dy: 0,
       };
 
-      let gravitaty5 = {
+      let gravity5 = {
         mode: "on",
         accerlerationX: 0.1 / 662 * height,
         dx: -3.5 / 662 * height,
@@ -988,17 +1013,17 @@ function innit(){
         dy: 0,
       };
 
-      let gravitaty6 = {
+      let gravity6 = {
         mode: "off",
         accerlerationX: 0.0,
         dx: 0,
         accerlerationY: 0,
         dy: 0,
       };
-      currentGravity = [gravitaty4,gravitaty5,gravitaty6];
+      currentGravity = [gravity4,gravity5,gravity6];
     }
     if (directions[randomNumber] === "left"){
-      let gravitaty4 = {
+      let gravity4 = {
         mode: "on",
         accerlerationX: -0.9 / 662 * height,
         dx: -9 / 662 * height,
@@ -1006,7 +1031,7 @@ function innit(){
         dy: 0,
       };
 
-      let gravitaty5 = {
+      let gravity5 = {
         mode: "on",
         accerlerationX: -0.1 / 662 * height,
         dx: 3.5 / 662 * height,
@@ -1015,17 +1040,17 @@ function innit(){
         dy: 0,
       };
 
-      let gravitaty6 = {
+      let gravity6 = {
         mode: "off",
         accerlerationX: 0.0,
         dx: 0,
         accerlerationY: 0,
         dy: 0,
       };
-      currentGravity = [gravitaty4,gravitaty5,gravitaty6];
+      currentGravity = [gravity4,gravity5,gravity6];
     }
 
-    currentGravity = [gravitaty1, gravitaty2, gravitaty3];
+    currentGravity = [gravity1, gravity2, gravity3];
     currentGravityIndex = 0;
 
     let attack2 = {
@@ -1041,7 +1066,7 @@ function innit(){
       cooldown: 50,
       direction: directions[randomNumber],
       zone: [],
-      gravitaty: structuredClone(currentGravity),
+      gravity: structuredClone(currentGravity),
     };
 
     attack2.gapHeight = attack2.gapHeight * (level2PlatformEdge[platformEdgeOrder.left].w - level2PlatformEdge[platformEdgeOrder.down].w - level2PlatformEdge[platformEdgeOrder.up].w);
@@ -1126,7 +1151,7 @@ function innit(){
   let attackLast = {type: "next round"};
   currentBones.push(attackLast);
 
-  currentGravity = [gravitaty1,gravitaty2,gravitaty3];
+  currentGravity = [gravity1,gravity2,gravity3];
   
 }
 
