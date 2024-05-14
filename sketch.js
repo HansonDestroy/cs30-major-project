@@ -16,7 +16,7 @@
 // reation time not starting form the attack period but only when it hit the ground for bone tab
 // display box only when it hit the ground for bone tab
 class TabAttack{
-  constructor(reaction,changeTime,endTime,damage,cooldown,direction,height,zone,gravity){
+  constructor(reaction,changeTime,endTime,damage,cooldown,direction,heightOfZone,zone,gravity){
     // innit varible COMPLETED
     this.type = "tab";
     this.reaction = reaction;
@@ -25,8 +25,8 @@ class TabAttack{
     this.damage = damage;
     this.cooldown = cooldown;
     this.direction = direction;
-    this.height = this.height * height;
-    this.currentHeight = this.height * height;
+    this.height = heightOfZone;
+    this.currentHeight = heightOfZone;
     this.zone = zone;
     this.gravity = gravity;
   }
@@ -339,20 +339,28 @@ function mainAttack(){
   // When the attack ends COMPLETED
   if (currentMillis - attackInitialTime > attack.endTime){
     // if the time in the attack excessed the end time then end it by moving to the next attack
-    currentAttackIndex++;
-    currentGravityIndex = 0;
-    // reset everything
-    attackInitialTime = millis();
-    attack = currentBones[currentAttackIndex];
-    currentGravity = attack.gravity;
-    return 0;
-  }
+    if (attack.height < 0.05*height){
+      print("pause")
+    }
+    
 
-  // when the level ends COMPLETED
-  // if the attack type is next round then it is the last atack thus advance level COMPLETED
-  if (attack.type === "next round"){
-    state = "action time";
-    return 0;
+    // increase attack index and
+    // reset everything else
+    attackInitialTime = currentMillis;
+
+    currentAttackIndex++;
+    attack = currentBones[currentAttackIndex];
+
+    // when the level ends COMPLETED
+    // if the attack type is next round then it is the last atack thus advance level COMPLETED
+    if (attack.type === "next round"){
+      state = "action time";
+      return 0;
+    }
+
+    currentGravityIndex = 0;
+    currentGravity = attack.gravity;
+    gravity = currentGravity[currentGravityIndex]
   }
 
 
@@ -744,7 +752,7 @@ function innit(){
   currentGravityIndex = 0;
 
   // initialize the varible of the attack 1 level 1 COMPLETED
-  let attack1 = new TabAttack(1000, 1200, 3000, 7, 400, "down", 0.08, [], structuredClone(currentGravity));
+  let attack1 = new TabAttack(1000, 1200, 3000, 7, 400, "down", 0.08 * height, [], structuredClone(currentGravity));
 
   // attack1.type = "tab";
   // attack1.reaction = 1000;
@@ -887,7 +895,7 @@ function innit(){
     }
 
     // initialize the varible of the attack 1 level 1 COMPLETED
-    let attack2 = new TabAttack(700, 1000, 1000, 3, 150, directions[randomNumber], 0.02, [], structuredClone(currentGravity));
+    let attack2 = new TabAttack(700, 1000, 1000, 3, 150, directions[randomNumber], 0.02 * height, [], structuredClone(currentGravity));
 
     // attack2.type = "tab";
     // attack2.reaction = 700;
@@ -909,8 +917,8 @@ function innit(){
   }
 
   // attack last or attack 3
-  let attack3 = {type: "next round"};
-  currentBones.push(attack3);
+  let attackLast = {type: "next round"};
+  currentBones.push(attackLast);
 
   currentGravity = [gravity1,gravity2,gravity3];
   
@@ -960,7 +968,7 @@ function innit(){
   currentGravityIndex = 0;
 
   // initialize the varible of the attack 1 level 2 COMPLETED
-  let attack1 = new TabAttack(1000, 1200, 3000, 7, 400, "down", 0.08, [], structuredClone(currentGravity));
+  let attack1 = new TabAttack(1000, 1200, 3000, 7, 400, "down", 0.08 * height, [], structuredClone(currentGravity));
 
   // attack1.type = "tab";
   // attack1.reaction = 1000;
