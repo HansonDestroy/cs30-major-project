@@ -26,6 +26,7 @@ class TabAttack{
     this.cooldown = cooldown;
     this.direction = direction;
     this.height = this.height * height;
+    this.currentHeight = this.height * height;
     this.zone = zone;
     this.gravity = gravity;
   }
@@ -324,26 +325,34 @@ function keyTyped(){
 
 function mainAttack(){
   //initailize COMPLETED
+  let currentMillis = millis();
   let attack = currentBones[currentAttackIndex];
   let gravity = currentGravity[currentGravityIndex];
-  let currentMillis = millis();
-
   // Change gravity to the right mode depending on the timming of attack.changeTime
   if (attack.type === "tab"){
     if (currentMillis - attackInitialTime > attack.changeTime){
       currentGravityIndex = 2;
       gravity = currentGravity[currentGravityIndex];
     } 
-    // else if(currentGravityIndex === 2){
-    //   currentGravityIndex = 1;
-    //   gravity = currentGravity[currentGravityIndex];
-    //   if (attack.direction === "down" || attack.direction === "up"){
-    //     currentGravity[currentGravityIndex].dy = currentGravity[currentGravityIndex].dyOriginal;
-    //   }
-    //   if (attack.direction === "left" || attack.direction === "right"){
-    //     currentGravity[currentGravityIndex].dx = currentGravity[currentGravityIndex].dxOriginal;
-    //   }
-    // }
+  }
+
+  // When the attack ends COMPLETED
+  if (currentMillis - attackInitialTime > attack.endTime){
+    // if the time in the attack excessed the end time then end it by moving to the next attack
+    currentAttackIndex++;
+    currentGravityIndex = 0;
+    // reset everything
+    attackInitialTime = millis();
+    attack = currentBones[currentAttackIndex];
+    currentGravity = attack.gravity;
+    return 0;
+  }
+
+  // when the level ends COMPLETED
+  // if the attack type is next round then it is the last atack thus advance level COMPLETED
+  if (attack.type === "next round"){
+    state = "action time";
+    return 0;
   }
 
 
@@ -363,23 +372,6 @@ function mainAttack(){
   rect(300,50,player.health*2,30);
   if (player.health < 0){
     state = "death";
-  }
-
-  // When the attack ends COMPLETED
-  if (currentMillis - attackInitialTime > attack.endTime){
-    // if the time in the attack excessed the end time then end it by moving to the next attack
-    currentAttackIndex++;
-    currentGravityIndex = 0;
-    // reset everything
-    attackInitialTime = millis();
-    attack = currentBones[currentAttackIndex];
-    currentGravity = attack.gravity;
-  }
-
-  // when the level ends COMPLETED
-  // if the attack type is next round then it is the last atack thus advance level COMPLETED
-  if (attack.type === "next round"){
-    state = "action time";
   }
 
   // a way to track the player DEBUG
@@ -752,18 +744,19 @@ function innit(){
   currentGravityIndex = 0;
 
   // initialize the varible of the attack 1 level 1 COMPLETED
-  let attack1 = new TabAttack();
+  let attack1 = new TabAttack(1000, 1200, 3000, 7, 400, "down", 0.08, [], structuredClone(currentGravity));
 
-  attack1.type = "tab";
-  attack1.reaction = 1000;
-  attack1.changeTime = 1200;
-  attack1.endTime = 3000;
-  attack1.damage = 7;
-  attack1.cooldown = 400;
-  attack1.direction = "down";
-  attack1.height = 0.08 * height;
-  attack1.zone = [];
-  attack1.gravity = structuredClone(currentGravity);
+  // attack1.type = "tab";
+  // attack1.reaction = 1000;
+  // attack1.changeTime = 1200;
+  // attack1.endTime = 3000;
+  // attack1.damage = 7;
+  // attack1.cooldown = 400;
+  // attack1.direction = "down";
+  // attack1.height = 0.08 * height;
+  // // attack1.currentHeight = 0.08 * height;
+  // attack1.zone = [];
+  // attack1.gravity = structuredClone(currentGravity);
 
   // calculated damge zone COMPLETED
   attack1.calculateDamageZone(level1PlatformEdge);
@@ -894,18 +887,19 @@ function innit(){
     }
 
     // initialize the varible of the attack 1 level 1 COMPLETED
-    let attack2 = new TabAttack();
+    let attack2 = new TabAttack(700, 1000, 1000, 3, 150, directions[randomNumber], 0.02, [], structuredClone(currentGravity));
 
-    attack2.type = "tab";
-    attack2.reaction = 700;
-    attack2.changeTime = 5000;
-    attack2.endTime = 1000;
-    attack2.damage = 3;
-    attack2.cooldown = 150;
-    attack2.direction = directions[randomNumber];
-    attack2.height = 0.02 * height;
-    attack2.zone = [];
-    attack2.gravity = structuredClone(currentGravity);
+    // attack2.type = "tab";
+    // attack2.reaction = 700;
+    // attack2.changeTime = 1000;
+    // attack2.endTime = 1000;
+    // attack2.damage = 3;
+    // attack2.cooldown = 150;
+    // attack2.direction = directions[randomNumber];
+    // attack2.height = 0.02 * height;
+    // // attack2.currentHeight = 0.02 * height;
+    // attack2.zone = [];
+    // attack2.gravity = structuredClone(currentGravity);
 
     // calculated damge zone COMPLETED
     attack2.calculateDamageZone(level1PlatformEdge);
@@ -966,18 +960,19 @@ function innit(){
   currentGravityIndex = 0;
 
   // initialize the varible of the attack 1 level 2 COMPLETED
-  let attack1 = new TabAttack();
+  let attack1 = new TabAttack(1000, 1200, 3000, 7, 400, "down", 0.08, [], structuredClone(currentGravity));
 
-  attack1.type = "tab";
-  attack1.reaction = 1000;
-  attack1.changeTime = 1200;
-  attack1.endTime = 3000;
-  attack1.damage = 7;
-  attack1.cooldown = 400;
-  attack1.direction = "down";
-  attack1.height = 0.08 * height;
-  attack1.zone = [];
-  attack1.gravity = structuredClone(currentGravity);
+  // attack1.type = "tab";
+  // attack1.reaction = 1000;
+  // attack1.changeTime = 1200;
+  // attack1.endTime = 3000;
+  // attack1.damage = 7;
+  // attack1.cooldown = 400;
+  // attack1.direction = "down";
+  // attack1.height = 0.08 * height;
+  // // attack1.currentHeight = 0.08 * height;
+  // attack1.zone = [];
+  // attack1.gravity = structuredClone(currentGravity);
 
   // calculated damge zone COMPLETED
   attack1.calculateDamageZone(level2PlatformEdge);
