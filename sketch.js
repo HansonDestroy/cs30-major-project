@@ -29,8 +29,7 @@ class TabAttack{
     this.currentHeight = 0;
     this.zone = zone;
     this.gravity = gravity;
-    this.boneTime = 1400;
-    // this.boneTime = boneTime;
+    this.boneTime = boneTime;
   }
 
 
@@ -453,9 +452,6 @@ function moveBones(attack, currentMillis){
           0 , attack.boneTime - attack.reaction,
           0, attack.height);
         attack.calculateCurrentDamageZone(currentPlatformEdge);
-        print((currentMillis - attackInitialTime - attack.reaction),
-          0 , attack.boneTime,
-          0, attack.height);
       }
     }
   }
