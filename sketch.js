@@ -29,7 +29,8 @@ class TabAttack{
     this.currentHeight = 0;
     this.zone = zone;
     this.gravity = gravity;
-    this.boneTime = boneTime
+    this.boneTime = 1400;
+    // this.boneTime = boneTime;
   }
 
 
@@ -408,12 +409,12 @@ function mainAttack(){
     // reset gravity
     currentGravityIndex = 0;
     currentGravity = attack.gravity;
-    gravity = currentGravity[currentGravityIndex]
+    gravity = currentGravity[currentGravityIndex];
   }
 
   // move player TEMP
   movePlayer(gravity);
-  moveBones(attack, currentMillis)
+  moveBones(attack, currentMillis);
 
   // display bones, player, action boxes, platform edgeCOMPLETED
   displayBones(attack, currentMillis);
@@ -447,13 +448,14 @@ function moveBones(attack, currentMillis){
         // map the height into the ratio of the time between 
         // after the reaciton period and the boneTime
         // to the original height
+        // eslint-disable-next-line no-extra-parens
         attack.currentHeight = map((currentMillis - attackInitialTime - attack.reaction),
           0 , attack.boneTime - attack.reaction,
-          0, attack.height)
-        attack.calculateCurrentDamageZone(currentPlatformEdge)
+          0, attack.height);
+        attack.calculateCurrentDamageZone(currentPlatformEdge);
         print((currentMillis - attackInitialTime - attack.reaction),
-        0 , attack.boneTime,
-        0, attack.height)
+          0 , attack.boneTime,
+          0, attack.height);
       }
     }
   }
@@ -574,7 +576,7 @@ function movePlayer(gravity) {
         // gravity index change mode since you hit the ground
         if (currentGravityIndex === 0){
           currentGravityIndex = 1;
-          attackInitialTime = millis()
+          attackInitialTime = millis();
         }
         // place the player at the below of the top edge
         player.y = platformEdge.y + platformEdge.w / 2 + heart.height * scaleOfPlayer / 2;
