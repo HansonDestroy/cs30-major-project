@@ -239,6 +239,8 @@ function preload() {
   heartRight = loadImage("assets/image/heartRight.png");
   megalovania = loadSound("assets/audio/Megalovania.mp3");
 } 
+
+// setup
 function setup() {
   // set up COMPLETED
   // create canvas
@@ -266,6 +268,8 @@ function setup() {
   // megalovania.setLoop(true);
   // startMusic = true;
 } 
+
+// draw
 function draw() {
   // draw TEMP
   background(100);
@@ -292,7 +296,9 @@ function draw() {
     fill("white");
     text("die",50,50);
   }
-} 
+}
+
+// when state is draw start screen
 function drawStartScreen(){
   // draw the start screen COMPLETED
   // innitailize
@@ -334,6 +340,8 @@ function drawStartScreen(){
   player.displayImage("heart");
 
 }
+
+// change action or mode or tying
 function keyTyped(){
   // chage mode or action COMPLETED
   // if key typed at the starting screen
@@ -457,6 +465,7 @@ function moveBones(attack, currentMillis){
   }
 }
 
+// display functions
 function displayBones(attack, currentMillis){
   // damage is built in this function other than displaying bones
   if (attack.type === "tab"){
@@ -1290,7 +1299,6 @@ function innit(){
 }
 
 // stop functions COMPLETED
-// NOTIFIED THE SYSTEM WHEN HIT HARD OPTIONAL
 function stopAtRight(){
   if (keyIsDown(68)){
     //d
