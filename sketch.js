@@ -411,10 +411,9 @@ function mainAttack(){
     gravity = currentGravity[currentGravityIndex]
   }
 
-
-
   // move player TEMP
   movePlayer(gravity);
+  moveBones(attack, currentMillis)
 
   // display bones, player, action boxes, platform edgeCOMPLETED
   displayBones(attack, currentMillis);
@@ -434,6 +433,30 @@ function mainAttack(){
   // line(player.x, 0, player.x, height);
   // line(0, player.y, width, player.y);
   // circle(player.x, player.y, heart.width * scaleOfPlayer)
+}
+
+function moveBones(attack, currentMillis){
+  // move the bone
+  if (attack.type === "tab"){
+    // the attack is tab
+    // draw the zone and determine if damage need to be taken
+    if (currentMillis - attackInitialTime > attack.reaction){
+      // if the reaction period is over then have the bone come up
+      // set the height to the right height and calculate zone
+      if (attack.currentHeight < attack.height){
+        // map the height into the ratio of the time between 
+        // after the reaciton period and the boneTime
+        // to the original height
+        attack.currentHeight = map((currentMillis - attackInitialTime - attack.reaction),
+          0 , attack.boneTime - attack.reaction,
+          0, attack.height)
+        attack.calculateCurrentDamageZone(currentPlatformEdge)
+        print((currentMillis - attackInitialTime - attack.reaction),
+        0 , attack.boneTime,
+        0, attack.height)
+      }
+    }
+  }
 }
 
 function displayBones(attack, currentMillis){
@@ -456,25 +479,7 @@ function displayBones(attack, currentMillis){
       // animation of sans throwing his hands down OPTIONAL
       // code here
 
-      // bone picture
-      // bone picture = current height
-
     } else{
-
-      // set the height to the right height and calculate zone
-      if (attack.currentHeight < attack.height){
-        // map the height into the ratio of the time between 
-        // after the reaciton period and the boneTime
-        // to the original height
-        attack.currentHeight = map((currentMillis - attackInitialTime - attack.reaction),
-          0 , attack.boneTime - attack.reaction,
-          0, attack.height)
-        attack.calculateCurrentDamageZone(currentPlatformEdge)
-        print((currentMillis - attackInitialTime - attack.reaction),
-        0 , attack.boneTime,
-        0, attack.height)
-      }
-
       // your reation time have passed
       // therefore your grace period is over and the zone is filled with white now
       rectMode(CENTER);
@@ -484,7 +489,8 @@ function displayBones(attack, currentMillis){
       // take damage
       attack.takeDamage(currentMillis);
 
-      // draw bones comming up
+      // bone picture: draw image of bone comming up
+      // bone picture = current height
     }
   }
   if (attack.type === "gap"){
