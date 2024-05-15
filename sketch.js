@@ -199,8 +199,8 @@ let attackInitialTime = 0;
 // last time damage is taken
 let damageLastTime = 0;
 
-// throw away useless varible
-let startMusic = false;
+// start music
+let startMusic = true;
 
 let platformEdgeOrder = new Map();
 platformEdgeOrder.set("up", 0);
@@ -227,6 +227,22 @@ let heartRight;
 let megalovania;
 
 
+let canLoad = true;
+let finishLoad;
+function preloadWithPromise() {
+  let promise = new Promise(
+    function (resolve, reject) {
+      if (canLoad){
+        megalovania = loadSound("assets/audio/Megalovania.mp3");
+        resolve();
+      }
+      else{
+        reject();
+      }
+    });
+  return promise
+}
+
 
 // load everthing COMPLETE
 // could use promise to preload OPTIONAL
@@ -237,7 +253,8 @@ function preload() {
   heartUp = loadImage("assets/image/heartUp.png");
   heartLeft = loadImage("assets/image/heartLeft.png");
   heartRight = loadImage("assets/image/heartRight.png");
-  megalovania = loadSound("assets/audio/Megalovania.mp3");
+  // preloadWithPromise()
+  // megalovania = loadSound("assets/audio/Megalovania.mp3");
 } 
 
 // setup
@@ -267,6 +284,7 @@ function setup() {
   // megalovania.play();
   // megalovania.setLoop(true);
   // startMusic = true;
+  finishLoad = preloadWithPromise();
 } 
 
 // draw
@@ -1379,10 +1397,14 @@ function stopAtRight(){
 
 // music
 function mouseReleased(){
-  startMusic = true;
   if (startMusic){
-    megalovania.jump(0);
-    megalovania.play();
-    megalovania.setLoop(true);    
+    finishLoad.then(function () {
+      megalovania.jump(0);
+      megalovania.setLoop(true);
+      megalovania.play();
+      startMusic = false
+    }).catch(function () {
+      console.log("Sorry Pending");
+    });
   }
 }
