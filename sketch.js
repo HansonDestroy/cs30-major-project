@@ -746,6 +746,20 @@ function movePlayer(gravity) {
         }
       }
       
+      // make sure do not go over the left wall
+      platformEdge = currentPlatformEdge[platformEdgeOrder.get("left")];
+      if (
+        player.x > platformEdge.x &&
+        platformEdge.y + platformEdge.w / 2 > player.y - heart.height * scaleOfPlayer / 2 &&
+        platformEdge.y - platformEdge.w / 2 < player.y + heart.height * scaleOfPlayer / 2 &&
+        player.x - heart.width * scaleOfPlayer / 2 + gravity.dx < platformEdge.x + platformEdge.l / 2
+      ) {
+        // move = false so you stop moving throught the wall
+        move = false;
+        // hit the left wall set speed to 0
+        gravity.dx = 0
+        player.x = platformEdge.x + platformEdge.l / 2 + heart.width * scaleOfPlayer / 2;
+      }
 
       // move up and down normally only if there is no gravity on the x direction
       if (gravity.accerlerationY === 0){
@@ -799,6 +813,22 @@ function movePlayer(gravity) {
         }        
       }
       
+      // make sure do not go over the left wall
+      platformEdge = currentPlatformEdge[platformEdgeOrder.get("right")];
+      if (
+        player.x < platformEdge.x &&
+        platformEdge.y + platformEdge.w / 2 > player.y - heart.height * scaleOfPlayer / 2 &&
+        platformEdge.y - platformEdge.w / 2 < player.y + heart.height * scaleOfPlayer / 2 &&
+        player.x + heart.width * scaleOfPlayer / 2 + gravity.dx > platformEdge.x - platformEdge.l / 2
+      ) {
+        // move = false so you stop moving throught the wall
+        move = false;
+        // hit the left wall set speed to 0
+        gravity.dx = 0
+        player.x = platformEdge.x - platformEdge.l / 2 - heart.width * scaleOfPlayer / 2;
+      }
+
+
       // move up and down normally only if there is no gravity on the x direction
       if (gravity.accerlerationY === 0){
         stopAtUp();
