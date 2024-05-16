@@ -240,7 +240,7 @@ function preloadWithPromise() {
         reject();
       }
     });
-  return promise
+  return promise;
 }
 
 
@@ -611,6 +611,22 @@ function movePlayer(gravity) {
         }
       }
 
+      // make sure dont go over the bottom same logic as if heart is throwing down excempt no changing the gravity index
+      platformEdge = currentPlatformEdge[platformEdgeOrder.get("down")];
+      if (
+        player.y < platformEdge.y &&
+        platformEdge.x + platformEdge.l / 2 > player.x - heart.width * scaleOfPlayer / 2 &&
+        platformEdge.x - platformEdge.l / 2 < player.x + heart.width * scaleOfPlayer / 2 &&
+        player.y + heart.height * scaleOfPlayer / 2 + gravity.dy > platformEdge.y - platformEdge.w / 2
+      ) {
+        // move = false so you stop moving throught the wall
+        move = false;
+        // hit the celing and stop the speed
+        gravity.dy = 0;
+        player.y = platformEdge.y - platformEdge.w / 2 - heart.height * scaleOfPlayer / 2;
+      }
+      
+
       // move left and right normally only if there is no gravity on the x direction
       if (gravity.accerlerationX === 0){
         stopAtLeft();
@@ -648,7 +664,10 @@ function movePlayer(gravity) {
         // move = false so you stop moving throught the wall
         move = false;
         // gravity index change mode since you hit the ground
-        currentGravityIndex = 1;
+        if (currentGravityIndex === 0){
+          currentGravityIndex = 1;
+          attackInitialTime = millis();
+        }
         // place the player at the top of bottom edge
         player.y = platformEdge.y - platformEdge.w / 2 - heart.height * scaleOfPlayer / 2;
         if (keyIsDown(87)){
@@ -661,7 +680,21 @@ function movePlayer(gravity) {
         }
       }
 
-      
+      // make sure dont go over the top same logic as if heart is throwing up excempt no changing the gravity index
+      platformEdge = currentPlatformEdge[platformEdgeOrder.get("up")];
+      if (
+        player.y > platformEdge.y &&
+        platformEdge.x + platformEdge.l / 2 > player.x - heart.width * scaleOfPlayer / 2 &&
+        platformEdge.x - platformEdge.l / 2 < player.x + heart.width * scaleOfPlayer / 2 &&
+        player.y - heart.height * scaleOfPlayer / 2 + gravity.dy < platformEdge.y + platformEdge.w / 2
+      ) {
+        // move = false so you stop moving throught the wall
+        move = false;
+        // hit the floor and stop speed
+        gravity.dy = 0;
+        player.y = platformEdge.y + platformEdge.w / 2 + heart.height * scaleOfPlayer / 2;
+      }
+
       // move left and right normally only if there is no gravity on the x direction
       if (gravity.accerlerationX === 0){
         stopAtLeft();
@@ -699,7 +732,10 @@ function movePlayer(gravity) {
         // move = false so you stop moving throught the wall
         move = false;
         // gravity index change mode since you hit the ground
-        currentGravityIndex = 1;
+        if (currentGravityIndex === 0){
+          currentGravityIndex = 1;
+          attackInitialTime = millis();
+        }
         // place the player's right at the left of the right edge
         player.x = platformEdge.x - platformEdge.l / 2 - heart.width * scaleOfPlayer / 2;
         if (keyIsDown(65)){
@@ -749,7 +785,10 @@ function movePlayer(gravity) {
         // move = false so you stop moving throught the wall
         move = false;
         // gravity index change mode since you hit the ground
-        currentGravityIndex = 1;
+        if (currentGravityIndex === 0){
+          currentGravityIndex = 1;
+          attackInitialTime = millis();
+        }
         // place the player's left at the right of the left edge
         player.x = platformEdge.x + platformEdge.l / 2 + heart.width * scaleOfPlayer / 2;
         if (keyIsDown(68)){
@@ -1402,7 +1441,7 @@ function mouseReleased(){
       megalovania.jump(0);
       megalovania.setLoop(true);
       megalovania.play();
-      startMusic = false
+      startMusic = false;
     }).catch(function () {
       console.log("Sorry Pending");
     });
