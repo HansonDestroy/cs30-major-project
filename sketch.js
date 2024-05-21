@@ -610,7 +610,7 @@ function mainAttack(){
   // move player TEMP
   moveBones(attack, currentMillis);
   movePlayer(gravity);
-  // display bones, player, action boxes, platform edgeCOMPLETED
+  // display bones, player, action boxes, platform edge COMPLETED
   displayBones(attack, currentMillis);
   displayPlatformEdge();
   displayActions();
@@ -642,93 +642,6 @@ function moveBones(attack, currentMillis){
     // attack.move(attack, currentMillis);
   }
 }
-
-// display functions
-function displayBones(attack, currentMillis){
-  // damage is built in this function other than displaying bones
-  if (attack.type === "stab"){
-    // the attack is stab
-    // draw the zone and determine if damage need to be taken
-    if (currentMillis - attackInitialTime < attack.reaction){
-      // if the time elapsed in this level(currentMillis - time) is within(<) the reaction time(attack.reaction)
-      // then color the zone green as warning
-
-      // note if it is dropping to the ground at gravity1 or gravityIndex == 0 then do not display the box at all TEMP
-      if (currentGravityIndex !== 0){
-        // condition met draw green zone
-        rectMode(CENTER);
-        fill(0,150,0);
-        rect(attack.zone[0],attack.zone[1],attack.zone[2],attack.zone[3]);
-      }
-
-      // animation of sans throwing his hands down OPTIONAL
-      // code here
-
-    } else{
-      // your reation time have passed
-      // therefore your grace period is over and the zone is filled with white now
-      rectMode(CENTER);
-      fill(150,150,150);
-      rect(attack.zone[0],attack.zone[1],attack.zone[2],attack.zone[3]);
-      
-      // take damage
-      attack.takeDamage(currentMillis);
-
-      // bone picture: draw image of bone comming up
-      // bone picture = current height
-    }
-  }
-  if (attack.type === "gap"){
-    if (state !== "dsfkad;lfksal;dkasdfk;slakdf;lak"){
-      rectMode(CENTER);
-      fill(150,150,150);
-      rect(attack.zone[0][0],attack.zone[0][1],attack.zone[0][2],attack.zone[0][3]);
-      rect(attack.zone[1][0],attack.zone[1][1],attack.zone[1][2],attack.zone[1][3]);
-      rect(attack.zone[2][0],attack.zone[2][1],attack.zone[2][2],attack.zone[2][3]);
-      rect(attack.zone[3][0],attack.zone[3][1],attack.zone[3][2],attack.zone[3][3]);
-    }
-    else{
-      rectMode(CENTER);
-      fill(150,150,150);
-      rect(attack.zone[0],attack.zone[1],attack.zone[2],attack.zone[3]);
-      if (
-        player.x < attack.zone[0] + attack.zone[2] / 2 &&
-        player.x > attack.zone[0] - attack.zone[2] / 2 &&
-        player.y < attack.zone[1] + attack.zone[3] / 2 &&
-        player.y > attack.zone[1] - attack.zone[3] / 2 &&
-        damageLastTime + attack.cooldown < currentMillis) {
-        player.health -= attack.damage;
-        damageLastTime = millis();
-      }
-    }
-
-  }
-} function displayPlatformEdge(){
-  // given the currentPlatformEdge display each of them COMPLETED
-  for (let platformEdge of currentPlatformEdge){
-    rectMode(CENTER);
-    fill("white");
-    noStroke();
-    rect(platformEdge.x, platformEdge.y, platformEdge.l, platformEdge.w);
-  }
-} function displayActions(){
-  // display all the text of actions COMPLETED
-  textAlign(LEFT);
-  for (let actionText of actions){
-    text(actionText.word,actionText.positionX,actionText.positionY);
-  }
-} function displayPlayer(attack, gravity){
-  // COMPLETED
-  // display red heart if no gravity
-  if (gravity.mode === "off"){
-    player.displayImage("heart");
-  }
-  // display the blue heart at the right direction. Need A Direction
-  else{
-    player.displayImage(attack.direction);
-  }
-
-} 
 
 function movePlayer(gravity) {
   // TEMP
@@ -1011,6 +924,95 @@ function movePlayer(gravity) {
   }
 } 
 
+// display functions
+function displayBones(attack, currentMillis){
+  // damage is built in this function other than displaying bones
+  if (attack.type === "stab"){
+    // the attack is stab
+    // draw the zone and determine if damage need to be taken
+    if (currentMillis - attackInitialTime < attack.reaction){
+      // if the time elapsed in this level(currentMillis - time) is within(<) the reaction time(attack.reaction)
+      // then color the zone green as warning
+
+      // note if it is dropping to the ground at gravity1 or gravityIndex == 0 then do not display the box at all TEMP
+      if (currentGravityIndex !== 0){
+        // condition met draw green zone
+        rectMode(CENTER);
+        fill(0,150,0);
+        rect(attack.zone[0],attack.zone[1],attack.zone[2],attack.zone[3]);
+      }
+
+      // animation of sans throwing his hands down OPTIONAL
+      // code here
+
+    } else{
+      // your reation time have passed
+      // therefore your grace period is over and the zone is filled with white now
+      rectMode(CENTER);
+      fill(150,150,150);
+      rect(attack.zone[0],attack.zone[1],attack.zone[2],attack.zone[3]);
+      
+      // take damage
+      attack.takeDamage(currentMillis);
+
+      // bone picture: draw image of bone comming up
+      // bone picture = current height
+    }
+  }
+  if (attack.type === "gap"){
+    if (state !== "dsfkad;lfksal;dkasdfk;slakdf;lak"){
+      rectMode(CENTER);
+      fill(150,150,150);
+      rect(attack.zone[0][0],attack.zone[0][1],attack.zone[0][2],attack.zone[0][3]);
+      rect(attack.zone[1][0],attack.zone[1][1],attack.zone[1][2],attack.zone[1][3]);
+      rect(attack.zone[2][0],attack.zone[2][1],attack.zone[2][2],attack.zone[2][3]);
+      rect(attack.zone[3][0],attack.zone[3][1],attack.zone[3][2],attack.zone[3][3]);
+    }
+    else{
+      rectMode(CENTER);
+      fill(150,150,150);
+      rect(attack.zone[0],attack.zone[1],attack.zone[2],attack.zone[3]);
+      if (
+        player.x < attack.zone[0] + attack.zone[2] / 2 &&
+        player.x > attack.zone[0] - attack.zone[2] / 2 &&
+        player.y < attack.zone[1] + attack.zone[3] / 2 &&
+        player.y > attack.zone[1] - attack.zone[3] / 2 &&
+        damageLastTime + attack.cooldown < currentMillis) {
+        player.health -= attack.damage;
+        damageLastTime = millis();
+      }
+    }
+
+  }
+} function displayPlatformEdge(){
+  // given the currentPlatformEdge display each of them COMPLETED
+  for (let platformEdge of currentPlatformEdge){
+    rectMode(CENTER);
+    fill("white");
+    noStroke();
+    rect(platformEdge.x, platformEdge.y, platformEdge.l, platformEdge.w);
+  }
+} function displayActions(){
+  // display all the text of actions COMPLETED
+  textAlign(LEFT);
+  for (let actionText of actions){
+    text(actionText.word,actionText.positionX,actionText.positionY);
+  }
+} function displayPlayer(attack, gravity){
+  // COMPLETED
+  // display red heart if no gravity
+  if (gravity.mode === "off"){
+    player.displayImage("heart");
+  }
+  // display the blue heart at the right direction. Need A Direction
+  else{
+    player.displayImage(attack.direction);
+  }
+
+} 
+
+
+
 // load levels
 function innit(){
   // innitialize the starting x,y position of the heart // reset timer // only run it once per level COMPLETED
@@ -1227,10 +1229,10 @@ function innit(){
     }
 
     // initialize the varible of the attack 1 level 1 COMPLETED
-    let attack2 = new StabAttack(650, 1000, 1000, 3, 150, directions[randomNumber], 0.02 * height, [], structuredClone(currentGravity), 800);
+    let attack2 = new StabAttack(600, 1000, 1000, 3, 150, directions[randomNumber], 0.02 * height, [], structuredClone(currentGravity), 800);
 
     // attack2.type = "stab";
-    // attack2.reaction = 650;
+    // attack2.reaction = 600;
     // attack2.changeTime = 1000;
     // attack2.endTime = 1000;
     // attack2.damage = 3;
@@ -1330,7 +1332,7 @@ function innit(){
     let direction = "down";
 
     // gravity
-    if (directions[randomNumber] === "down"){
+    if (direction === "down"){
       let gravity4 = {
         mode: "on",
         accerlerationX: 0,
@@ -1373,7 +1375,7 @@ function innit(){
       gapDifference: 0.12,
       damage: 3,
       cooldown: 50,
-      direction: directions[randomNumber],
+      direction: "down",
       zone: [],
       gravity: structuredClone(currentGravity),
     };
@@ -1437,22 +1439,6 @@ function innit(){
         ]
       ];
     }
-    // if (attack2.direction === "left"){
-    //   attack2.zone = [
-    //     level2PlatformEdge[platformEdgeOrder.get("left")].x + level2PlatformEdge[platformEdgeOrder.get("left")].l / 2 + attack2.height / 2,
-    //     level2PlatformEdge[platformEdgeOrder.get("left")].y,
-    //     attack2.height,
-    //     level2PlatformEdge[platformEdgeOrder.get("left")].w - level2PlatformEdge[platformEdgeOrder.get("up")].w - level2PlatformEdge[platformEdgeOrder.get("down")].w
-    //   ];
-    // }
-    // if (attack2.direction === "right"){
-    //   attack2.zone = [
-    //     level2PlatformEdge[platformEdgeOrder.get("right")].x - level2PlatformEdge[platformEdgeOrder.get("right")].l / 2 - attack2.height / 2,
-    //     level2PlatformEdge[platformEdgeOrder.get("right")].y,
-    //     attack2.height,
-    //     level2PlatformEdge[platformEdgeOrder.get("right")].w - level2PlatformEdge[platformEdgeOrder.get("up")].w - level2PlatformEdge[platformEdgeOrder.get("down")].w
-    //   ];
-    // }
     currentBones.push(attack2);
   }
 
