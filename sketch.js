@@ -151,7 +151,7 @@ class StabAttack{
   }
   
   // bone aka zone move function
-  move(attack, currentMillis){
+  moveBone(attack, currentMillis){
     if (currentMillis - attackInitialTime > attack.reaction){
       // if the reaction period is over then have the bone come up
       // set the height to the right height and calculate zone
@@ -305,21 +305,8 @@ class GapAttack{
   }
   
   // bone aka zone move function
-  move(attack, currentMillis){
-    if (currentMillis - attackInitialTime > attack.reaction){
-      // if the reaction period is over then have the bone come up
-      // set the height to the right height and calculate zone
-      if (attack.currentHeight < attack.height){
-        // map the height into the ratio of the time between 
-        // after the reaciton period and the boneTime
-        // to the original height
-        // eslint-disable-next-line no-extra-parens
-        attack.currentHeight = map((currentMillis - attackInitialTime - attack.reaction),
-          0 , attack.boneTime - attack.reaction,
-          0, attack.height);
-        attack.calculateCurrentDamageZone(currentPlatformEdge);
-      }
-    }
+  moveBone(attack, currentMillis){
+    print("dfd")
   }
 }
 
@@ -608,7 +595,7 @@ function mainAttack(){
   }
 
   // move player TEMP
-  moveBones(attack, currentMillis);
+  attack.moveBone(attack, currentMillis);
   movePlayer(gravity);
   // display bones, player, action boxes, platform edge COMPLETED
   displayBones(attack, currentMillis);
@@ -628,19 +615,6 @@ function mainAttack(){
   // line(player.x, 0, player.x, height);
   // line(0, player.y, width, player.y);
   // circle(player.x, player.y, heart.width * scaleOfPlayer)
-}
-
-function moveBones(attack, currentMillis){
-  // move the bone
-  if (attack.type === "stab"){
-    // the attack is stab
-    attack.move(attack, currentMillis);
-  }
-
-  if (attack.type === "stab"){
-    // the attack is stab
-    // attack.move(attack, currentMillis);
-  }
 }
 
 function movePlayer(gravity) {
