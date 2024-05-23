@@ -16,7 +16,7 @@
 // reation time not starting form the attack period but only when it hit the ground for bone stab
 // display box only when it hit the ground for bone stab
 class StabAttack{
-  constructor(reaction,changeTime,endTime,damage,cooldown,direction,heightOfZone,zone,gravity, boneTime){
+  constructor(reaction,changeTime,endTime,damage,cooldown,direction,heightOfZone,zone,gravity,boneTime){
     // innit varible COMPLETED
     this.type = "stab";
     this.reaction = reaction;
@@ -26,66 +26,13 @@ class StabAttack{
     this.cooldown = cooldown;
     this.direction = direction;
     this.height = heightOfZone;
-    this.currentHeight = 0;
+    this.currentHeight = heightOfZone;
     this.zone = zone;
     this.gravity = gravity;
     this.boneTime = boneTime;
   }
 
-  // calculate zone function
   calculateDamageZone(platformEdge){
-    // draw the right damge zone at the right place. very hard I wish not to look back at it. COMPLETED
-    if (this.direction === "up"){
-      this.zone = [
-        platformEdge[platformEdgeOrder.get("up")].x,
-        platformEdge[platformEdgeOrder.get("up")].y
-        + platformEdge[platformEdgeOrder.get("down")].w / 2
-        + this.height / 2,
-        platformEdge[platformEdgeOrder.get("up")].l
-        - platformEdge[platformEdgeOrder.get("left")].l
-        - platformEdge[platformEdgeOrder.get("right")].l,
-        this.height
-      ];
-    }
-    if (this.direction === "down"){
-      this.zone = [
-        platformEdge[platformEdgeOrder.get("down")].x,
-        platformEdge[platformEdgeOrder.get("down")].y
-        - platformEdge[platformEdgeOrder.get("down")].w / 2
-        - this.height / 2,
-        platformEdge[platformEdgeOrder.get("down")].l
-        - platformEdge[platformEdgeOrder.get("left")].l
-        - platformEdge[platformEdgeOrder.get("right")].l,
-        this.height
-      ];
-    }
-    if (this.direction === "left"){
-      this.zone = [
-        platformEdge[platformEdgeOrder.get("left")].x
-        + platformEdge[platformEdgeOrder.get("left")].l / 2
-        + this.height / 2,
-        platformEdge[platformEdgeOrder.get("left")].y,
-        this.height,
-        platformEdge[platformEdgeOrder.get("left")].w
-        - platformEdge[platformEdgeOrder.get("up")].w
-        - platformEdge[platformEdgeOrder.get("down")].w
-      ];
-    }
-    if (this.direction === "right"){
-      this.zone = [
-        platformEdge[platformEdgeOrder.get("right")].x
-        - platformEdge[platformEdgeOrder.get("right")].l / 2
-        - this.height / 2,
-        platformEdge[platformEdgeOrder.get("right")].y,
-        this.height,
-        platformEdge[platformEdgeOrder.get("right")].w
-        - platformEdge[platformEdgeOrder.get("up")].w
-        - platformEdge[platformEdgeOrder.get("down")].w
-      ];
-    }
-  }
-
-  calculateCurrentDamageZone(platformEdge){
     // draw the right damge zone at the right place. very hard I wish not to look back at it. COMPLETED
     if (this.direction === "up"){
       this.zone = [
@@ -164,8 +111,41 @@ class StabAttack{
           currentMillis - attackInitialTime - this.reaction,
           0 , this.boneTime - this.reaction,
           0, this.height);
-          this.calculateCurrentDamageZone(currentPlatformEdge);
+        this.calculateDamageZone(currentPlatformEdge);
       }
+    }
+  }
+
+  displayBones(currentMillis){
+    // damage is built in this function other than displaying bones
+    // draw the zone and determine if damage need to be taken
+    if (currentMillis - attackInitialTime < this.reaction){
+      // if the time elapsed in this level(currentMillis - time) is within(<) the reaction time(this.reaction)
+      // then color the zone green as warning
+  
+      // note if it is dropping to the ground at gravity1 or gravityIndex == 0 then do not display the box at all TEMP
+      if (currentGravityIndex !== 0){
+        // condition met draw green zone
+        rectMode(CENTER);
+        fill(0,150,0);
+        rect(this.zone[0],this.zone[1],this.zone[2],this.zone[3]);
+      }
+  
+      // animation of sans throwing his hands down OPTIONAL
+      // code here
+  
+    } else{
+      // your reation time have passed
+      // therefore your grace period is over and the zone is filled with white now
+      rectMode(CENTER);
+      fill(150,150,150);
+      rect(this.zone[0],this.zone[1],this.zone[2],this.zone[3]);
+        
+      // take damage
+      this.takeDamage(currentMillis);
+  
+      // bone picture: draw image of bone comming up
+      // bone picture = current height
     }
   }
 
@@ -198,6 +178,7 @@ class StabAttack{
           // gravity index change mode since you hit the ground
           if (currentGravityIndex === 0){
             currentGravityIndex = 1;
+            // attack reset the innitail time so this.reaction is accurate
             attackInitialTime = millis();
           }
           // place the player at the below of the top edge
@@ -460,134 +441,16 @@ class StabAttack{
     this.gapHeight = gapHeight;
     this.gapWidth = gapWidth;
     this.gapDifference = gapDifference;
-    this.damage = damage
+    this.damage = damage;
     this.cooldown = cooldown;
     this.direction = direction;
     this.zone = zone;
     this.gravity = gravity;
   }
 
-  // calculate zone function
-  calculateDamageZone(platformEdge){
-    // draw the right damge zone at the right place. very hard I wish not to look back at it. COMPLETED
-    if (this.direction === "up"){
-      this.zone = [
-        platformEdge[platformEdgeOrder.get("up")].x,
-        platformEdge[platformEdgeOrder.get("up")].y
-        + platformEdge[platformEdgeOrder.get("down")].w / 2
-        + this.height / 2,
-        platformEdge[platformEdgeOrder.get("up")].l
-        - platformEdge[platformEdgeOrder.get("left")].l
-        - platformEdge[platformEdgeOrder.get("right")].l,
-        this.height
-      ];
-    }
-    if (this.direction === "down"){
-      this.zone = [
-        platformEdge[platformEdgeOrder.get("down")].x,
-        platformEdge[platformEdgeOrder.get("down")].y
-        - platformEdge[platformEdgeOrder.get("down")].w / 2
-        - this.height / 2,
-        platformEdge[platformEdgeOrder.get("down")].l
-        - platformEdge[platformEdgeOrder.get("left")].l
-        - platformEdge[platformEdgeOrder.get("right")].l,
-        this.height
-      ];
-    }
-    if (this.direction === "left"){
-      this.zone = [
-        platformEdge[platformEdgeOrder.get("left")].x
-        + platformEdge[platformEdgeOrder.get("left")].l / 2
-        + this.height / 2,
-        platformEdge[platformEdgeOrder.get("left")].y,
-        this.height,
-        platformEdge[platformEdgeOrder.get("left")].w
-        - platformEdge[platformEdgeOrder.get("up")].w
-        - platformEdge[platformEdgeOrder.get("down")].w
-      ];
-    }
-    if (this.direction === "right"){
-      this.zone = [
-        platformEdge[platformEdgeOrder.get("right")].x
-        - platformEdge[platformEdgeOrder.get("right")].l / 2
-        - this.height / 2,
-        platformEdge[platformEdgeOrder.get("right")].y,
-        this.height,
-        platformEdge[platformEdgeOrder.get("right")].w
-        - platformEdge[platformEdgeOrder.get("up")].w
-        - platformEdge[platformEdgeOrder.get("down")].w
-      ];
-    }
-  }
-
-  calculateCurrentDamageZone(platformEdge){
-    // draw the right damge zone at the right place. very hard I wish not to look back at it. COMPLETED
-    if (this.direction === "up"){
-      this.zone = [
-        platformEdge[platformEdgeOrder.get("up")].x,
-        platformEdge[platformEdgeOrder.get("up")].y
-        + platformEdge[platformEdgeOrder.get("down")].w / 2
-        + this.currentHeight / 2,
-        platformEdge[platformEdgeOrder.get("up")].l
-        - platformEdge[platformEdgeOrder.get("left")].l
-        - platformEdge[platformEdgeOrder.get("right")].l,
-        this.currentHeight
-      ];
-    }
-    if (this.direction === "down"){
-      this.zone = [
-        platformEdge[platformEdgeOrder.get("down")].x,
-        platformEdge[platformEdgeOrder.get("down")].y
-        - platformEdge[platformEdgeOrder.get("down")].w / 2
-        - this.currentHeight / 2,
-        platformEdge[platformEdgeOrder.get("down")].l
-        - platformEdge[platformEdgeOrder.get("left")].l
-        - platformEdge[platformEdgeOrder.get("right")].l,
-        this.currentHeight
-      ];
-    }
-    if (this.direction === "left"){
-      this.zone = [
-        platformEdge[platformEdgeOrder.get("left")].x
-        + platformEdge[platformEdgeOrder.get("left")].l / 2
-        + this.currentHeight / 2,
-        platformEdge[platformEdgeOrder.get("left")].y,
-        this.currentHeight,
-        platformEdge[platformEdgeOrder.get("left")].w
-        - platformEdge[platformEdgeOrder.get("up")].w
-        - platformEdge[platformEdgeOrder.get("down")].w
-      ];
-    }
-    if (this.direction === "right"){
-      this.zone = [
-        platformEdge[platformEdgeOrder.get("right")].x
-        - platformEdge[platformEdgeOrder.get("right")].l / 2
-        - this.currentHeight / 2,
-        platformEdge[platformEdgeOrder.get("right")].y,
-        this.currentHeight,
-        platformEdge[platformEdgeOrder.get("right")].w
-        - platformEdge[platformEdgeOrder.get("up")].w
-        - platformEdge[platformEdgeOrder.get("down")].w
-      ];
-    }
-  }
-
-  // damage function
-  takeDamage(currentMillis){
-    if (
-      player.x < this.zone[0] + this.zone[2] / 2 &&
-      player.x > this.zone[0] - this.zone[2] / 2 &&
-      player.y < this.zone[1] + this.zone[3] / 2 &&
-      player.y > this.zone[1] - this.zone[3] / 2 &&
-      damageLastTime + this.cooldown < currentMillis) {
-      player.health -= this.damage;
-      damageLastTime = currentMillis;
-    }
-  }
-  
   // bone aka zone move function
   moveBone(currentMillis){
-    print("dfd")
+    print("dfd");
   }
 
   movePlayer(gravity) {
@@ -869,7 +732,17 @@ class StabAttack{
         }
       }
     }
-  } 
+  }
+
+  displayBones(currentMillis){
+    rectMode(CENTER);
+    fill(150,150,150);
+    rect(this.zone[0][0],this.zone[0][1],this.zone[0][2],this.zone[0][3]);
+    rect(this.zone[1][0],this.zone[1][1],this.zone[1][2],this.zone[1][3]);
+    rect(this.zone[2][0],this.zone[2][1],this.zone[2][2],this.zone[2][3]);
+    rect(this.zone[3][0],this.zone[3][1],this.zone[3][2],this.zone[3][3]);
+  }
+
 } class Player{
   constructor(){
     this.x = 0;
@@ -1328,7 +1201,7 @@ function innit(){
   currentGravityIndex = 0;
 
   // initialize the varible of the attack 1 level 1 COMPLETED
-  let attack1 = new StabAttack(1000, 1200, 3000, 7, 400, "down", 0.08 * height, [], structuredClone(currentGravity), 1150);
+  let attack1 = new StabAttack(1000, 1200, 3000, 7, 80, "down", 0.08 * height, [], structuredClone(currentGravity), 1150);
 
   // attack1.type = "stab";
   // attack1.reaction = 1000;
@@ -1338,13 +1211,16 @@ function innit(){
   // attack1.cooldown = 400;
   // attack1.direction = "down";
   // attack1.height = 0.08 * height;
-  // // attack1.currentHeight = 0;
+  // // attack1.currentHeight = 0.08 * height;
   // attack1.zone = [];
   // attack1.gravity = structuredClone(currentGravity);
   // attack1.boneTime = 1500
 
-  // calculated damge zone COMPLETED
+  // calculated damge zone for the green box at full height COMPLETED
   attack1.calculateDamageZone(level1PlatformEdge);
+
+  // set the height back to 0 because it start at zero to rise
+  attack1.currentHeight = 0;
   
   // push the attack in COMPLETED
   currentAttackIndex = 0;
@@ -1472,7 +1348,7 @@ function innit(){
     }
 
     // initialize the varible of the attack 1 level 1 COMPLETED
-    let attack2 = new StabAttack(600, 1000, 1000, 3, 150, directions[randomNumber], 0.02 * height, [], structuredClone(currentGravity), 800);
+    let attack2 = new StabAttack(600, 1000, 1000, 3, 30, directions[randomNumber], 0.02 * height, [], structuredClone(currentGravity), 800);
 
     // attack2.type = "stab";
     // attack2.reaction = 600;
@@ -1489,6 +1365,8 @@ function innit(){
 
     // calculated damge zone COMPLETED
     attack2.calculateDamageZone(level1PlatformEdge);
+    // set the height back to 0 because it start at zero to rise
+    attack2.currentHeight = 0;
 
     // push the attack in COMPLETED
     currentBones.push(attack2);
@@ -1546,7 +1424,7 @@ function innit(){
   currentGravityIndex = 0;
 
   // initialize the varible of the attack 1 level 2 COMPLETED
-  let attack1 = new StabAttack(1000, 1200, 3000, 7, 400, "down", 0.08 * height, [], structuredClone(currentGravity), 1150);
+  let attack1 = new StabAttack(1000, 1200, 3000, 7, 80, "down", 0.08 * height, [], structuredClone(currentGravity), 1150);
 
   // attack1.type = "stab";
   // attack1.reaction = 1000;
@@ -1563,7 +1441,9 @@ function innit(){
 
   // calculated damge zone COMPLETED
   attack1.calculateDamageZone(level2PlatformEdge);
-  
+  // set the height back to 0 because it start at zero to rise
+  attack1.currentHeight = 0;
+
   // push the attack in COMPLETED
   currentAttackIndex = 0;
   currentBones = [attack1];
@@ -1607,7 +1487,7 @@ function innit(){
     currentGravity = [gravity1, gravity2, gravity3];
     currentGravityIndex = 0;
 
-    let attack2 = new GapAttack(700,1000,1000,1300,0.15,0.04,0.12,3,50,"down",[],structuredClone(currentGravity));
+    let attack2 = new GapAttack(700,1000,1000,1300,0.15,0.04,0.12,3,10,"down",[],structuredClone(currentGravity));
 
     // attack.type = "gap";
     // attack.reaction = 700;
