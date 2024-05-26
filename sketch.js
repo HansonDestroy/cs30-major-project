@@ -450,7 +450,7 @@ class StabAttack{
 
   // bone aka zone move function
   moveBone(currentMillis){
-    print("dfd");
+    //print("dfd");
   }
 
   movePlayer(gravity) {
@@ -479,11 +479,6 @@ class StabAttack{
         ) {
           // move = false so you stop moving throught the wall
           move = false;
-          // gravity index change mode since you hit the ground
-          if (currentGravityIndex === 0){
-            currentGravityIndex = 1;
-            attackInitialTime = millis();
-          }
           // place the player at the below of the top edge
           player.y = platformEdge.y + platformEdge.w / 2 + heart.height * scaleOfPlayer / 2;
           if (keyIsDown(83)){
@@ -546,11 +541,6 @@ class StabAttack{
         ) {
           // move = false so you stop moving throught the wall
           move = false;
-          // gravity index change mode since you hit the ground
-          if (currentGravityIndex === 0){
-            currentGravityIndex = 1;
-            attackInitialTime = millis();
-          }
           // place the player at the top of bottom edge
           player.y = platformEdge.y - platformEdge.w / 2 - heart.height * scaleOfPlayer / 2;
           if (keyIsDown(87)){
@@ -614,11 +604,6 @@ class StabAttack{
         ) {
           // move = false so you stop moving throught the wall
           move = false;
-          // gravity index change mode since you hit the ground
-          if (currentGravityIndex === 0){
-            currentGravityIndex = 1;
-            attackInitialTime = millis();
-          }
           // place the player's right at the left of the right edge
           player.x = platformEdge.x - platformEdge.l / 2 - heart.width * scaleOfPlayer / 2;
           if (keyIsDown(65)){
@@ -681,11 +666,6 @@ class StabAttack{
         ) {
           // move = false so you stop moving throught the wall
           move = false;
-          // gravity index change mode since you hit the ground
-          if (currentGravityIndex === 0){
-            currentGravityIndex = 1;
-            attackInitialTime = millis();
-          }
           // place the player's left at the right of the left edge
           player.x = platformEdge.x + platformEdge.l / 2 + heart.width * scaleOfPlayer / 2;
           if (keyIsDown(68)){
@@ -749,7 +729,7 @@ class StabAttack{
     this.y = 0;
     this.dx = 0.005;
     this.dy = 0.005;
-    this.health = 92;
+    this.health = 92992;
   }
 
   displayImage(imageName){
@@ -1021,7 +1001,7 @@ function mainAttack(){
   attack.moveBone(currentMillis);
   attack.movePlayer(gravity);
   // display bones, player, action boxes, platform edge COMPLETED
-  displayBones(attack, currentMillis);
+  attack.displayBones(currentMillis);
   displayPlatformEdge();
   displayActions();
   displayPlayer(attack, gravity);
@@ -1155,7 +1135,7 @@ function innit(){
   }
   // reset timer
   attackInitialTime = millis();
-} function loadLevel1All(){
+} function loadLevel2All(){
   // level 1 innit COMPLETED
   // platformEdge COMPLETED
   let platformEdge1={x: 0.5 * height,y: 0.5 * height,l: 0.26 * height,w: 0.01 * height};
@@ -1378,7 +1358,7 @@ function innit(){
 
   currentGravity = [gravity1,gravity2,gravity3];
   
-} function loadLevel2All(){
+} function loadLevel1All(){
   // level 2 innit COMPLETED
   // platformEdge COMPLETED
   let platformEdge1={x: 0.5 * height,y: 0.5 * height,l: 0.51 * height,w: 0.01 * height};
@@ -1456,14 +1436,6 @@ function innit(){
 
     // gravity
     if (direction === "down"){
-      let gravity4 = {
-        mode: "on",
-        accerlerationX: 0,
-        dx: 0,
-        accerlerationY: 0.5 / 662 * height,
-        dy: 5 / 662 * height,
-      };
-
       let gravity5 = {
         mode: "on",
         accerlerationX: 0,
@@ -1473,19 +1445,9 @@ function innit(){
         dyOriginal: -3.5 / 662 * height,
       };
 
-      let gravity6 = {
-        mode: "off",
-        accerlerationX: 0.0,
-        dx: 0,
-        accerlerationY: 0,
-        dy: 0,
-      };
-      currentGravity = [gravity4,gravity5,gravity6];
+      currentGravityIndex = 0;
+      currentGravity = [gravity5];
     }
-
-    
-    currentGravity = [gravity1, gravity2, gravity3];
-    currentGravityIndex = 0;
 
     let attack2 = new GapAttack(700,1000,1000,1300,0.15,0.04,0.12,3,10,"down",[],structuredClone(currentGravity));
 
@@ -1569,8 +1531,7 @@ function innit(){
   let attackLast = {type: "next round"};
   currentBones.push(attackLast);
 
-  currentGravity = [gravity1,gravity2,gravity3];
-  
+  currentGravity = [gravity1,gravity2,gravity3]; 
 }
 
 // stop functions COMPLETED
