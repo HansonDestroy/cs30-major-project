@@ -15,7 +15,25 @@
 // optimization
 // reation time not starting form the attack period but only when it hit the ground for bone stab
 // display box only when it hit the ground for bone stab
-class StabAttack{
+
+class ParentAttack{
+  constructor(type,direction,gravity,zone,damge,cooldown,endTime){
+    // innit varible COMPLETED
+    this.type = type;
+    this.direction = direction;
+    this.gravity = gravity;
+    this.zone = zone;
+    this.damge = damge;
+    this.cooldown = cooldown;
+    this.endTime = endTime;
+  }
+
+  displayPlayer(){
+    player.displayImage(this.direction);
+  }
+}
+
+class StabAttack extends ParentAttack{
   constructor(reaction,changeTime,endTime,damage,cooldown,direction,heightOfZone,zone,gravity,boneTime){
     // innit varible COMPLETED
     this.type = "stab";
@@ -430,23 +448,23 @@ class StabAttack{
       }
     }
   } 
-} class GapAttack{
-  constructor(reaction,boneSpeedLeft,boneSpeedRight,endTime,gapHeight,gapWidth,gapDifference,damage,cooldown,direction,zone,gravity){
-    // innit varible COMPLETED
-    this.type = "gap";
-    this.reaction = reaction;
-    this.boneSpeedLeft = boneSpeedLeft;
-    this.boneSpeedRight = boneSpeedRight;
-    this.endTime = endTime;
-    this.gapHeight = gapHeight;
-    this.gapWidth = gapWidth;
-    this.gapDifference = gapDifference;
-    this.damage = damage;
-    this.cooldown = cooldown;
-    this.direction = direction;
-    this.zone = zone;
-    this.gravity = gravity;
-  }
+} class GapAttack extends ParentAttack{
+  // constructor(reaction,boneSpeedLeft,boneSpeedRight,endTime,gapHeight,gapWidth,gapDifference,damage,cooldown,direction,zone,gravity){
+  //   // innit varible COMPLETED
+  //   this.type = "gap";
+  //   this.reaction = reaction;
+  //   this.boneSpeedLeft = boneSpeedLeft;
+  //   this.boneSpeedRight = boneSpeedRight;
+  //   this.endTime = endTime;
+  //   this.gapHeight = gapHeight;
+  //   this.gapWidth = gapWidth;
+  //   this.gapDifference = gapDifference;
+  //   this.damage = damage;
+  //   this.cooldown = cooldown;
+  //   this.direction = direction;
+  //   this.zone = zone;
+  //   this.gravity = gravity;
+  // }
 
   // bone aka zone move function
   moveBone(currentMillis){
@@ -723,7 +741,9 @@ class StabAttack{
     rect(this.zone[3][0],this.zone[3][1],this.zone[3][2],this.zone[3][3]);
   }
 
-} class Player{
+}
+
+class Player{
   constructor(){
     this.x = 0;
     this.y = 0;
@@ -797,6 +817,7 @@ let heartRight;
 let megalovania;
 let canLoad = true;
 let finishLoad;
+
 function preloadWithPromise() {
   let promise = new Promise(
     function (resolve, reject) {
@@ -985,8 +1006,8 @@ function mainAttack(){
     attack = currentBones[currentAttackIndex];
 
     // when the level ends COMPLETED
-    // check if the attack type is next round then it is the last atack thus advance level COMPLETED
-    if (attack.type === "next round"){
+    // check if the attack type is next level then it is the last atack thus advance level COMPLETED
+    if (attack.type === "next level"){
       state = "action time";
       return 0;
     }
@@ -1002,9 +1023,9 @@ function mainAttack(){
   attack.movePlayer(gravity);
   // display bones, player, action boxes, platform edge COMPLETED
   attack.displayBones(currentMillis);
+  attack.displayPlayer();
   displayPlatformEdge();
   displayActions();
-  displayPlayer(attack, gravity);
   
   
   // health bar and health COMPLETED
@@ -1353,7 +1374,7 @@ function innit(){
   }
 
   // attack last or attack 3
-  let attackLast = {type: "next round"};
+  let attackLast = {type: "next level"};
   currentBones.push(attackLast);
 
   currentGravity = [gravity1,gravity2,gravity3];
@@ -1528,7 +1549,7 @@ function innit(){
   }
 
   // attack last
-  let attackLast = {type: "next round"};
+  let attackLast = {type: "next level"};
   currentBones.push(attackLast);
 
   currentGravity = [gravity1,gravity2,gravity3]; 
