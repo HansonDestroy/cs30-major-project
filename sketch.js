@@ -12,18 +12,19 @@
 
 
 // note to my self
-// optimization
-// reation time not starting form the attack period but only when it hit the ground for bone stab
-// display box only when it hit the ground for bone stab
+// change the INPUT order of constructor
+// see IMPORTANT!!!
+// main attack detect teleport attack
+// test if return works in attack skip
 
 class ParentAttack{
-  constructor(type,direction,gravity,zone,damge,cooldown,endTime){
+  constructor(type,direction,gravity,zone,damage,cooldown,endTime){
     // innit varible COMPLETED
     this.type = type;
     this.direction = direction;
     this.gravity = gravity;
     this.zone = zone;
-    this.damge = damge;
+    this.damage = damage;
     this.cooldown = cooldown;
     this.endTime = endTime;
   }
@@ -36,18 +37,20 @@ class ParentAttack{
 class StabAttack extends ParentAttack{
   constructor(reaction,changeTime,endTime,damage,cooldown,direction,heightOfZone,zone,gravity,boneTime){
     // innit varible COMPLETED
+    super("stab",direction,gravity,zone,damage,cooldown,endTime);
     this.type = "stab";
-    this.reaction = reaction;
-    this.changeTime = changeTime;
-    this.endTime = endTime;
+    this.direction = direction;
+    this.gravity = gravity;
+    this.zone = zone;
     this.damage = damage;
     this.cooldown = cooldown;
-    this.direction = direction;
+    this.endTime = endTime;
+
+    this.reaction = reaction;
+    this.boneTime = boneTime;
     this.height = heightOfZone;
     this.currentHeight = heightOfZone;
-    this.zone = zone;
-    this.gravity = gravity;
-    this.boneTime = boneTime;
+    this.changeTime = changeTime;
   }
 
   calculateDamageZone(platformEdge){
@@ -449,26 +452,27 @@ class StabAttack extends ParentAttack{
     }
   } 
 } class GapAttack extends ParentAttack{
-  // constructor(reaction,boneSpeedLeft,boneSpeedRight,endTime,gapHeight,gapWidth,gapDifference,damage,cooldown,direction,zone,gravity){
-  //   // innit varible COMPLETED
-  //   this.type = "gap";
-  //   this.reaction = reaction;
-  //   this.boneSpeedLeft = boneSpeedLeft;
-  //   this.boneSpeedRight = boneSpeedRight;
-  //   this.endTime = endTime;
-  //   this.gapHeight = gapHeight;
-  //   this.gapWidth = gapWidth;
-  //   this.gapDifference = gapDifference;
-  //   this.damage = damage;
-  //   this.cooldown = cooldown;
-  //   this.direction = direction;
-  //   this.zone = zone;
-  //   this.gravity = gravity;
-  // }
+  constructor(reaction,boneSpeedLeft,boneSpeedRight,endTime,gapHeight,gapWidth,gapDifference,damage,cooldown,direction,zone,gravity){
+    // innit varible COMPLETED
+        super("gap",direction,gravity,zone,damage,cooldown,endTime);
+    this.type = "gap";
+    this.direction = direction;
+    this.gravity = gravity;
+    this.zone = zone;
+    this.damage = damage;
+    this.cooldown = cooldown;
+    this.endTime = endTime;
+
+    this.reaction = reaction;
+    this.boneSpeedLeft = boneSpeedLeft;
+    this.boneSpeedRight = boneSpeedRight;
+    this.gapHeight = gapHeight;
+    this.gapWidth = gapWidth;
+    this.gapDifference = gapDifference;
+  }
 
   // bone aka zone move function
   moveBone(currentMillis){
-    //print("dfd");
   }
 
   movePlayer(gravity) {
@@ -890,7 +894,19 @@ function draw() {
   else if (state !== "death"){
     
     // main attack funciton TEMP
-    mainAttack();
+    if (mainAttack() === "try again"){
+      mainAttack()
+    }
+
+    displayPlatformEdge();
+    displayActions();
+    // health bar and health COMPLETED
+    text(player.health,50,50);
+    rect(300,50,player.health*2,30);
+    if (player.health < 0){
+      state = "death";
+    }
+
   }
   else{
     // death screen
@@ -989,6 +1005,8 @@ function mainAttack(){
   // Change gravity to the right mode depending on the timming of attack.changeTime
   if (attack.type === "stab"){
     if (currentMillis - attackInitialTime > attack.changeTime){
+      // changeTime means gravity is off
+      attack.direction = "heart"
       currentGravityIndex = 2;
       gravity = currentGravity[currentGravityIndex];
     } 
@@ -1009,13 +1027,17 @@ function mainAttack(){
     // check if the attack type is next level then it is the last atack thus advance level COMPLETED
     if (attack.type === "next level"){
       state = "action time";
-      return 0;
+      return "don't again";
     }
 
-    // reset gravity
-    currentGravityIndex = 0;
-    currentGravity = attack.gravity;
-    gravity = currentGravity[currentGravityIndex];
+    // reset gravity or keep gravity
+    if (attack.gravity.mode !== "previous"){
+      currentGravityIndex = 0;
+      currentGravity = attack.gravity;
+      gravity = currentGravity[currentGravityIndex];
+    }
+
+    return "try again";
   }
 
   // move player TEMP
@@ -1024,17 +1046,6 @@ function mainAttack(){
   // display bones, player, action boxes, platform edge COMPLETED
   attack.displayBones(currentMillis);
   attack.displayPlayer();
-  displayPlatformEdge();
-  displayActions();
-  
-  
-  // health bar and health COMPLETED
-  text(player.health,50,50);
-  rect(300,50,player.health*2,30);
-  if (player.health < 0){
-    state = "death";
-  }
-
   // a way to track the player DEBUG
   // line(player.x, 0, player.x, height);
   // line(0, player.y, width, player.y);
@@ -1449,8 +1460,15 @@ function innit(){
   currentAttackIndex = 0;
   currentBones = [attack1];
   
-  // attack 2 TEMP
+  // attack Innit 2
 
+  // IMPORTANT!!!
+
+  // teleport to the right place
+    // read the teleport message
+  // set the right gravity
+
+  // attack 2 TEMP
   for (let i = 0; i < 6; i++){
 
     let direction = "down";
@@ -1458,7 +1476,7 @@ function innit(){
     // gravity
     if (direction === "down"){
       let gravity5 = {
-        mode: "on",
+        mode: "previous",
         accerlerationX: 0,
         dx: 0,
         accerlerationY: 0.1 / 662 * height,
