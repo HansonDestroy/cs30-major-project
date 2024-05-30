@@ -35,8 +35,7 @@ class ParentAttack{
 }
 
 class StabAttack extends ParentAttack{
-  constructor(reaction,changeTime,endTime,damage,cooldown,direction,heightOfZone,zone,gravity,boneTime){
-    // innit varible COMPLETED
+  constructor(direction,gravity,zone,damage,cooldown,endTime,reaction,boneTime,heightOfZone,changeTime){
     super("stab",direction,gravity,zone,damage,cooldown,endTime);
     this.type = "stab";
     this.direction = direction;
@@ -452,9 +451,9 @@ class StabAttack extends ParentAttack{
     }
   } 
 } class GapAttack extends ParentAttack{
-  constructor(reaction,boneSpeedLeft,boneSpeedRight,endTime,gapHeight,gapWidth,gapDifference,damage,cooldown,direction,zone,gravity){
+  constructor(direction,gravity,zone,damage,cooldown,endTime,reaction,boneSpeedLeft,boneSpeedRight,gapHeight,gapWidth,gapDifference){
     // innit varible COMPLETED
-        super("gap",direction,gravity,zone,damage,cooldown,endTime);
+    super("gap",direction,gravity,zone,damage,cooldown,endTime);
     this.type = "gap";
     this.direction = direction;
     this.gravity = gravity;
@@ -895,7 +894,7 @@ function draw() {
     
     // main attack funciton TEMP
     if (mainAttack() === "try again"){
-      mainAttack()
+      mainAttack();
     }
 
     displayPlatformEdge();
@@ -1006,7 +1005,7 @@ function mainAttack(){
   if (attack.type === "stab"){
     if (currentMillis - attackInitialTime > attack.changeTime){
       // changeTime means gravity is off
-      attack.direction = "heart"
+      attack.direction = "heart";
       currentGravityIndex = 2;
       gravity = currentGravity[currentGravityIndex];
     } 
@@ -1213,8 +1212,8 @@ function innit(){
   currentGravityIndex = 0;
 
   // initialize the varible of the attack 1 level 1 COMPLETED
-  let attack1 = new StabAttack(1000, 1200, 3000, 7, 80, "down", 0.08 * height, [], structuredClone(currentGravity), 1150);
-
+  let attack1 = new StabAttack("down", structuredClone(currentGravity), [], 7, 80, 3000, 1000, 1150, 0.08 * height, 1200);
+  
   // attack1.type = "stab";
   // attack1.reaction = 1000;
   // attack1.changeTime = 1200;
@@ -1360,8 +1359,8 @@ function innit(){
     }
 
     // initialize the varible of the attack 1 level 1 COMPLETED
-    let attack2 = new StabAttack(600, 1000, 1000, 3, 30, directions[randomNumber], 0.02 * height, [], structuredClone(currentGravity), 800);
 
+    let attack2 = new StabAttack(directions[randomNumber], structuredClone(currentGravity), [], 3, 30, 1000, 600, 800, 0.02 * height, 1000);
     // attack2.type = "stab";
     // attack2.reaction = 600;
     // attack2.changeTime = 1000;
@@ -1436,7 +1435,7 @@ function innit(){
   currentGravityIndex = 0;
 
   // initialize the varible of the attack 1 level 2 COMPLETED
-  let attack1 = new StabAttack(1000, 1200, 3000, 7, 80, "down", 0.08 * height, [], structuredClone(currentGravity), 1150);
+  let attack1 = new StabAttack("down", structuredClone(currentGravity), [], 7, 80, 3000, 1000, 1150, 0.08 * height, 1200);
 
   // attack1.type = "stab";
   // attack1.reaction = 1000;
@@ -1465,7 +1464,7 @@ function innit(){
   // IMPORTANT!!!
 
   // teleport to the right place
-    // read the teleport message
+  // read the teleport message
   // set the right gravity
 
   // attack 2 TEMP
@@ -1487,9 +1486,7 @@ function innit(){
       currentGravityIndex = 0;
       currentGravity = [gravity5];
     }
-
-    let attack2 = new GapAttack(700,1000,1000,1300,0.15,0.04,0.12,3,10,"down",[],structuredClone(currentGravity));
-
+    let attack2 = new GapAttack("down",structuredClone(currentGravity),[],3,10,1300,700,1000,1000,0.15,0.04,0.12);
     // attack.type = "gap";
     // attack.reaction = 700;
     // attack.boneSpeedLeft = 1000;
