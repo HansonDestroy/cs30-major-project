@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable brace-style */
 // Sans Boss fight from Undertale
 // Hanson
@@ -749,13 +750,13 @@ class StabAttack extends ParentAttack{
 
 class TeleAttack{
   constructor(location, currentPlatformEdge){
-    this.type = "teleport"
+    this.type = "teleport";
     if (location === "mid mid"){
       // // mid mid spawn
       // player.x = currentPlatformEdge[2].x;
       // player.y = currentPlatformEdge[1].y;
-      this.x = currentPlatformEdge[2].x
-      this.y = currentPlatformEdge[1].y
+      this.x = currentPlatformEdge[2].x;
+      this.y = currentPlatformEdge[1].y;
     }
     else if (location === "bottom mid"){
       // bottom mid spawn

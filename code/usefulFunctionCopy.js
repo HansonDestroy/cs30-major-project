@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 
 // load everthing COMPLETE
 // could use promise to preload OPTIONAL
@@ -18,7 +19,9 @@ function preloadWithPromise() {
   let promise = new Promise(
     function (resolve, reject) {
       if (canLoad){
-        megalovania = loadSound("assets/audio/Megalovania.mp3", ()=>{resolve();});
+        megalovania = loadSound("assets/audio/Megalovania.mp3", ()=>{
+          resolve();
+        });
       }
       else{
         reject();
@@ -126,14 +129,6 @@ function mainAttack(){
   //initailize COMPLETED
   let currentMillis = millis();
   let attack = currentBones[currentAttackIndex];
-  // teleport if attack.type = teleport
-  if (attack.type === "teleport"){
-    player.x = attack.x
-    player.y = attack.y
-    currentAttackIndex++
-    return "try again"
-  }
-
   let gravity = currentGravity[currentGravityIndex];
   // Change gravity to the right mode depending on the timming of attack.changeTime
   if (attack.type === "stab"){
@@ -163,6 +158,15 @@ function mainAttack(){
       return "don't again";
     }
 
+    // when the level ends COMPLETED
+    // teleport if attack.type = teleport
+    if (attack.type === "teleport"){
+      player.x = attack.x;
+      player.y = attack.y;
+      currentAttackIndex++;
+      return "try again";
+    }
+    
     // reset gravity or keep gravity
     if (attack.gravity.mode !== "previous"){
       currentGravityIndex = 0;
@@ -209,7 +213,8 @@ function displayBones(attack, currentMillis){
       // animation of sans throwing his hands down OPTIONAL
       // code here
 
-    } else{
+    }
+    else{
       // your reation time have passed
       // therefore your grace period is over and the zone is filled with white now
       rectMode(CENTER);
@@ -302,7 +307,27 @@ function innit(){
     // - heart.height * scaleOfPlayer / 2;
   }
   // reset timer
-  attackInitialTime = millis();
+  attackInitialTime = currentMillis;
+
+  currentAttackIndex = 0;
+  attack = currentBones[currentAttackIndex];
+
+  // when the level ends COMPLETED
+  // check if the attack type is next level then it is the last atack thus advance level COMPLETED
+  if (attack.type === "next level"){
+    state = "action time";
+    return "don't again";
+  }
+
+  // when the level ends COMPLETED
+  // teleport if attack.type = teleport
+  if (attack.type === "teleport"){
+    player.x = attack.x;
+    player.y = attack.y;
+    currentAttackIndex++;
+    return "try again";
+  }
+    
 } function loadLevel2All(){
   // level 1 innit COMPLETED
   // platformEdge COMPLETED
@@ -318,8 +343,8 @@ function innit(){
   currentPlatformEdge = level1PlatformEdge;
 
   // first Teteloport
-  let teleAttack1 = new TeleAttack("mid mid", level1PlatformEdge)
-  currentBones = [teleAttack1]
+  let teleAttack1 = new TeleAttack("mid mid", level1PlatformEdge);
+  currentBones = [teleAttack1];
 
   // bones COMPLETD
   // attack 1
@@ -375,8 +400,11 @@ function innit(){
   attack1.currentHeight = 0;
   
   // push the attack in COMPLETED
-  currentAttackIndex = 0;
   currentBones.push(attack1);
+
+  // tele
+  let teleAttack2 = new TeleAttack("bottom mid", level2PlatformEdge);
+  currentBones.push(teleAttack2);
   
   // attack 2
 
@@ -544,9 +572,8 @@ function innit(){
   let level2PlatformEdge = [platformEdge1,platformEdge2,platformEdge3,platformEdge4];
   currentPlatformEdge = level2PlatformEdge;
 
-  let teleAttack1 = new TeleAttack("bottom mid", level2PlatformEdge)
-  print(teleAttack1)
-  currentBones = [teleAttack1]
+  let teleAttack1 = new TeleAttack("mid mid", level2PlatformEdge);
+  currentBones = [teleAttack1];
 
   // bones COMPLETD
   // attack 1
@@ -601,9 +628,14 @@ function innit(){
   attack1.currentHeight = 0;
 
   // push the attack in COMPLETED
-  currentAttackIndex = 0;
   currentBones.push(attack1);
   
+
+  // tele
+  let teleAttack2 = new TeleAttack("bottom mid", level2PlatformEdge);
+  currentBones.push(teleAttack2);
+
+
   // attack Innit 2
 
   // IMPORTANT!!!

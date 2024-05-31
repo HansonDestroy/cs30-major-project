@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable brace-style */
 // Sans Boss fight from Undertale
 // Hanson
@@ -50,7 +51,7 @@ let mode = 0;
 let actions = [];
 let action = 0;
 
-let currentBones = [];
+let currentBones;
 let currentAttackIndex;
 let currentPlatformEdge;
 let currentGravity;
