@@ -163,8 +163,10 @@ function mainAttack(){
     if (attack.type === "teleport"){
       player.x = attack.x;
       player.y = attack.y;
+      
+      print(player.x, player.y)
       currentAttackIndex++;
-      return "try again";
+      attack = currentBones[currentAttackIndex];
     }
     
     // reset gravity or keep gravity
@@ -174,6 +176,8 @@ function mainAttack(){
       gravity = currentGravity[currentGravityIndex];
     }
 
+    
+    print(player.x, player.y)
     return "try again";
   }
 

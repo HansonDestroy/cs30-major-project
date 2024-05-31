@@ -768,7 +768,7 @@ class TeleAttack{
       this.x = currentPlatformEdge[platformEdgeOrder.get("down")].x;
       // the y need to stand on top of the edge
       this.y = currentPlatformEdge[platformEdgeOrder.get("down")].y
-      - currentPlatformEdge[platformEdgeOrder.get("down")].w / 2 
+      - currentPlatformEdge[platformEdgeOrder.get("down")].w / 2
       - heart.height * scaleOfPlayer / 2;
     }
   }
@@ -784,6 +784,7 @@ class Player{
   }
 
   displayImage(imageName){
+    
     if (imageName === "heart"){
       image(heart, this.x, this.y, heart.width * scaleOfPlayer, heart.height * scaleOfPlayer);
     }
