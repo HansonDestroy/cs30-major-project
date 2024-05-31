@@ -307,7 +307,7 @@ function innit(){
     // - heart.height * scaleOfPlayer / 2;
   }
   // reset timer
-  attackInitialTime = currentMillis;
+  attackInitialTime = millis();
 
   currentAttackIndex = 0;
   attack = currentBones[currentAttackIndex];
@@ -403,7 +403,7 @@ function innit(){
   currentBones.push(attack1);
 
   // tele
-  let teleAttack2 = new TeleAttack("bottom mid", level2PlatformEdge);
+  let teleAttack2 = new TeleAttack("mid mid", level1PlatformEdge);
   currentBones.push(teleAttack2);
   
   // attack 2
@@ -640,8 +640,6 @@ function innit(){
 
   // IMPORTANT!!!
 
-  // teleport to the right place
-  // read the teleport message
   // set the right gravity
 
   // attack 2 TEMP
