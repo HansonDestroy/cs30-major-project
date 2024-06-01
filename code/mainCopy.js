@@ -96,6 +96,7 @@ function setup() {
   // startMusic = true;
   finishLoad = preloadWithPromise();
 }
+
 // draw
 function draw() {
   // draw TEMP
@@ -116,7 +117,6 @@ function draw() {
     
     // main attack funciton TEMP
     while (mainAttack() === "try again"){
-      mainAttack();
     }
 
     displayPlatformEdge();

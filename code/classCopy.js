@@ -770,8 +770,9 @@ class TeleAttack{
       this.y = currentPlatformEdge[platformEdgeOrder.get("down")].y
       - currentPlatformEdge[platformEdgeOrder.get("down")].w / 2
       - heart.height * scaleOfPlayer / 2;
-    }
+    }  
   }
+
 }
 
 class Player{

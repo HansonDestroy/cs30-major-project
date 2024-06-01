@@ -97,10 +97,10 @@ function keyTyped(){
       mode--;
     }
     else if (key === " "){
+      scaleOfPlayer = 0.000045 * height;
       state = modes[mode].word;
       level++;
       innit();
-      scaleOfPlayer = 0.000045 * height;
     }
     mode += modes.length;
     mode = mode % modes.length;
@@ -163,8 +163,6 @@ function mainAttack(){
     if (attack.type === "teleport"){
       player.x = attack.x;
       player.y = attack.y;
-      
-      print(player.x, player.y)
       currentAttackIndex++;
       attack = currentBones[currentAttackIndex];
     }
@@ -176,8 +174,6 @@ function mainAttack(){
       gravity = currentGravity[currentGravityIndex];
     }
 
-    
-    print(player.x, player.y)
     return "try again";
   }
 
