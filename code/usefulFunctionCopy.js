@@ -130,6 +130,7 @@ function mainAttack(){
   let currentMillis = millis();
   let attack = currentBones[currentAttackIndex];
   let gravity = currentGravity[currentGravityIndex];
+
   // Change gravity to the right mode depending on the timming of attack.changeTime
   if (attack.type === "stab"){
     if (currentMillis - attackInitialTime > attack.changeTime){
@@ -141,7 +142,7 @@ function mainAttack(){
   }
 
   // When the attack ends COMPLETED
-  if (currentMillis - attackInitialTime > attack.endTime){
+  if (currentMillis - attackInitialTime >= attack.endTime){
     // if the time in the attack excessed the end time then end it by moving to the next attack    
 
     // increase attack index and
@@ -164,6 +165,8 @@ function mainAttack(){
       player.x = attack.x;
       player.y = attack.y;
       currentAttackIndex++;
+      currentGravityIndex = 0;
+      currentGravity = currentBones[currentAttackIndex].gravity;
       return "try again";
     }
     
@@ -193,67 +196,7 @@ function mainAttack(){
 }
 
 // display functions
-function displayBones(attack, currentMillis){
-  // damage is built in this function other than displaying bones
-  if (attack.type === "stab"){
-    // the attack is stab
-    // draw the zone and determine if damage need to be taken
-    if (currentMillis - attackInitialTime < attack.reaction){
-      // if the time elapsed in this level(currentMillis - time) is within(<) the reaction time(attack.reaction)
-      // then color the zone green as warning
-
-      // note if it is dropping to the ground at gravity1 or gravityIndex == 0 then do not display the box at all TEMP
-      if (currentGravityIndex !== 0){
-        // condition met draw green zone
-        rectMode(CENTER);
-        fill(0,150,0);
-        rect(attack.zone[0],attack.zone[1],attack.zone[2],attack.zone[3]);
-      }
-
-      // animation of sans throwing his hands down OPTIONAL
-      // code here
-
-    }
-    else{
-      // your reation time have passed
-      // therefore your grace period is over and the zone is filled with white now
-      rectMode(CENTER);
-      fill(150,150,150);
-      rect(attack.zone[0],attack.zone[1],attack.zone[2],attack.zone[3]);
-      
-      // take damage
-      attack.takeDamage(currentMillis);
-
-      // bone picture: draw image of bone comming up
-      // bone picture = current height
-    }
-  }
-  if (attack.type === "gap"){
-    if (state !== "dsfkad;lfksal;dkasdfk;slakdf;lak"){
-      rectMode(CENTER);
-      fill(150,150,150);
-      rect(attack.zone[0][0],attack.zone[0][1],attack.zone[0][2],attack.zone[0][3]);
-      rect(attack.zone[1][0],attack.zone[1][1],attack.zone[1][2],attack.zone[1][3]);
-      rect(attack.zone[2][0],attack.zone[2][1],attack.zone[2][2],attack.zone[2][3]);
-      rect(attack.zone[3][0],attack.zone[3][1],attack.zone[3][2],attack.zone[3][3]);
-    }
-    else{
-      rectMode(CENTER);
-      fill(150,150,150);
-      rect(attack.zone[0],attack.zone[1],attack.zone[2],attack.zone[3]);
-      if (
-        player.x < attack.zone[0] + attack.zone[2] / 2 &&
-        player.x > attack.zone[0] - attack.zone[2] / 2 &&
-        player.y < attack.zone[1] + attack.zone[3] / 2 &&
-        player.y > attack.zone[1] - attack.zone[3] / 2 &&
-        damageLastTime + attack.cooldown < currentMillis) {
-        player.health -= attack.damage;
-        damageLastTime = millis();
-      }
-    }
-
-  }
-} function displayPlatformEdge(){
+function displayPlatformEdge(){
   // given the currentPlatformEdge display each of them COMPLETED
   for (let platformEdge of currentPlatformEdge){
     rectMode(CENTER);
@@ -267,18 +210,7 @@ function displayBones(attack, currentMillis){
   for (let actionText of actions){
     text(actionText.word,actionText.positionX,actionText.positionY);
   }
-} function displayPlayer(attack, gravity){
-  // COMPLETED
-  // display red heart if no gravity
-  if (gravity.mode === "off"){
-    player.displayImage("heart");
-  }
-  // display the blue heart at the right direction. Need A Direction
-  else{
-    player.displayImage(attack.direction);
-  }
-
-} 
+}
 
 
 
@@ -328,7 +260,7 @@ function innit(){
     return "try again";
   }
     
-} function loadLevel2All(){
+} function loadLevel1All(){
   // level 1 innit COMPLETED
   // platformEdge COMPLETED
   let platformEdge1={x: 0.5 * height,y: 0.5 * height,l: 0.26 * height,w: 0.01 * height};
@@ -558,7 +490,7 @@ function innit(){
 
   currentGravity = [gravity1,gravity2,gravity3];
   
-} function loadLevel1All(){
+} function loadLevel2All(){
   // level 2 innit COMPLETED
   // platformEdge COMPLETED
   let platformEdge1={x: 0.5 * height,y: 0.5 * height,l: 0.51 * height,w: 0.01 * height};
