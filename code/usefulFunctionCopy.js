@@ -1,286 +1,6 @@
 /* eslint-disable no-undef */
 
 // load everthing COMPLETE
-// could use promise to preload OPTIONAL
-function preload() {
-  // preload COMPLETED
-  heart = loadImage("assets/image/heart.png");
-  heartDown = loadImage("assets/image/heartDown.png");
-  heartUp = loadImage("assets/image/heartUp.png");
-  heartLeft = loadImage("assets/image/heartLeft.png");
-  heartRight = loadImage("assets/image/heartRight.png");
-  // preloadWithPromise()
-  // megalovania = loadSound("assets/audio/Megalovania.mp3");
-}
-
-// music
-
-function preloadWithPromise() {
-  let promise = new Promise(
-    function (resolve, reject) {
-      if (canLoad){
-        megalovania = loadSound("assets/audio/Megalovania.mp3", ()=>{
-          resolve();
-        });
-      }
-      else{
-        reject();
-      }
-    });
-  return promise;
-}
-
-function mouseReleased(){
-  if (startMusic){
-    finishLoad.then(function () {
-      megalovania.jump(0);
-      megalovania.setLoop(true);
-      megalovania.play();
-      startMusic = false;
-    }).catch(function () {
-      console.log("Sorry Pending");
-    });
-  }
-}
-
-function drawStartScreen(){
-  // draw the start screen COMPLETED
-  // innitailize
-  const TITLE_HIEGHT = 0.25;
-  const TITLE_WIDTH = 0.6;
-  const MODE_WIDTH = 0.1;
-  const MODE_HEIGHT = 0.45;
-  const MODE_HEIGHT_DIFFERENCE = 0.1;
-  // display the title being: Sans Boss Fight from Undertale
-  // formating
-  fill("white");
-  textAlign(CENTER,CENTER);
-  textSize(1);
-  for(let i = 0; textWidth("Sans Boss Fight from Undertale") < TITLE_WIDTH * width; i++){
-    textSize(i);
-  }
-  // display text
-  text("Sans Boss Fight from Undertale", width / 2, TITLE_HIEGHT * height);
-
-  // display all the modes being: normal, endless....
-  // formating
-  fill("white");
-  textAlign(LEFT,CENTER);
-  textSize(1);
-  for(let i = 1; textWidth("Normal") < MODE_WIDTH * width; i++){
-    textSize(i);
-  }
-  
-  // display text of modes
-  for(let modeText of modes){
-    text(modeText.word, width/2, (MODE_HEIGHT + MODE_HEIGHT_DIFFERENCE * modeText.position) * height);
-  }
-
-  // display heart at the right mode
-  const HEART_X = 0.45;
-  imageMode(CENTER);
-  player.x = HEART_X * width;
-  player.y = (MODE_HEIGHT + MODE_HEIGHT_DIFFERENCE * modes[mode].position) * height;
-  player.displayImage("heart");
-
-}
-
-// change action or mode or tying
-function keyTyped(){
-  // chage mode or action COMPLETED
-  // if key typed at the starting screen
-  if (state === "starting screen"){
-    if (key === "s"){
-      mode++;
-    }
-    else if (key === "w"){
-      mode--;
-    }
-    else if (key === " "){
-      scaleOfPlayer = 0.000045 * height;
-      state = modes[mode].word;
-      level++;
-      innit();
-    }
-    mode += modes.length;
-    mode = mode % modes.length;
-  }
-
-  // if key typed at the action time
-  if (state === "action time"){
-    if (key === "d"){
-      action++;
-    }
-    if (key === "a"){
-      action--;
-    }
-    if (key === " "){
-      level++;
-      innit();
-      state = modes[mode].word;
-    }
-    action += modes.length;
-    action = action % actions.length;
-  }
-  
-}
-
-function mainAttack(){
-  //initailize COMPLETED
-  let currentMillis = millis();
-  let attack = currentBones[currentAttackIndex];
-  let gravity = currentGravity[currentGravityIndex];
-  // Change gravity to the right mode depending on the timming of attack.changeTime
-  if (attack.type === "stab"){
-    if (currentMillis - attackInitialTime > attack.changeTime){
-      // changeTime means gravity is off
-      attack.direction = "heart";
-      currentGravityIndex = 2;
-      gravity = currentGravity[currentGravityIndex];
-    } 
-  }
-
-  // When the attack ends COMPLETED
-  if (currentMillis - attackInitialTime > attack.endTime){
-    // if the time in the attack excessed the end time then end it by moving to the next attack    
-
-    // increase attack index and
-    // reset everything else
-    attackInitialTime = currentMillis;
-
-    currentAttackIndex++;
-    attack = currentBones[currentAttackIndex];
-
-    // when the level ends COMPLETED
-    // check if the attack type is next level then it is the last atack thus advance level COMPLETED
-    if (attack.type === "next level"){
-      state = "action time";
-      return "don't again";
-    }
-
-    // when the level ends COMPLETED
-    // teleport if attack.type = teleport
-    if (attack.type === "teleport"){
-      player.x = attack.x;
-      player.y = attack.y;
-      currentAttackIndex++;
-      attack = currentBones[currentAttackIndex];
-    }
-    
-    // reset gravity or keep gravity
-    if (attack.gravity.mode !== "previous"){
-      currentGravityIndex = 0;
-      currentGravity = attack.gravity;
-      gravity = currentGravity[currentGravityIndex];
-    }
-
-    return "try again";
-  }
-
-  // move player TEMP
-  attack.moveBone(currentMillis);
-  attack.movePlayer(gravity);
-  // display bones, player, action boxes, platform edge COMPLETED
-  attack.displayBones(currentMillis);
-  attack.displayPlayer();
-
-  // a way to track the player DEBUG
-  // line(player.x, 0, player.x, height);
-  // line(0, player.y, width, player.y);
-  // circle(player.x, player.y, heart.width * scaleOfPlayer)
-
-  return "don't again";
-}
-
-// display functions
-function displayBones(attack, currentMillis){
-  // damage is built in this function other than displaying bones
-  if (attack.type === "stab"){
-    // the attack is stab
-    // draw the zone and determine if damage need to be taken
-    if (currentMillis - attackInitialTime < attack.reaction){
-      // if the time elapsed in this level(currentMillis - time) is within(<) the reaction time(attack.reaction)
-      // then color the zone green as warning
-
-      // note if it is dropping to the ground at gravity1 or gravityIndex == 0 then do not display the box at all TEMP
-      if (currentGravityIndex !== 0){
-        // condition met draw green zone
-        rectMode(CENTER);
-        fill(0,150,0);
-        rect(attack.zone[0],attack.zone[1],attack.zone[2],attack.zone[3]);
-      }
-
-      // animation of sans throwing his hands down OPTIONAL
-      // code here
-
-    }
-    else{
-      // your reation time have passed
-      // therefore your grace period is over and the zone is filled with white now
-      rectMode(CENTER);
-      fill(150,150,150);
-      rect(attack.zone[0],attack.zone[1],attack.zone[2],attack.zone[3]);
-      
-      // take damage
-      attack.takeDamage(currentMillis);
-
-      // bone picture: draw image of bone comming up
-      // bone picture = current height
-    }
-  }
-  if (attack.type === "gap"){
-    if (state !== "dsfkad;lfksal;dkasdfk;slakdf;lak"){
-      rectMode(CENTER);
-      fill(150,150,150);
-      rect(attack.zone[0][0],attack.zone[0][1],attack.zone[0][2],attack.zone[0][3]);
-      rect(attack.zone[1][0],attack.zone[1][1],attack.zone[1][2],attack.zone[1][3]);
-      rect(attack.zone[2][0],attack.zone[2][1],attack.zone[2][2],attack.zone[2][3]);
-      rect(attack.zone[3][0],attack.zone[3][1],attack.zone[3][2],attack.zone[3][3]);
-    }
-    else{
-      rectMode(CENTER);
-      fill(150,150,150);
-      rect(attack.zone[0],attack.zone[1],attack.zone[2],attack.zone[3]);
-      if (
-        player.x < attack.zone[0] + attack.zone[2] / 2 &&
-        player.x > attack.zone[0] - attack.zone[2] / 2 &&
-        player.y < attack.zone[1] + attack.zone[3] / 2 &&
-        player.y > attack.zone[1] - attack.zone[3] / 2 &&
-        damageLastTime + attack.cooldown < currentMillis) {
-        player.health -= attack.damage;
-        damageLastTime = millis();
-      }
-    }
-
-  }
-} function displayPlatformEdge(){
-  // given the currentPlatformEdge display each of them COMPLETED
-  for (let platformEdge of currentPlatformEdge){
-    rectMode(CENTER);
-    fill("white");
-    noStroke();
-    rect(platformEdge.x, platformEdge.y, platformEdge.l, platformEdge.w);
-  }
-} function displayActions(){
-  // display all the text of actions COMPLETED
-  textAlign(LEFT);
-  for (let actionText of actions){
-    text(actionText.word,actionText.positionX,actionText.positionY);
-  }
-} function displayPlayer(attack, gravity){
-  // COMPLETED
-  // display red heart if no gravity
-  if (gravity.mode === "off"){
-    player.displayImage("heart");
-  }
-  // display the blue heart at the right direction. Need A Direction
-  else{
-    player.displayImage(attack.direction);
-  }
-
-} 
-
-
 
 // load levels
 function innit(){
@@ -309,8 +29,8 @@ function innit(){
   // reset timer
   attackInitialTime = millis();
 
-  currentAttackIndex = 0;
-  attack = currentBones[currentAttackIndex];
+  currentBonesIndex = 0;
+  attack = currentBones[currentBonesIndex];
 
   // when the level ends COMPLETED
   // check if the attack type is next level then it is the last atack thus advance level COMPLETED
@@ -324,7 +44,7 @@ function innit(){
   if (attack.type === "teleport"){
     player.x = attack.x;
     player.y = attack.y;
-    currentAttackIndex++;
+    currentBonesIndex++;
     return "try again";
   }
     
@@ -342,9 +62,18 @@ function innit(){
   let level1PlatformEdge = [platformEdge1,platformEdge2,platformEdge3,platformEdge4];
   currentPlatformEdge = level1PlatformEdge;
 
+  // innitalize
+  // useless code right now
+  currentBones = [];
+  currentBonesIndex = 0;
+  currentGravity = [];
+  currentGravityIndex = 0;
+
   // first Teteloport
   let teleAttack1 = new TeleAttack("mid mid", level1PlatformEdge);
   currentBones = [teleAttack1];
+
+  // first real attack
 
   // bones COMPLETD
   // attack 1
@@ -743,6 +472,284 @@ function innit(){
   currentBones.push(attackLast);
 
   currentGravity = [gravity1,gravity2,gravity3]; 
+}
+
+// music
+// could use promise to preload OPTIONAL
+function preload() {
+  // preload COMPLETED
+  heart = loadImage("assets/image/heart.png");
+  heartDown = loadImage("assets/image/heartDown.png");
+  heartUp = loadImage("assets/image/heartUp.png");
+  heartLeft = loadImage("assets/image/heartLeft.png");
+  heartRight = loadImage("assets/image/heartRight.png");
+  // preloadWithPromise()
+  // megalovania = loadSound("assets/audio/Megalovania.mp3");
+} function preloadWithPromise() {
+  let promise = new Promise(
+    function (resolve, reject) {
+      if (canLoad){
+        megalovania = loadSound("assets/audio/Megalovania.mp3", ()=>{
+          resolve();
+        });
+      }
+      else{
+        reject();
+      }
+    });
+  return promise;
+} function mouseReleased(){
+  if (startMusic){
+    finishLoad.then(function () {
+      megalovania.jump(0);
+      megalovania.setLoop(true);
+      megalovania.play();
+      startMusic = false;
+    }).catch(function () {
+      console.log("Sorry Pending");
+    });
+  }
+}
+
+function drawStartScreen(){
+  // draw the start screen COMPLETED
+  // innitailize
+  const TITLE_HIEGHT = 0.25;
+  const TITLE_WIDTH = 0.6;
+  const MODE_WIDTH = 0.1;
+  const MODE_HEIGHT = 0.45;
+  const MODE_HEIGHT_DIFFERENCE = 0.1;
+  // display the title being: Sans Boss Fight from Undertale
+  // formating
+  fill("white");
+  textAlign(CENTER,CENTER);
+  textSize(1);
+  for(let i = 0; textWidth("Sans Boss Fight from Undertale") < TITLE_WIDTH * width; i++){
+    textSize(i);
+  }
+  // display text
+  text("Sans Boss Fight from Undertale", width / 2, TITLE_HIEGHT * height);
+
+  // display all the modes being: normal, endless....
+  // formating
+  fill("white");
+  textAlign(LEFT,CENTER);
+  textSize(1);
+  for(let i = 1; textWidth("Normal") < MODE_WIDTH * width; i++){
+    textSize(i);
+  }
+  
+  // display text of modes
+  for(let modeText of modes){
+    text(modeText.word, width/2, (MODE_HEIGHT + MODE_HEIGHT_DIFFERENCE * modeText.position) * height);
+  }
+
+  // display heart at the right mode
+  const HEART_X = 0.45;
+  imageMode(CENTER);
+  player.x = HEART_X * width;
+  player.y = (MODE_HEIGHT + MODE_HEIGHT_DIFFERENCE * modes[mode].position) * height;
+  player.displayImage("heart");
+
+}
+
+// change action or mode or tying
+function keyTyped(){
+  // chage mode or action COMPLETED
+  // if key typed at the starting screen
+  if (state === "starting screen"){
+    if (key === "s"){
+      mode++;
+    }
+    else if (key === "w"){
+      mode--;
+    }
+    else if (key === " "){
+      scaleOfPlayer = 0.000045 * height;
+      state = modes[mode].word;
+      level++;
+      innit();
+    }
+    mode += modes.length;
+    mode = mode % modes.length;
+  }
+
+  // if key typed at the action time
+  if (state === "action time"){
+    if (key === "d"){
+      action++;
+    }
+    if (key === "a"){
+      action--;
+    }
+    if (key === " "){
+      level++;
+      innit();
+      state = modes[mode].word;
+    }
+    action += modes.length;
+    action = action % actions.length;
+  }
+  
+}
+
+function mainAttack(){
+  //initailize COMPLETED
+  let currentMillis = millis();
+  let attack = currentBones[currentBonesIndex];
+  let gravity = currentGravity[currentGravityIndex];
+  // Change gravity to the right mode depending on the timming of attack.changeTime
+  if (attack.type === "stab"){
+    if (currentMillis - attackInitialTime > attack.changeTime){
+      // changeTime means gravity is off
+      attack.direction = "heart";
+      currentGravityIndex = 2;
+      gravity = currentGravity[currentGravityIndex];
+    } 
+  }
+
+  // When the attack ends COMPLETED
+  if (currentMillis - attackInitialTime > attack.endTime){
+    // if the time in the attack excessed the end time then end it by moving to the next attack    
+
+    // increase attack index and
+    // reset everything else
+    attackInitialTime = currentMillis;
+
+    currentBonesIndex++;
+    attack = currentBones[currentBonesIndex];
+
+    // when the level ends COMPLETED
+    // check if the attack type is next level then it is the last atack thus advance level COMPLETED
+    if (attack.type === "next level"){
+      state = "action time";
+      return "don't again";
+    }
+
+    // when the level ends COMPLETED
+    // teleport if attack.type = teleport
+    if (attack.type === "teleport"){
+      player.x = attack.x;
+      player.y = attack.y;
+      currentBonesIndex++;
+      attack = currentBones[currentBonesIndex];
+    }
+    
+    // reset gravity or keep gravity
+    if (attack.gravity.mode !== "previous"){
+      currentGravityIndex = 0;
+      currentGravity = attack.gravity;
+      gravity = currentGravity[currentGravityIndex];
+    }
+
+    return "try again";
+  }
+
+  // move player TEMP
+  attack.moveBone(currentMillis);
+  attack.movePlayer(gravity);
+  // display bones, player, action boxes, platform edge COMPLETED
+  attack.displayBones(currentMillis);
+  attack.displayPlayer();
+
+  // a way to track the player DEBUG
+  // line(player.x, 0, player.x, height);
+  // line(0, player.y, width, player.y);
+  // circle(player.x, player.y, heart.width * scaleOfPlayer)
+
+  return "don't again";
+}
+
+// // display functions disabled changed to class based functions
+// function displayBones(attack, currentMillis){
+//   // damage is built in this function other than displaying bones
+//   if (attack.type === "stab"){
+//     // the attack is stab
+//     // draw the zone and determine if damage need to be taken
+//     if (currentMillis - attackInitialTime < attack.reaction){
+//       // if the time elapsed in this level(currentMillis - time) is within(<) the reaction time(attack.reaction)
+//       // then color the zone green as warning
+
+//       // note if it is dropping to the ground at gravity1 or gravityIndex == 0 then do not display the box at all TEMP
+//       if (currentGravityIndex !== 0){
+//         // condition met draw green zone
+//         rectMode(CENTER);
+//         fill(0,150,0);
+//         rect(attack.zone[0],attack.zone[1],attack.zone[2],attack.zone[3]);
+//       }
+
+//       // animation of sans throwing his hands down OPTIONAL
+//       // code here
+
+//     }
+//     else{
+//       // your reation time have passed
+//       // therefore your grace period is over and the zone is filled with white now
+//       rectMode(CENTER);
+//       fill(150,150,150);
+//       rect(attack.zone[0],attack.zone[1],attack.zone[2],attack.zone[3]);
+      
+//       // take damage
+//       attack.takeDamage(currentMillis);
+
+//       // bone picture: draw image of bone comming up
+//       // bone picture = current height
+//     }
+//   }
+//   if (attack.type === "gap"){
+//     if (state !== "dsfkad;lfksal;dkasdfk;slakdf;lak"){
+//       rectMode(CENTER);
+//       fill(150,150,150);
+//       rect(attack.zone[0][0],attack.zone[0][1],attack.zone[0][2],attack.zone[0][3]);
+//       rect(attack.zone[1][0],attack.zone[1][1],attack.zone[1][2],attack.zone[1][3]);
+//       rect(attack.zone[2][0],attack.zone[2][1],attack.zone[2][2],attack.zone[2][3]);
+//       rect(attack.zone[3][0],attack.zone[3][1],attack.zone[3][2],attack.zone[3][3]);
+//     }
+//     else{
+//       rectMode(CENTER);
+//       fill(150,150,150);
+//       rect(attack.zone[0],attack.zone[1],attack.zone[2],attack.zone[3]);
+//       if (
+//         player.x < attack.zone[0] + attack.zone[2] / 2 &&
+//         player.x > attack.zone[0] - attack.zone[2] / 2 &&
+//         player.y < attack.zone[1] + attack.zone[3] / 2 &&
+//         player.y > attack.zone[1] - attack.zone[3] / 2 &&
+//         damageLastTime + attack.cooldown < currentMillis) {
+//         player.health -= attack.damage;
+//         damageLastTime = millis();
+//       }
+//     }
+
+//   }
+// } function displayPlayer(attack, gravity){
+//   // COMPLETED
+//   // display red heart if no gravity
+//   if (gravity.mode === "off"){
+//     player.displayImage("heart");
+//   }
+//   // display the blue heart at the right direction. Need A Direction
+//   else{
+//     player.displayImage(attack.direction);
+//   }
+
+// } 
+
+
+// display random things functions called after main attack
+function displayPlatformEdge(){
+  // given the currentPlatformEdge display each of them COMPLETED
+  for (let platformEdge of currentPlatformEdge){
+    rectMode(CENTER);
+    fill("white");
+    noStroke();
+    rect(platformEdge.x, platformEdge.y, platformEdge.l, platformEdge.w);
+  }
+} function displayActions(){
+  // display all the text of actions COMPLETED
+  textAlign(LEFT);
+  for (let actionText of actions){
+    text(actionText.word,actionText.positionX,actionText.positionY);
+  }
 }
 
 // stop functions COMPLETED

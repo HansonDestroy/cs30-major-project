@@ -18,6 +18,8 @@
 // main attack detect teleport attack
 // test if return works in attack skip
 // get the attackindex = 0 from the load1all function to innit function
+// make the gap attack better by adding its uqiue functions such as load1all
+// make parent attack better by adding move player and display edge, display player
 
 class ParentAttack{
   constructor(type,direction,gravity,zone,damage,cooldown,endTime){

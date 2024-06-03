@@ -52,10 +52,10 @@ let actions = [];
 let action = 0;
 
 let currentBones;
-let currentAttackIndex;
-let currentPlatformEdge;
+let currentBonesIndex;
 let currentGravity;
 let currentGravityIndex;
+let currentPlatformEdge;
 
 let heart;
 let heartDown;
