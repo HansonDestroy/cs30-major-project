@@ -474,6 +474,74 @@ class StabAttack extends ParentAttack{
     this.gapDifference = gapDifference;
   }
 
+  // damge zone
+
+  calculateDamageZone(platformEdge){
+    // set the attack heights to real heights
+    attack2.gapHeight = attack2.gapHeight * (platformEdge[platformEdgeOrder.get("left")].w - platformEdge[platformEdgeOrder.get("down")].w - platformEdge[platformEdgeOrder.get("up")].w);
+    attack2.gapDifference = attack2.gapDifference * (platformEdge[platformEdgeOrder.get("left")].w - platformEdge[platformEdgeOrder.get("down")].w - platformEdge[platformEdgeOrder.get("up")].w);
+    attack2.gapWidth = attack2.gapWidth * (platformEdge[platformEdgeOrder.get("down")].l - platformEdge[platformEdgeOrder.get("left")].l - platformEdge[platformEdgeOrder.get("right")].l);
+    
+    // calculate damge zone
+    
+    if (attack2.direction === "down"){
+      attack2.zone = [
+        [
+          platformEdge[platformEdgeOrder.get("left")].x - 0,
+          platformEdge[platformEdgeOrder.get("up")].y + platformEdge[platformEdgeOrder.get("up")].w / 2 + platformEdge[platformEdgeOrder.get("left")].w / 2 - platformEdge[platformEdgeOrder.get("down")].w / 2 - platformEdge[platformEdgeOrder.get("up")].w / 2 - attack2.gapHeight / 2 - attack2.gapDifference / 2,
+          attack2.gapWidth,
+          platformEdge[platformEdgeOrder.get("up")].w / 2 + (platformEdge[platformEdgeOrder.get("left")].w - platformEdge[platformEdgeOrder.get("down")].w - platformEdge[platformEdgeOrder.get("up")].w) - attack2.gapHeight - attack2.gapDifference
+        ],
+        [
+          platformEdge[platformEdgeOrder.get("left")].x - 0,
+          platformEdge[platformEdgeOrder.get("down")].y - platformEdge[platformEdgeOrder.get("down")].w / 2 - attack2.gapHeight / 2,
+          attack2.gapWidth,
+          attack2.gapHeight
+        ],
+        [
+          platformEdge[platformEdgeOrder.get("right")].x - 0,
+          platformEdge[platformEdgeOrder.get("up")].y + platformEdge[platformEdgeOrder.get("up")].w / 2 + platformEdge[platformEdgeOrder.get("left")].w / 2 - platformEdge[platformEdgeOrder.get("down")].w / 2 - platformEdge[platformEdgeOrder.get("up")].w / 2 - attack2.gapHeight / 2 - attack2.gapDifference / 2,
+          attack2.gapWidth,
+          platformEdge[platformEdgeOrder.get("up")].w / 2 + (platformEdge[platformEdgeOrder.get("left")].w - platformEdge[platformEdgeOrder.get("down")].w - platformEdge[platformEdgeOrder.get("up")].w) - attack2.gapHeight - attack2.gapDifference
+        ],
+        [
+          platformEdge[platformEdgeOrder.get("right")].x - 0,
+          platformEdge[platformEdgeOrder.get("down")].y - platformEdge[platformEdgeOrder.get("down")].w / 2 - attack2.gapHeight / 2,
+          attack2.gapWidth,
+          attack2.gapHeight
+        ]
+      ];
+    }
+    if (attack2.direction === "up"){
+      attack2.zone = [
+        [
+          platformEdge[platformEdgeOrder.get("left")].x - 0,
+          platformEdge[platformEdgeOrder.get("down")].y - platformEdge[platformEdgeOrder.get("down")].w / 2 - attack2.gapHeight / 2,
+          attack2.gapWidth,
+          attack2.gapHeight
+        ],
+        [
+          platformEdge[platformEdgeOrder.get("left")].x - 0,
+          platformEdge[platformEdgeOrder.get("up")].y + platformEdge[platformEdgeOrder.get("up")].w / 2 + (platformEdge[platformEdgeOrder.get("left")].w - platformEdge[platformEdgeOrder.get("down")].w - platformEdge[platformEdgeOrder.get("up")].w) - attack2.gapHeight - attack2.gapDifference,
+          attack2.gapWidth,
+          attack2.gapHeight
+        ],
+        [
+          platformEdge[platformEdgeOrder.get("right")].x - 0,
+          platformEdge[platformEdgeOrder.get("down")].y - platformEdge[platformEdgeOrder.get("down")].w / 2 - attack2.gapHeight / 2,
+          attack2.gapWidth,
+          attack2.gapHeight
+        ],
+        [
+          platformEdge[platformEdgeOrder.get("right")].x - 0,
+          platformEdge[platformEdgeOrder.get("down")].y - platformEdge[platformEdgeOrder.get("down")].w / 2 - attack2.gapHeight / 2,
+          attack2.gapWidth,
+          attack2.gapHeight
+        ]
+      ];
+    }
+  }
+
   // bone aka zone move function
   moveBone(currentMillis){
   }
