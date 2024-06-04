@@ -97,10 +97,10 @@ function keyTyped(){
       mode--;
     }
     else if (key === " "){
+      scaleOfPlayer = 0.000045 * height;
       state = modes[mode].word;
       level++;
       innit();
-      scaleOfPlayer = 0.000045 * height;
     }
     mode += modes.length;
     mode = mode % modes.length;
@@ -115,9 +115,9 @@ function keyTyped(){
       action--;
     }
     if (key === " "){
+      state = modes[mode].word;
       level++;
       innit();
-      state = modes[mode].word;
     }
     action += modes.length;
     action = action % actions.length;
@@ -171,7 +171,10 @@ function mainAttack(){
     }
     
     // reset gravity or keep gravity
-    if (attack.gravity.mode !== "previous"){
+    
+    let currentGravityTemp = attack.gravity[0]
+    if (currentGravityTemp.mode !== "previous"){
+      //print(attack, attack.gravity, currentGravityTemp, currentGravityTemp.mode, (attack.gravity).mode !== "previous")
       currentGravityIndex = 0;
       currentGravity = attack.gravity;
       gravity = currentGravity[currentGravityIndex];
@@ -260,7 +263,7 @@ function innit(){
     return "try again";
   }
     
-} function loadLevel1All(){
+} function loadLevel2All(){
   // level 1 innit COMPLETED
   // platformEdge COMPLETED
   let platformEdge1={x: 0.5 * height,y: 0.5 * height,l: 0.26 * height,w: 0.01 * height};
@@ -490,7 +493,7 @@ function innit(){
 
   currentGravity = [gravity1,gravity2,gravity3];
   
-} function loadLevel2All(){
+} function loadLevel1All(){
   // level 2 innit COMPLETED
   // platformEdge COMPLETED
   let platformEdge1={x: 0.5 * height,y: 0.5 * height,l: 0.51 * height,w: 0.01 * height};
@@ -575,7 +578,7 @@ function innit(){
   // set the right gravity
 
   // attack 2 TEMP
-  for (let i = 0; i < 6; i++){
+  for (let i = 0; i < 11; i++){
 
     let direction = "down";
 
@@ -593,6 +596,7 @@ function innit(){
       currentGravityIndex = 0;
       currentGravity = [gravity5];
     }
+
     let attack2 = new GapAttack("down",structuredClone(currentGravity),[],3,10,1300,700,1000,1000,0.15,0.04,0.12);
     // attack.type = "gap";
     // attack.reaction = 700;

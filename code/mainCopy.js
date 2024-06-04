@@ -121,13 +121,13 @@ function draw() {
 
     displayPlatformEdge();
     displayActions();
+
     // health bar and health COMPLETED
     text(player.health,50,50);
     rect(300,50,player.health*2,30);
     if (player.health < 0){
       state = "death";
     }
-
   }
   else{
     // death screen
