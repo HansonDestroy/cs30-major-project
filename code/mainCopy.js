@@ -117,6 +117,7 @@ function draw() {
     
     // main attack funciton TEMP
     while (mainAttack() === "try again"){
+      // blank space
     }
 
     displayPlatformEdge();

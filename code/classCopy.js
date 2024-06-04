@@ -455,7 +455,7 @@ class StabAttack extends ParentAttack{
     }
   } 
 } class GapAttack extends ParentAttack{
-  constructor(direction,gravity,zone,damage,cooldown,endTime,reaction,boneSpeedLeft,boneSpeedRight,gapHeight,gapWidth,gapDifference){
+  constructor(direction,gravity,zone,damage,cooldown,endTime,reaction,boneSpeedLeft,boneSpeedRight,gapHeight,gapWidth,gapDifference, startTime, middleTime){
     // innit varible COMPLETED
     super("gap",direction,gravity,zone,damage,cooldown,endTime);
     this.type = "gap";
@@ -472,6 +472,9 @@ class StabAttack extends ParentAttack{
     this.gapHeight = gapHeight;
     this.gapWidth = gapWidth;
     this.gapDifference = gapDifference;
+
+    this.startTime = 500;
+    this.middleTime = 10000000;
   }
 
   // damge zone
@@ -544,22 +547,21 @@ class StabAttack extends ParentAttack{
 
   // bone aka zone move function
   moveBone(currentMillis){
-    this.boneSpeedLeft = 2
-    this.boneSpeedRight = -2
     this.zone[0][0] += this.boneSpeedLeft;
     this.zone[1][0] += this.boneSpeedLeft;
     this.zone[2][0] += this.boneSpeedRight;
     this.zone[3][0] += this.boneSpeedRight;
-    this.takeDamage(currentMillis)
 
     // recusive function to start the next attack
-    // if (!isLast){
-    //   currentBonesIndex++
-    //   mainAttack()
-    // }
+    if (currentBones[currentBonesIndex+1].type === "gap" && currentMillis - attackInitialTime > this.startTime){
+      currentBonesIndex++;
+      mainAttackSimult();
+      currentBonesIndex--;
+    }
 
   }
 
+  // normal move need to be in parent class
   movePlayer(gravity) {
     // TEMP
     if(gravity.mode === "off"){
@@ -821,6 +823,7 @@ class StabAttack extends ParentAttack{
     }
   }
 
+  // display and damage built in COMPLETED
   displayBones(currentMillis){
     rectMode(CENTER);
     fill(150,150,150);
@@ -828,7 +831,8 @@ class StabAttack extends ParentAttack{
     rect(this.zone[1][0],this.zone[1][1],this.zone[1][2],this.zone[1][3]);
     rect(this.zone[2][0],this.zone[2][1],this.zone[2][2],this.zone[2][3]);
     rect(this.zone[3][0],this.zone[3][1],this.zone[3][2],this.zone[3][3]);
-    
+    // damage
+    this.takeDamage(currentMillis);
   }
 
   takeDamage(currentMillis){
