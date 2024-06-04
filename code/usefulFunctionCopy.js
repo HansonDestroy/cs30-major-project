@@ -597,12 +597,12 @@ function innit(){
       currentGravity = [gravity5];
     }
 
-    let attack2 = new GapAttack("down",structuredClone(currentGravity),[],3,10,1300,700,1000,1000,0.15,0.04,0.12);
+    let attack2 = new GapAttack("down",structuredClone(currentGravity),[],3,10,2300,700,1000,1000,0.15,0.04,0.12);
     // attack.type = "gap";
     // attack.reaction = 700;
     // attack.boneSpeedLeft = 1000;
     // attack.boneSpeedRight = 1000;
-    // attack.endTime = 1300;
+    // attack.endTime = 2300;
     // attack.gapHeight = 0.15;
     // attack.gapWidth = 0.04;
     // attack.gapDifference = 0.12;

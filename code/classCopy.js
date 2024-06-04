@@ -544,6 +544,20 @@ class StabAttack extends ParentAttack{
 
   // bone aka zone move function
   moveBone(currentMillis){
+    this.boneSpeedLeft = 2
+    this.boneSpeedRight = -2
+    this.zone[0][0] += this.boneSpeedLeft;
+    this.zone[1][0] += this.boneSpeedLeft;
+    this.zone[2][0] += this.boneSpeedRight;
+    this.zone[3][0] += this.boneSpeedRight;
+    this.takeDamage(currentMillis)
+
+    // recusive function to start the next attack
+    // if (!isLast){
+    //   currentBonesIndex++
+    //   mainAttack()
+    // }
+
   }
 
   movePlayer(gravity) {
@@ -814,6 +828,21 @@ class StabAttack extends ParentAttack{
     rect(this.zone[1][0],this.zone[1][1],this.zone[1][2],this.zone[1][3]);
     rect(this.zone[2][0],this.zone[2][1],this.zone[2][2],this.zone[2][3]);
     rect(this.zone[3][0],this.zone[3][1],this.zone[3][2],this.zone[3][3]);
+    
+  }
+
+  takeDamage(currentMillis){
+    for (let i = 0; i < 4; i++){
+      if (
+        player.x < this.zone[i][0] + this.zone[i][2] / 2 &&
+        player.x > this.zone[i][0] - this.zone[i][2] / 2 &&
+        player.y < this.zone[i][1] + this.zone[i][3] / 2 &&
+        player.y > this.zone[i][1] - this.zone[i][3] / 2 &&
+        damageLastTime + this.cooldown < currentMillis) {
+        player.health -= this.damage;
+        damageLastTime = currentMillis;
+      }
+    }
   }
 
 }
@@ -851,7 +880,7 @@ class Player{
     this.y = 0;
     this.dx = 0.005;
     this.dy = 0.005;
-    this.health = 92992;
+    this.health = 92;
   }
 
   displayImage(imageName){
