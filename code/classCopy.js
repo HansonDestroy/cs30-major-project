@@ -464,7 +464,7 @@ class StabAttack extends ParentAttack{
     this.zone = zone;
     this.damage = damage;
     this.cooldown = cooldown;
-    this.endTime = endTime;
+    this.endTime = 100000000;
 
     this.reaction = reaction;
     this.boneSpeedLeft = boneSpeedLeft;
@@ -473,8 +473,8 @@ class StabAttack extends ParentAttack{
     this.gapWidth = gapWidth;
     this.gapDifference = gapDifference;
 
-    this.startTime = 500;
-    this.middleTime = 10000000;
+    this.startTime = startTime;
+    this.middleTime = middleTime;
   }
 
   // damge zone
@@ -884,7 +884,7 @@ class Player{
     this.y = 0;
     this.dx = 0.005;
     this.dy = 0.005;
-    this.health = 92;
+    this.health = 9992;
   }
 
   displayImage(imageName){
