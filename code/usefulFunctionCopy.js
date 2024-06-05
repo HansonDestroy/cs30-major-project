@@ -198,6 +198,76 @@ function mainAttack(){
   return "don't again";
 }
 
+function mainAttackSimult(){
+  //initailize COMPLETED
+  let currentMillis = millis();
+  let attack = currentBones[currentBonesIndex];
+  let gravity = currentGravity[currentGravityIndex];
+
+  // Change gravity to the right mode depending on the timming of attack.changeTime
+  if (attack.type === "stab"){
+    if (currentMillis - attackInitialTime > attack.changeTime){
+      // changeTime means gravity is off
+      attack.direction = "heart";
+      currentGravityIndex = 2;
+      gravity = currentGravity[currentGravityIndex];
+    } 
+  }
+
+  // When the attack ends COMPLETED
+  if (currentMillis - attackInitialTime >= attack.endTime){
+    // if the time in the attack excessed the end time then end it by moving to the next attack    
+
+    // increase attack index and
+    // reset everything else
+    attackInitialTime = currentMillis;
+
+    currentBonesIndex++;
+    attack = currentBones[currentBonesIndex];
+
+    // when the level ends COMPLETED
+    // check if the attack type is next level then it is the last atack thus advance level COMPLETED
+    if (attack.type === "next level"){
+      state = "action time";
+      return "don't again";
+    }
+
+    // when the level ends COMPLETED
+    // teleport if attack.type = teleport
+    if (attack.type === "teleport"){
+      player.x = attack.x;
+      player.y = attack.y;
+      currentBonesIndex++;
+      currentGravityIndex = 0;
+      currentGravity = currentBones[currentBonesIndex].gravity;
+      return "try again";
+    }
+    
+    // reset gravity or keep gravity
+    
+    let currentGravityTemp = attack.gravity[0];
+    if (currentGravityTemp.mode !== "previous"){
+      //print(attack, attack.gravity, currentGravityTemp, currentGravityTemp.mode, (attack.gravity).mode !== "previous")
+      currentGravityIndex = 0;
+      currentGravity = attack.gravity;
+      gravity = currentGravity[currentGravityIndex];
+    }
+
+    return "try again";
+  }
+
+  // move player TEMP
+  attack.moveBone(currentMillis);
+  // display bones, player, action boxes, platform edge COMPLETED
+  attack.displayBones(currentMillis);
+
+  // a way to track the player DEBUG
+  // line(player.x, 0, player.x, height);
+  // line(0, player.y, width, player.y);
+  // circle(player.x, player.y, heart.width * scaleOfPlayer)
+
+  return "don't again";
+}
 
 
 // display functions

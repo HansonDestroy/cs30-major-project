@@ -552,12 +552,12 @@ class StabAttack extends ParentAttack{
     this.zone[2][0] += this.boneSpeedRight;
     this.zone[3][0] += this.boneSpeedRight;
 
-    // // recusive function to start the next attack
-    // if (currentBones[currentBonesIndex+1].type === "gap" && currentMillis - attackInitialTime > this.startTime){
-    //   currentBonesIndex++;
-    //   mainAttackSimult();
-    //   currentBonesIndex--;
-    // }
+    // recusive function to start the next attack
+    if (currentBones[currentBonesIndex+1].type === "gap" && currentMillis - attackInitialTime > this.startTime){
+      currentBonesIndex++;
+      mainAttackSimult();
+      currentBonesIndex--;
+    }
 
   }
 
