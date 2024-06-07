@@ -141,16 +141,28 @@ function mainAttack(){
     } 
   }
 
+  
   // When the attack ends COMPLETED
-  if (currentMillis - attackInitialTime >= attack.endTime && attack.type !== "gap"){
+  if (currentMillis - attackInitialTime >= attack.endTime){
     // if the time in the attack excessed the end time then end it by moving to the next attack    
 
     // increase attack index and
     // reset everything else
     attackInitialTime = currentMillis;
 
-    currentBonesIndex++;
-    attack = currentBones[currentBonesIndex];
+    print("sdfsdfs",attack,currentGravity);
+
+    if (attack.type !== "gap"){
+      currentBonesIndex++;
+      attack = currentBones[currentBonesIndex];
+    }
+    else{
+      while (attack.type === "gap"){
+        currentBonesIndex++;
+        attack = currentBones[currentBonesIndex];
+      }
+    }
+    
 
     // when the level ends COMPLETED
     // check if the attack type is next level then it is the last atack thus advance level COMPLETED
@@ -171,10 +183,8 @@ function mainAttack(){
     }
     
     // reset gravity or keep gravity
-    
     let currentGravityTemp = attack.gravity[0];
     if (currentGravityTemp.mode !== "previous"){
-      //print(attack, attack.gravity, currentGravityTemp, currentGravityTemp.mode, (attack.gravity).mode !== "previous")
       currentGravityIndex = 0;
       currentGravity = attack.gravity;
       gravity = currentGravity[currentGravityIndex];
@@ -616,14 +626,14 @@ function innit(){
       currentGravity = [gravity5];
     }
 
-    let attack2 = new GapAttack("down",structuredClone(currentGravity),[],3,10,2300,700,2,-2,0.15,0.04,0.12,500*i,69420);
+    let attack2 = new GapAttack("down",structuredClone(currentGravity),[],3,10,5300,700,2,-2,0.15,0.04,0.12,500*i);
     // attack.type = "gap";
     // attack.reaction = 700;
     // attack.boneSpeedLeft = 1000;
     // attack.boneSpeedRight = 1000;
     // attack.endTime = 2300;
     // attack.gapHeight = 0.15;
-    // attack.gapWidth = 0.04;
+    // attack.gapWidth = 0.02;
     // attack.gapDifference = 0.12;
     // attack.damage = 3;
     // attack.cooldown = 50;

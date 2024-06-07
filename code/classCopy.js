@@ -464,7 +464,7 @@ class StabAttack extends ParentAttack{
     this.zone = zone;
     this.damage = damage;
     this.cooldown = cooldown;
-    this.endTime = 100000000;
+    this.endTime = endTime;
 
     this.reaction = reaction;
     this.boneSpeedLeft = boneSpeedLeft;
