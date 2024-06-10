@@ -150,8 +150,6 @@ function mainAttack(){
     // reset everything else
     attackInitialTime = currentMillis;
 
-    print("sdfsdfs",attack,currentGravity);
-
     if (attack.type !== "gap"){
       currentBonesIndex++;
       attack = currentBones[currentBonesIndex];
