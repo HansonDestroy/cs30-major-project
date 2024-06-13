@@ -154,6 +154,8 @@ function mainAttack(){
     if (attack.type !== "gap"){
       currentBonesIndex++;
       attack = currentBones[currentBonesIndex];
+      currentGravityIndex = 0;
+      currentGravity = attack.gravity;
     }
     else{
       while (attack.type === "gap"){
@@ -258,6 +260,7 @@ function innit(){
     // player.x = currentPlatformEdge[2].x;
     // player.y = currentPlatformEdge[1].y;
   }
+  
   if(level === 2){
     // load attack
     loadLevel2All();
@@ -269,6 +272,19 @@ function innit(){
     // - currentPlatformEdge[platformEdgeOrder.get("down")].w / 2 
     // - heart.height * scaleOfPlayer / 2;
   }
+
+  if(level === 3){
+    // load attack
+    loadLevel3All();
+
+    // // bottom mid spawn
+    // player.x = currentPlatformEdge[platformEdgeOrder.get("down")].x;
+    // // the y need to stand on top of the edge
+    // player.y = currentPlatformEdge[platformEdgeOrder.get("down")].y
+    // - currentPlatformEdge[platformEdgeOrder.get("down")].w / 2 
+    // - heart.height * scaleOfPlayer / 2;
+  }
+
   // reset timer
   attackInitialTime = millis();
 
@@ -521,7 +537,7 @@ function innit(){
 
   currentGravity = [gravity1,gravity2,gravity3];
   
-} function loadLevel1All(){
+} function loadLevel3All(){
   // level 2 innit COMPLETED
   // platformEdge COMPLETED
   let platformEdge1={x: 0.5 * height,y: 0.5 * height,l: 0.51 * height,w: 0.01 * height};
@@ -649,7 +665,7 @@ function innit(){
   currentBones.push(attackLast);
 
   currentGravity = [gravity1,gravity2,gravity3]; 
-}  function loadLevel3All(){
+}  function loadLevel1All(){
   // level 3 innit COMPLETED
   // platformEdge COMPLETED
   let platformEdge1={x: 0.5 * height,y: 0.5 * height,l: 0.51 * height,w: 0.01 * height};
@@ -723,8 +739,8 @@ function innit(){
   
 
   // tele
-  let teleAttack2 = new TeleAttack("bottom mid", level2PlatformEdge);
-  currentBones.push(teleAttack2);
+  // let teleAttack2 = new TeleAttack("bottom mid", level2PlatformEdge);
+  // currentBones.push(teleAttack2);
 
 
   // attack Innit 2
@@ -744,16 +760,16 @@ function innit(){
         mode: "previous",
         accerlerationX: 0,
         dx: 0,
-        accerlerationY: 0.1 / 662 * height,
-        dy: -3.5 / 662 * height,
-        dyOriginal: -3.5 / 662 * height,
+        accerlerationY: 0.3 / 662 * height,
+        dy: -4 / 662 * height,
+        dyOriginal: -4 / 662 * height,
       };
 
       currentGravityIndex = 0;
       currentGravity = [gravity5];
     }
 
-    let attack2 = new GapAttack("down",structuredClone(currentGravity),[],3,10,5300,700,2,-2,0.15,0.04,0.12,500*i);
+    let attack2 = new GapAttack("down",structuredClone(currentGravity),[],3,10,5300,700,2,0,0.15,0.04,0.86,1000*i);
     // attack.type = "gap";
     // attack.reaction = 700;
     // attack.boneSpeedLeft = 1000;
