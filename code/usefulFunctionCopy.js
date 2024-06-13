@@ -750,7 +750,7 @@ function innit(){
   // set the right gravity
 
   // attack 2 TEMP
-  for (let i = 0; i < 11; i++){
+  for (let i = 0; i < 4; i++){
 
     let direction = "down";
 
@@ -760,7 +760,7 @@ function innit(){
         mode: "previous",
         accerlerationX: 0,
         dx: 0,
-        accerlerationY: 0.3 / 662 * height,
+        accerlerationY: 0.25 / 662 * height,
         dy: -4 / 662 * height,
         dyOriginal: -4 / 662 * height,
       };
@@ -769,7 +769,27 @@ function innit(){
       currentGravity = [gravity5];
     }
 
-    let attack2 = new GapAttack("down",structuredClone(currentGravity),[],3,10,5300,700,2,0,0.15,0.04,0.86,1000*i);
+    if (i == 0){
+      let attack2 = new GapAttack("down",structuredClone(currentGravity),[],3,10,530000,700,8,0,0.15,0.00,0.85,800*i + 2000);
+      // attack.type = "gap";
+      // attack.reaction = 700;
+      // attack.boneSpeedLeft = 1000;
+      // attack.boneSpeedRight = 1000;
+      // attack.endTime = 2300;
+      // attack.gapHeight = 0.15;
+      // attack.gapWidth = 0.02;
+      // attack.gapDifference = 0.12;
+      // attack.damage = 3;
+      // attack.cooldown = 50;
+      // attack.direction = "down";
+      // attack.zone = [];
+      // attack.gravity = structuredClone(currentGravity);
+
+      attack2.calculateDamageZone(level2PlatformEdge);
+      currentBones.push(attack2);
+    }
+
+    let attack2 = new GapAttack("down",structuredClone(currentGravity),[],3,10,530000,700,6,0,0.15,0.04,0.85,800*i + 2000);
     // attack.type = "gap";
     // attack.reaction = 700;
     // attack.boneSpeedLeft = 1000;
