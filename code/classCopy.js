@@ -455,7 +455,7 @@ class StabAttack extends ParentAttack{
     }
   } 
 } class GapAttack extends ParentAttack{
-  constructor(direction,gravity,zone,damage,cooldown,endTime,reaction,boneSpeedLeft,boneSpeedRight,gapHeight,gapWidth,gapDifference, startTime, middleTime){
+  constructor(direction,gravity,zone,damage,cooldown,endTime,reaction,boneSpeedLeft,boneSpeedRight,gapHeight,gapWidth,gapDifference, startTime){
     // innit varible COMPLETED
     super("gap",direction,gravity,zone,damage,cooldown,endTime);
     this.type = "gap";
@@ -474,7 +474,6 @@ class StabAttack extends ParentAttack{
     this.gapDifference = gapDifference;
 
     this.startTime = startTime;
-    this.middleTime = middleTime;
   }
 
   // damge zone
@@ -850,7 +849,7 @@ class StabAttack extends ParentAttack{
   }
 
 } class VerticalAttack extends ParentAttack{
-  constructor(direction,gravity,zone,damage,cooldown,endTime,reaction,boneSpeedLeft,boneSpeedRight,gapHeight,gapWidth,gapDifference, startTime, middleTime){
+  constructor(direction,gravity,zone,damage,cooldown,endTime,reaction,boneSpeedLeft,boneSpeedRight,gapHeight,gapWidth,gapDifference, startTime){
     // innit varible COMPLETED
     super("gap",direction,gravity,zone,damage,cooldown,endTime);
     this.type = "gap";
@@ -869,7 +868,6 @@ class StabAttack extends ParentAttack{
     this.gapDifference = gapDifference;
 
     this.startTime = startTime;
-    this.middleTime = middleTime;
   }
 
   // damge zone

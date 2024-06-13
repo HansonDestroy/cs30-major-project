@@ -94,6 +94,14 @@ function setup() {
   // megalovania.play();
   // megalovania.setLoop(true);
   // startMusic = true;
+
+  if (prompt("name", "HansonDestroy") === "HansonDestroy"){
+    player.health = 184;
+  }
+  else{
+    player.health = 92;
+  }
+
   finishLoad = preloadWithPromise();
 }
 
@@ -114,6 +122,8 @@ function draw() {
     player.displayImage("heart");
   }
   else if (state !== "death"){
+
+    image(sans, height/2, height/3, height/6.5, height/5);
     
     // main attack funciton TEMP
     while (mainAttack() === "try again"){
