@@ -944,13 +944,10 @@ class StabAttack extends ParentAttack{
 
   // bone aka zone move function
   moveBone(currentMillis){
-
-    fill(0,0,150);
     this.zone[0][0] += this.boneSpeedLeft;
     this.zone[1][0] += this.boneSpeedLeft;
     this.zone[2][0] += this.boneSpeedRight;
     this.zone[3][0] += this.boneSpeedRight;
-
     // recusive function to start the next attack
     if (currentBones[currentBonesIndex+1].type === "gap" && currentMillis - attackInitialTime > this.startTime){
       currentBonesIndex++;
@@ -1226,6 +1223,8 @@ class StabAttack extends ParentAttack{
   displayBones(currentMillis){
     rectMode(CENTER);
     // fill(0,0,150);
+    fill(0,0,150);
+
     rect(this.zone[0][0],this.zone[0][1],this.zone[0][2],this.zone[0][3]);
     rect(this.zone[1][0],this.zone[1][1],this.zone[1][2],this.zone[1][3]);
     rect(this.zone[2][0],this.zone[2][1],this.zone[2][2],this.zone[2][3]);
@@ -1237,6 +1236,10 @@ class StabAttack extends ParentAttack{
   takeDamage(currentMillis){
     for (let i = 0; i < 4; i++){
       if (
+        (keyIsDown(87)||
+        keyIsDown(83)||
+        keyIsDown(65)||
+        keyIsDown(68)) &&
         player.x < this.zone[i][0] + this.zone[i][2] / 2 &&
         player.x > this.zone[i][0] - this.zone[i][2] / 2 &&
         player.y < this.zone[i][1] + this.zone[i][3] / 2 &&

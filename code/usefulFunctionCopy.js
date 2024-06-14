@@ -831,45 +831,47 @@ function innit(){
       attack2.calculateDamageZone(level2PlatformEdge);
       currentBones.push(attack2);
     }
-
-    if (i%2 === 1){
-      let attack2 = new GapAttack("down",structuredClone(currentGravity),[],3,10,530000,700,3,0,0.15,0.04,0.85,500*i + 2000);
-      // attack.type = "gap";
-      // attack.reaction = 700;
-      // attack.boneSpeedLeft = 1000;
-      // attack.boneSpeedRight = 1000;
-      // attack.endTime = 2300;
-      // attack.gapHeight = 0.15;
-      // attack.gapWidth = 0.02;
-      // attack.gapDifference = 0.12;
-      // attack.damage = 3;
-      // attack.cooldown = 50;
-      // attack.direction = "down";
-      // attack.zone = [];
-      // attack.gravity = structuredClone(currentGravity);
-
-      attack2.calculateDamageZone(level2PlatformEdge);
-      currentBones.push(attack2);
-    }
     else{
-      let attack2 = new BlueAttack("down",structuredClone(currentGravity),[],3,10,530000,700,3,0,0.65,0.04,0.35,500*i + 2000);
-      // attack.type = "gap";
-      // attack.reaction = 700;
-      // attack.boneSpeedLeft = 1000;
-      // attack.boneSpeedRight = 1000;
-      // attack.endTime = 2300;
-      // attack.gapHeight = 0.15;
-      // attack.gapWidth = 0.02;
-      // attack.gapDifference = 0.12;
-      // attack.damage = 3;
-      // attack.cooldown = 50;
-      // attack.direction = "down";
-      // attack.zone = [];
-      // attack.gravity = structuredClone(currentGravity);
+      if (i%2 === 1){
+        let attack2 = new GapAttack("down",structuredClone(currentGravity),[],3,10,530000,700,3,0,0.15,0.04,0.85,500*i + 2000);
+        // attack.type = "gap";
+        // attack.reaction = 700;
+        // attack.boneSpeedLeft = 1000;
+        // attack.boneSpeedRight = 1000;
+        // attack.endTime = 2300;
+        // attack.gapHeight = 0.15;
+        // attack.gapWidth = 0.02;
+        // attack.gapDifference = 0.12;
+        // attack.damage = 3;
+        // attack.cooldown = 50;
+        // attack.direction = "down";
+        // attack.zone = [];
+        // attack.gravity = structuredClone(currentGravity);
 
-      attack2.calculateDamageZone(level2PlatformEdge);
-      currentBones.push(attack2);
+        attack2.calculateDamageZone(level2PlatformEdge);
+        currentBones.push(attack2);
+      }
+      else{
+        let attack2 = new BlueAttack("down",structuredClone(currentGravity),[],3,10,530000,700,3,0,0.65,0.04,0.35,500*i + 2000);
+        // attack.type = "gap";
+        // attack.reaction = 700;
+        // attack.boneSpeedLeft = 1000;
+        // attack.boneSpeedRight = 1000;
+        // attack.endTime = 2300;
+        // attack.gapHeight = 0.15;
+        // attack.gapWidth = 0.02;
+        // attack.gapDifference = 0.12;
+        // attack.damage = 3;
+        // attack.cooldown = 50;
+        // attack.direction = "down";
+        // attack.zone = [];
+        // attack.gravity = structuredClone(currentGravity);
+
+        attack2.calculateDamageZone(level2PlatformEdge);
+        currentBones.push(attack2);
+      }
     }
+    
   }
 
   // attack last

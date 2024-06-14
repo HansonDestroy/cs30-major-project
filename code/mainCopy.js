@@ -5,10 +5,12 @@
 // Date
 //
 // Extra for Experts:
-// search bad time simulator on google and play the game so you know what I'm I trying to clone here
-// I added music that would play when mouse is clicked
-// I technically have 2d arrays because in the currentBones array there is a list of attacks and in each attack there is a list of gravities
+// very simmilar to the original game
 // it will always fit the screen's size
+// multiple script
+// inheritance
+// promise
+// very complex math look at line 1236-1252, or 969-1221
 
 
 
@@ -95,11 +97,12 @@ function setup() {
   // megalovania.setLoop(true);
   // startMusic = true;
 
-  if (prompt("name", "HansonDestroy") === "HansonDestroy"){
-    player.health = 1840;
+  if (prompt("name you may type help if you are new", "help") === "help"){
+    player.health = 184;
+    prompt("okay so this is how this game work. \n You press space to enter a mode like the normal mode or take an action like the fight action. \n You press wsad lower-cased to mover around. \n When there are gravity and if you are falling down lets say pressing w key will not make you move up but the a and s key still works. \n The white bone will hurt you if you touch it and the blue bone will not hurt you as long as you are not moving when touching it (basic undertale knowledge). \nI played though all the level without taking damage so if you kept dying then you are just bad. \n Search up bad time simmulator on google if you want to get better or see the original game");
   }
   else{
-    player.health = 920;
+    player.health = 92;
   }
 
   finishLoad = preloadWithPromise();
