@@ -307,7 +307,7 @@ function innit(){
     return "try again";
   }
     
-} function loadLevel1All(){
+} function loadLevel3All(){
   // level 1 innit COMPLETED
   // platformEdge COMPLETED
   let platformEdge1={x: 0.5 * height,y: 0.5 * height,l: 0.26 * height,w: 0.01 * height};
@@ -662,7 +662,7 @@ function innit(){
     }
 
     if(i%2 === 0){
-      let attack2 = new GapAttack("down",structuredClone(currentGravity),[],3,10,5300,700,2,-2,0.15,0.0,1,500*i);
+      let attack2 = new GapAttack("down",structuredClone(currentGravity),[],3,10,5300,700,2,-2,0.15,0.0,1,300*i);
       // attack.type = "gap";
       // attack.reaction = 700;
       // attack.boneSpeedLeft = 1000;
@@ -681,7 +681,7 @@ function innit(){
       currentBones.push(attack2);
     }
     else{
-      let attack2 = new GapAttack("down",structuredClone(currentGravity),[],3,10,5300,700,2,-2,0.15,0.04,0.12,500*i);
+      let attack2 = new GapAttack("down",structuredClone(currentGravity),[],3,10,5300,700,2,-2,0.15,0.04,0.12,300*i);
       // attack.type = "gap";
       // attack.reaction = 700;
       // attack.boneSpeedLeft = 1000;
@@ -708,7 +708,7 @@ function innit(){
   currentBones.push(attackLast);
 
   currentGravity = [gravity1,gravity2,gravity3]; 
-}  function loadLevel3All(){
+}  function loadLevel1All(){
   // level 3 innit COMPLETED
   // platformEdge COMPLETED
   let platformEdge1={x: 0.5 * height,y: 0.5 * height,l: 0.51 * height,w: 0.01 * height};
@@ -793,7 +793,7 @@ function innit(){
   // set the right gravity
 
   // attack 2 TEMP
-  for (let i = 0; i < 4; i++){
+  for (let i = 0; i < 71; i++){
 
     let direction = "down";
 
@@ -832,23 +832,44 @@ function innit(){
       currentBones.push(attack2);
     }
 
-    let attack2 = new GapAttack("down",structuredClone(currentGravity),[],3,10,530000,700,3,0,0.15,0.04,0.85,1000*i + 2000);
-    // attack.type = "gap";
-    // attack.reaction = 700;
-    // attack.boneSpeedLeft = 1000;
-    // attack.boneSpeedRight = 1000;
-    // attack.endTime = 2300;
-    // attack.gapHeight = 0.15;
-    // attack.gapWidth = 0.02;
-    // attack.gapDifference = 0.12;
-    // attack.damage = 3;
-    // attack.cooldown = 50;
-    // attack.direction = "down";
-    // attack.zone = [];
-    // attack.gravity = structuredClone(currentGravity);
+    if (i%2 === 1){
+      let attack2 = new GapAttack("down",structuredClone(currentGravity),[],3,10,530000,700,3,0,0.15,0.04,0.85,500*i + 2000);
+      // attack.type = "gap";
+      // attack.reaction = 700;
+      // attack.boneSpeedLeft = 1000;
+      // attack.boneSpeedRight = 1000;
+      // attack.endTime = 2300;
+      // attack.gapHeight = 0.15;
+      // attack.gapWidth = 0.02;
+      // attack.gapDifference = 0.12;
+      // attack.damage = 3;
+      // attack.cooldown = 50;
+      // attack.direction = "down";
+      // attack.zone = [];
+      // attack.gravity = structuredClone(currentGravity);
 
-    attack2.calculateDamageZone(level2PlatformEdge);
-    currentBones.push(attack2);
+      attack2.calculateDamageZone(level2PlatformEdge);
+      currentBones.push(attack2);
+    }
+    else{
+      let attack2 = new BlueAttack("down",structuredClone(currentGravity),[],3,10,530000,700,3,0,0.65,0.04,0.35,500*i + 2000);
+      // attack.type = "gap";
+      // attack.reaction = 700;
+      // attack.boneSpeedLeft = 1000;
+      // attack.boneSpeedRight = 1000;
+      // attack.endTime = 2300;
+      // attack.gapHeight = 0.15;
+      // attack.gapWidth = 0.02;
+      // attack.gapDifference = 0.12;
+      // attack.damage = 3;
+      // attack.cooldown = 50;
+      // attack.direction = "down";
+      // attack.zone = [];
+      // attack.gravity = structuredClone(currentGravity);
+
+      attack2.calculateDamageZone(level2PlatformEdge);
+      currentBones.push(attack2);
+    }
   }
 
   // attack last

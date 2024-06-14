@@ -96,10 +96,10 @@ function setup() {
   // startMusic = true;
 
   if (prompt("name", "HansonDestroy") === "HansonDestroy"){
-    player.health = 184;
+    player.health = 1840;
   }
   else{
-    player.health = 92;
+    player.health = 920;
   }
 
   finishLoad = preloadWithPromise();
