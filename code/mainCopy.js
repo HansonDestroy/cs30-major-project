@@ -102,7 +102,7 @@ function setup() {
     prompt("okay so this is how this game work. \n You press space to enter a mode like the normal mode or take an action like the fight action. \n You press wsad lower-cased to mover around. \n When there are gravity and if you are falling down lets say pressing w key will not make you move up but the a and s key still works. \n The white bone will hurt you if you touch it and the blue bone will not hurt you as long as you are not moving when touching it (basic undertale knowledge). \nI played though all the level without taking damage so if you kept dying then you are just bad. \n Search up bad time simmulator on google if you want to get better or see the original game");
   }
   else{
-    player.health = 92;
+    player.health = 9200;
   }
 
   finishLoad = preloadWithPromise();

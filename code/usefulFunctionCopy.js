@@ -285,6 +285,18 @@ function innit(){
     // - heart.height * scaleOfPlayer / 2;
   }
 
+  if(level === 4){
+    // load attack
+    loadLevel4All();
+
+    // // bottom mid spawn
+    // player.x = currentPlatformEdge[platformEdgeOrder.get("down")].x;
+    // // the y need to stand on top of the edge
+    // player.y = currentPlatformEdge[platformEdgeOrder.get("down")].y
+    // - currentPlatformEdge[platformEdgeOrder.get("down")].w / 2 
+    // - heart.height * scaleOfPlayer / 2;
+  }
+
   // reset timer
   attackInitialTime = millis();
 
@@ -307,7 +319,7 @@ function innit(){
     return "try again";
   }
     
-} function loadLevel3All(){
+} function loadLevel2All(){
   // level 1 innit COMPLETED
   // platformEdge COMPLETED
   let platformEdge1={x: 0.5 * height,y: 0.5 * height,l: 0.26 * height,w: 0.01 * height};
@@ -537,7 +549,7 @@ function innit(){
 
   currentGravity = [gravity1,gravity2,gravity3];
   
-} function loadLevel2All(){
+} function loadLevel3All(){
   // level 2 innit COMPLETED
   // platformEdge COMPLETED
   let platformEdge1={x: 0.5 * height,y: 0.5 * height,l: 0.51 * height,w: 0.01 * height};
@@ -708,7 +720,7 @@ function innit(){
   currentBones.push(attackLast);
 
   currentGravity = [gravity1,gravity2,gravity3]; 
-}  function loadLevel1All(){
+} function loadLevel4All(){
   // level 3 innit COMPLETED
   // platformEdge COMPLETED
   let platformEdge1={x: 0.5 * height,y: 0.5 * height,l: 0.51 * height,w: 0.01 * height};
@@ -719,10 +731,10 @@ function innit(){
   // let platformEdge2={x: 0,y: 0.5,l: 0.025,w: 1}; left
   // let platformEdge3={x: 0.5,y: 1,l: 1,w: 0.025}; down
   // let platformEdge4={x: 1,y: 0.5,l: 0.025,w: 1}; right
-  let level2PlatformEdge = [platformEdge1,platformEdge2,platformEdge3,platformEdge4];
-  currentPlatformEdge = level2PlatformEdge;
+  let level3PlatformEdge = [platformEdge1,platformEdge2,platformEdge3,platformEdge4];
+  currentPlatformEdge = level3PlatformEdge;
 
-  let teleAttack1 = new TeleAttack("mid mid", level2PlatformEdge);
+  let teleAttack1 = new TeleAttack("mid mid", level3PlatformEdge);
   currentBones = [teleAttack1];
 
   // bones COMPLETD
@@ -773,7 +785,7 @@ function innit(){
   // attack1.boneTime = 1150
 
   // calculated damge zone COMPLETED
-  attack1.calculateDamageZone(level2PlatformEdge);
+  attack1.calculateDamageZone(level3PlatformEdge);
   // set the height back to 0 because it start at zero to rise
   attack1.currentHeight = 0;
 
@@ -782,7 +794,7 @@ function innit(){
   
 
   // tele
-  // let teleAttack2 = new TeleAttack("bottom mid", level2PlatformEdge);
+  // let teleAttack2 = new TeleAttack("bottom mid", level3PlatformEdge);
   // currentBones.push(teleAttack2);
 
 
@@ -793,7 +805,7 @@ function innit(){
   // set the right gravity
 
   // attack 2 TEMP
-  for (let i = 0; i < 71; i++){
+  for (let i = 0; i < 7; i++){
 
     let direction = "down";
 
@@ -813,7 +825,7 @@ function innit(){
     }
 
     if (i === 0){
-      let attack2 = new GapAttack("down",structuredClone(currentGravity),[],3,10,530000,700,4,0,0.15,0,1,800*i + 2000);
+      let attack2 = new GapAttack("down",structuredClone(currentGravity),[],3,10,12000,700,4,0,0.15,0,1,800*i + 2000);
       // attack.type = "gap";
       // attack.reaction = 700;
       // attack.boneSpeedLeft = 1000;
@@ -828,12 +840,12 @@ function innit(){
       // attack.zone = [];
       // attack.gravity = structuredClone(currentGravity);
 
-      attack2.calculateDamageZone(level2PlatformEdge);
+      attack2.calculateDamageZone(level3PlatformEdge);
       currentBones.push(attack2);
     }
     else{
       if (i%2 === 1){
-        let attack2 = new GapAttack("down",structuredClone(currentGravity),[],3,10,530000,700,3,0,0.15,0.04,0.85,500*i + 2000);
+        let attack2 = new GapAttack("down",structuredClone(currentGravity),[],3,10,12000,700,3,0,0.15,0.04,0.85,500*i + 2000);
         // attack.type = "gap";
         // attack.reaction = 700;
         // attack.boneSpeedLeft = 1000;
@@ -848,7 +860,7 @@ function innit(){
         // attack.zone = [];
         // attack.gravity = structuredClone(currentGravity);
 
-        attack2.calculateDamageZone(level2PlatformEdge);
+        attack2.calculateDamageZone(level3PlatformEdge);
         currentBones.push(attack2);
       }
       else{
@@ -867,7 +879,87 @@ function innit(){
         // attack.zone = [];
         // attack.gravity = structuredClone(currentGravity);
 
-        attack2.calculateDamageZone(level2PlatformEdge);
+        attack2.calculateDamageZone(level3PlatformEdge);
+        currentBones.push(attack2);
+      }
+    }
+    
+  } 
+  for (let i = 0; i < 7; i++){
+
+    let direction = "down";
+
+    // gravity
+    if (direction === "down"){
+      let gravity5 = {
+        mode: "previous",
+        accerlerationX: 0,
+        dx: 0,
+        accerlerationY: 0.25 / 662 * height,
+        dy: -4 / 662 * height,
+        dyOriginal: -4 / 662 * height,
+      };
+
+      currentGravityIndex = 0;
+      currentGravity = [gravity5];
+    }
+
+    if (i === 0){
+      let attack2 = new GapAttack("down",structuredClone(currentGravity),[],3,10,12000,700,0,-4,0.15,0,1,800*i + 2000);
+      // attack.type = "gap";
+      // attack.reaction = 700;
+      // attack.boneSpeedLeft = 1000;
+      // attack.boneSpeedRight = 1000;
+      // attack.endTime = 2300;
+      // attack.gapHeight = 0.15;
+      // attack.gapWidth = 0.02;
+      // attack.gapDifference = 0.12;
+      // attack.damage = 3;
+      // attack.cooldown = 50;
+      // attack.direction = "down";
+      // attack.zone = [];
+      // attack.gravity = structuredClone(currentGravity);
+
+      attack2.calculateDamageZone(level3PlatformEdge);
+      currentBones.push(attack2);
+    }
+    else{
+      if (i%2 === 1){
+        let attack2 = new GapAttack("down",structuredClone(currentGravity),[],3,10,12000,700,0,-3,0.15,0.04,0.85,500*i + 5000);
+        // attack.type = "gap";
+        // attack.reaction = 700;
+        // attack.boneSpeedLeft = 1000;
+        // attack.boneSpeedRight = 1000;
+        // attack.endTime = 2300;
+        // attack.gapHeight = 0.15;
+        // attack.gapWidth = 0.02;
+        // attack.gapDifference = 0.12;
+        // attack.damage = 3;
+        // attack.cooldown = 50;
+        // attack.direction = "down";
+        // attack.zone = [];
+        // attack.gravity = structuredClone(currentGravity);
+
+        attack2.calculateDamageZone(level3PlatformEdge);
+        currentBones.push(attack2);
+      }
+      else{
+        let attack2 = new BlueAttack("down",structuredClone(currentGravity),[],3,10,530000,700,0,-3,0.65,0.04,0.35,500*i + 5000);
+        // attack.type = "gap";
+        // attack.reaction = 700;
+        // attack.boneSpeedLeft = 1000;
+        // attack.boneSpeedRight = 1000;
+        // attack.endTime = 2300;
+        // attack.gapHeight = 0.15;
+        // attack.gapWidth = 0.02;
+        // attack.gapDifference = 0.12;
+        // attack.damage = 3;
+        // attack.cooldown = 50;
+        // attack.direction = "down";
+        // attack.zone = [];
+        // attack.gravity = structuredClone(currentGravity);
+
+        attack2.calculateDamageZone(level3PlatformEdge);
         currentBones.push(attack2);
       }
     }
@@ -879,7 +971,182 @@ function innit(){
   currentBones.push(attackLast);
 
   currentGravity = [gravity1,gravity2,gravity3]; 
-}
+} function loadLevel1All(){
+  // level 2 innit COMPLETED
+  // platformEdge COMPLETED
+  let platformEdge1={x: 0.5 * height,y: 0.5 * height,l: 0.51 * height,w: 0.01 * height};
+  let platformEdge2={x: 0.25 * height,y: 0.625 * height,l: 0.01 * height,w: 0.26 * height};
+  let platformEdge3={x: 0.5 * height,y: 0.75 * height,l: 0.51 * height,w: 0.01 * height};
+  let platformEdge4={x: 0.75 * height,y: 0.625 * height,l: 0.01 * height,w: 0.26 * height};
+  // let platformEdge1={x: 0.5,y: 0,l: 1,w: 0.025}; top
+  // let platformEdge2={x: 0,y: 0.5,l: 0.025,w: 1}; left
+  // let platformEdge3={x: 0.5,y: 1,l: 1,w: 0.025}; down
+  // let platformEdge4={x: 1,y: 0.5,l: 0.025,w: 1}; right
+  let level4PlatformEdge = [platformEdge1,platformEdge2,platformEdge3,platformEdge4];
+  currentPlatformEdge = level4PlatformEdge;
+
+  let teleAttack1 = new TeleAttack("mid mid", level4PlatformEdge);
+  currentBones = [teleAttack1];
+
+  // bones COMPLETD
+  // attack 1
+  // gravity innit COMPLETED
+  let gravity1 = {
+    mode: "on",
+    accerlerationX: 0,
+    dx: 0,
+    accerlerationY: 0.3 / 662 * height,
+    dy: 3 / 662 * height,
+  };
+
+  let gravity2 = {
+    mode: "on",
+    accerlerationX: 0,
+    dx: 0,
+    accerlerationY: 0.1 / 662 * height,
+    dy: -3.5 / 662 * height,
+    dyOriginal: -3.5 / 662 * height,
+  };
+
+  let gravity3 = {
+    mode: "off",
+    accerlerationX: 0.0,
+    dx: 0,
+    accerlerationY: 0,
+    dy: 0,
+  };
+
+  currentGravity = [gravity1, gravity2, gravity3];
+  currentGravityIndex = 0;
+
+  // initialize the varible of the attack 1 level 2 COMPLETED
+  let attack1 = new StabAttack("down", structuredClone(currentGravity), [], 7, 80, 3000, 1000, 1150, 0.08 * height, 1200);
+
+  // attack1.type = "stab";
+  // attack1.reaction = 1000;
+  // attack1.changeTime = 1200;
+  // attack1.endTime = 3000;
+  // attack1.damage = 7;
+  // attack1.cooldown = 400;
+  // attack1.direction = "down";
+  // attack1.height = 0.08 * height;
+  // // attack1.currentHeight = 0;
+  // attack1.zone = [];
+  // attack1.gravity = structuredClone(currentGravity);
+  // attack1.boneTime = 1150
+
+  // calculated damge zone COMPLETED
+  attack1.calculateDamageZone(level4PlatformEdge);
+  // set the height back to 0 because it start at zero to rise
+  attack1.currentHeight = 0;
+
+  // push the attack in COMPLETED
+  currentBones.push(attack1);
+  
+
+  // tele
+  let teleAttack2 = new TeleAttack("mid mid", level4PlatformEdge);
+  currentBones.push(teleAttack2);
+
+
+  // attack Innit 2
+
+  // IMPORTANT!!!
+
+  // set the right gravity
+
+  // attack 2 TEMP
+  for (let i = 2; i < 50; i++){
+
+    let direction = "down";
+
+    // gravity
+    if (direction === "down"){
+      let gravity5 = {
+        mode: "off",
+        accerlerationX: 0,
+        dx: 0,
+        accerlerationY: 0.1 / 662 * height,
+        dy: -3.5 / 662 * height,
+        dyOriginal: -3.5 / 662 * height,
+      };
+
+      currentGravityIndex = 0;
+      currentGravity = [gravity5];
+    }
+
+    if(i === 2){
+      let attack2 = new GapAttack("down",structuredClone(currentGravity),[],3,10,23000,700,2,-2,0.0,0.0,1,250*i);
+      // attack.type = "gap";
+      // attack.reaction = 700;
+      // attack.boneSpeedLeft = 1000;
+      // attack.boneSpeedRight = 1000;
+      // attack.endTime = 2300;
+      // attack.gapHeight = 0.15;
+      // attack.gapWidth = 0.02;
+      // attack.gapDifference = 0.12;
+      // attack.damage = 3;
+      // attack.cooldown = 50;
+      // attack.direction = "down";
+      // attack.zone = [];
+      // attack.gravity = structuredClone(currentGravity);
+
+      attack2.calculateDamageZone(level4PlatformEdge);
+      currentBones.push(attack2);
+    }
+
+    else{
+      if(i%2 === 0){
+        let attack2 = new GapAttack("down",structuredClone(currentGravity),[],3,10,23000,700,0,-2.25,0.0,0.04,0.5,400*i);
+        // attack.type = "gap";
+        // attack.reaction = 700;
+        // attack.boneSpeedLeft = 1000;
+        // attack.boneSpeedRight = 1000;
+        // attack.endTime = 2300;
+        // attack.gapHeight = 0.15;
+        // attack.gapWidth = 0.02;
+        // attack.gapDifference = 0.12;
+        // attack.damage = 3;
+        // attack.cooldown = 50;
+        // attack.direction = "down";
+        // attack.zone = [];
+        // attack.gravity = structuredClone(currentGravity);
+
+        attack2.calculateDamageZone(level4PlatformEdge);
+        currentBones.push(attack2);
+      }
+      else{
+        let attack2 = new GapAttack("down",structuredClone(currentGravity),[],3,10,23000,700,2.25,0,0.5,0.04,0.5,400*i);
+        // attack.type = "gap";
+        // attack.reaction = 700;
+        // attack.boneSpeedLeft = 1000;
+        // attack.boneSpeedRight = 1000;
+        // attack.endTime = 2300;
+        // attack.gapHeight = 0.15;
+        // attack.gapWidth = 0.02;
+        // attack.gapDifference = 0.12;
+        // attack.damage = 3;
+        // attack.cooldown = 50;
+        // attack.direction = "down";
+        // attack.zone = [];
+        // attack.gravity = structuredClone(currentGravity);
+
+        attack2.calculateDamageZone(level4PlatformEdge);
+        currentBones.push(attack2);
+      }
+    }
+
+    
+  }
+
+    
+
+  // attack last
+  let attackLast = {type: "next level"};
+  currentBones.push(attackLast);
+
+  currentGravity = [gravity1,gravity2,gravity3]; 
+} 
 
 // stop functions COMPLETED
 function stopAtRight(){

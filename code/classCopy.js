@@ -34,7 +34,13 @@ class ParentAttack{
   }
 
   displayPlayer(){
-    player.displayImage(this.direction);
+    if(this.gravity[currentGravityIndex].mode === "off"){
+      player.displayImage("heart");
+    }
+    else{
+      player.displayImage(this.direction);
+    }
+    
   }
 }
 
@@ -832,6 +838,7 @@ class StabAttack extends ParentAttack{
     rect(this.zone[2][0],this.zone[2][1],this.zone[2][2],this.zone[2][3]);
     rect(this.zone[3][0],this.zone[3][1],this.zone[3][2],this.zone[3][3]);
     // damage
+    // text(currentBonesIndex,this.zone[2][0],250)
     this.takeDamage(currentMillis);
   }
 
