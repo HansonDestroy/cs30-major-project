@@ -96,13 +96,21 @@ function setup() {
   // megalovania.play();
   // megalovania.setLoop(true);
   // startMusic = true;
+  let inputGameMode = prompt("if you want to hack type: God\nif you want know rules type: help\nelse type name(HansonDestroy is the superior name)", "HansonDestroy")
 
-  if (prompt("name you may type help if you are new", "help") === "help"){
+  if (inputGameMode === "help"){
     player.health = 184;
-    prompt("okay so this is how this game work. \n You press space to enter a mode like the normal mode or take an action like the fight action. \n You press wsad lower-cased to mover around. \n When there are gravity and if you are falling down lets say pressing w key will not make you move up but the a and s key still works. \n The white bone will hurt you if you touch it and the blue bone will not hurt you as long as you are not moving when touching it (basic undertale knowledge). \nI played though all the level without taking damage so if you kept dying then you are just bad. \n Search up bad time simmulator on google if you want to get better or see the original game");
+    prompt("okay so this is how this game work\n You press space to enter a mode like the normal mode or take an action like the fight action \n You press wsad lower-cased to mover around.\n When there are gravity and if you are falling down lets say pressing w key will not make you move up but the a and s key still works.\n The white bone will hurt you if you touch it and the blue bone will not hurt you as long as you are not moving when touching it (basic undertale knowledge)\n I played though all the level without taking damage so if you kept dying then you are just bad.\n Search up bad time simmulator on google if you want to get better or see the original game");
+    prompt("Every level start off with a stab attack so donot jump immidiately because the gravity will pull you down you want to time the jump about 0.5 slower.\n the levels get harder and harder for level one it is simple you just move away from the direction of gravity\n level 1 is just move away fromt he green area when they turn white you die\n level 2 is just staying consistant and you will find the right rythem to jump through everything do not move away from the middele just jump\n level 3 is tricky the way I do this in the original game is I click w key and d key at the same time and release the w key the moment you rise above the white bone then figure out when to release the d key. you can't do it immidiately because you will get hit by the bluebone but not too late because you have no room\n The way to beat level 4 is the spam click all the keys in a circlular motion so click w a s d in ths order. It looks like there is more sophistated stratagy but it is much harder than it seems.(The stratagy that brayden uses is to span w and s but my method is safer)\n level 5: level 5 is very hard and there is no good stratagy other than get good. The timing is really hard I see you taking a lot of damage here. Level 6 you can cheese the original game by pressing every key at the same time the entire time. I purposefully did not patched this bug even though I could but if you don't want to cheese it then I guess have a good reation rate nothing you can do here really. Level 8 is level 2 but much faster. Same strat\n Level 9: There is a patter that whenever a tall one will come it will take more time to come so you can pretty much predict everything with enough practice. Again this game is hard go god mode if you want")
+  }
+  else if(inputGameMode === "God"){
+    player.health = 92000;
+  }
+  else if(inputGameMode === "HansonDestroy"){
+    player.health = 92*2;
   }
   else{
-    player.health = 9200;
+    player.health = 92;
   }
 
   finishLoad = preloadWithPromise();
